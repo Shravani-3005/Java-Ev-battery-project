@@ -40,14 +40,14 @@ If you haven't yet pushed `thermocore` to your GitHub account:
 Your database is already configured and verified with Supabase! 
 
 ### Connection Parameters Reference:
-- **Host / Pooler:** `aws-0-eu-north-1.pooler.supabase.com`
+- **Host / Pooler:** `aws-0-eu-west-1.pooler.supabase.com`
 - **Port:** `5432`
 - **Database Name:** `postgres`
-- **User:** `postgres.taiaqrtkldbasxvqxhlj`
+- **User:** `postgres.nrabwtcebghjnctauntp`
 - **Password:** `Sarvesh@2004`
 - **JDBC Connection String:**
   ```
-  jdbc:postgresql://aws-0-eu-north-1.pooler.supabase.com:5432/postgres?sslmode=require
+  jdbc:postgresql://aws-0-eu-west-1.pooler.supabase.com:5432/postgres?sslmode=require
   ```
 
 > **Note:** Spring Boot JPA `hibernate.ddl-auto=update` is already enabled. When the backend boots, it automatically creates and updates all tables (`thermocore_battery_packs`, `thermocore_sensor_readings`, `thermocore_cell_temperatures`, `thermocore_alerts`, `thermocore_recommendations`, `thermocore_simulation_sessions`, `thermocore_system_config`) and seeds 4 industrial EV battery packs (`BP-LFP-01`, `BP-NMC-02`, `BP-NMC-03`, `BP-SS-04`).
@@ -87,8 +87,8 @@ Add the following in the **Environment** tab:
 | Key | Value | Description |
 |---|---|---|
 | `SPRING_PROFILES_ACTIVE` | `postgres` | Activates PostgreSQL datasource profile |
-| `DATABASE_URL` | `jdbc:postgresql://aws-0-eu-north-1.pooler.supabase.com:5432/postgres?sslmode=require` | Supabase JDBC URL |
-| `DATABASE_USERNAME` | `postgres.taiaqrtkldbasxvqxhlj` | Supabase username |
+| `DATABASE_URL` | `jdbc:postgresql://aws-0-eu-west-1.pooler.supabase.com:5432/postgres?sslmode=require` | Supabase JDBC URL |
+| `DATABASE_USERNAME` | `postgres.nrabwtcebghjnctauntp` | Supabase username |
 | `DATABASE_PASSWORD` | `Sarvesh@2004` | Supabase password |
 
 ### Health Check Path
