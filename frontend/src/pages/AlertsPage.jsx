@@ -134,7 +134,7 @@ export default function AlertsPage() {
             >
               <option value="">All Battery Packs</option>
               {packs.map((p) => (
-                <option key={p.id} value={p.id}>{p.packCode} ({p.vehicleModel})</option>
+                <option key={p.id} value={p.id}>{p.packName} ({p.packCode})</option>
               ))}
             </select>
 

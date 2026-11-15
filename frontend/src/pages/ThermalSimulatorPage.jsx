@@ -32,7 +32,7 @@ export default function ThermalSimulatorPage() {
     testScenario: 'What-If Simulation Run',
   });
 
-  const [aiResult, setAiResult] = useState(null);
+  const [analysisResult, setAnalysisResult] = useState(null);
   const [isSimulating, setIsSimulating] = useState(false);
   const [commitSuccess, setCommitSuccess] = useState(false);
 
@@ -52,7 +52,7 @@ export default function ThermalSimulatorPage() {
         batteryPackId: Number(selectedPackId),
       };
       const result = await thermalApi.analyze(payload);
-      setAiResult(result);
+      setAnalysisResult(result);
     } catch (e) {
       console.error(e);
     } finally {
@@ -158,7 +158,7 @@ export default function ThermalSimulatorPage() {
             What-If Scenario Simulator &amp; Thermal Risk Sandbox
           </h2>
           <p className="text-xs text-[#A1A1AA] mt-0.5">
-            Test edge-case thermal dynamics (DC fast charging, pump stalls, high summer ambient) with live AI inference
+            Test edge-case thermal dynamics (DC fast charging, pump stalls, high ambient heat) with real-time physics calculation
           </p>
         </div>
 
@@ -169,32 +169,34 @@ export default function ThermalSimulatorPage() {
             className="bg-[#1B1B1F] border border-[#FF7900] text-[#F5F5F5] rounded px-3 py-1.5 focus:outline-none"
           >
             {packs.map((p) => (
-              <option key={p.id} value={p.id}>{p.packCode} ({p.vehicleModel})</option>
+              <option key={p.id} value={p.id}>
+                {p.packName} ({p.packCode})
+              </option>
             ))}
           </select>
         </div>
       </div>
 
-      {/* Quick Presets Strip */}
-      <div className="flex flex-wrap items-center gap-2.5 p-3 rounded bg-[#1B1B1F] border border-[#34343A]">
-        <span className="text-[10px] text-[#A1A1AA] uppercase tracking-wider">Quick Scenario Presets:</span>
+      {/* Preset Action Strip */}
+      <div className="flex flex-wrap items-center gap-2 p-3 rounded-lg bg-[#141416] border border-[#34343A]">
+        <span className="text-[10px] text-[#A1A1AA] uppercase font-bold mr-2">Quick Presets:</span>
         <button
           onClick={() => applyPreset('eco')}
-          className="px-2.5 py-1 rounded bg-[#141416] text-[#22C55E] hover:border-[#22C55E] border border-[#34343A] transition-colors"
+          className="px-2.5 py-1 rounded bg-[#22C55E]/10 text-[#22C55E] hover:bg-[#22C55E] hover:text-black border border-[#22C55E]/40 transition-colors font-medium"
         >
-          Eco City Cruise
+          Eco Cruise (30°C)
         </button>
         <button
           onClick={() => applyPreset('sprint')}
-          className="px-2.5 py-1 rounded bg-[#141416] text-[#FF7900] hover:border-[#FF7900] border border-[#34343A] transition-colors"
+          className="px-2.5 py-1 rounded bg-[#FF7900]/10 text-[#FF7900] hover:bg-[#FF7900] hover:text-black border border-[#FF7900]/40 transition-colors font-medium"
         >
-          Track Sprint (High Load)
+          Sprint (220A)
         </button>
         <button
           onClick={() => applyPreset('fastcharge')}
-          className="px-2.5 py-1 rounded bg-[#141416] text-[#EF4444] hover:border-[#EF4444] border border-[#34343A] transition-colors"
+          className="px-2.5 py-1 rounded bg-[#FF7900]/20 text-[#FF7900] hover:bg-[#FF7900] hover:text-black border border-[#FF7900]/50 transition-colors font-bold"
         >
-          Summer Fast-Charge (ΔT 10.5°)
+          DC Fast-Charge (350kW)
         </button>
         <button
           onClick={() => applyPreset('pumpfail')}
@@ -204,7 +206,7 @@ export default function ThermalSimulatorPage() {
         </button>
       </div>
 
-      {/* Main Grid: Controls vs Live AI Output */}
+      {/* Main Grid: Controls vs Physics Output */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Col: Parameter Sliders */}
         <div className="p-5 rounded-lg bg-[#1B1B1F] border border-[#34343A] space-y-4">
@@ -238,8 +240,8 @@ export default function ThermalSimulatorPage() {
             </div>
             <input
               type="range"
-              min="18"
-              max="65"
+              min="15"
+              max="60"
               step="0.5"
               value={form.minCellTemp}
               onChange={(e) => handleChange('minCellTemp', parseFloat(e.target.value))}
@@ -247,16 +249,35 @@ export default function ThermalSimulatorPage() {
             />
           </div>
 
-          {/* Current */}
+          {/* Pack Average Temp */}
           <div className="space-y-1">
             <div className="flex justify-between">
-              <span className="text-[#A1A1AA]">Pack Current (A):</span>
-              <span className="font-bold text-[#FF7900]">{form.current} A</span>
+              <span className="text-[#A1A1AA]">Mean Pack Temp (T_avg):</span>
+              <span className="font-bold text-[#FF7900]">{form.batteryTemp}°C</span>
+            </div>
+            <input
+              type="range"
+              min="18"
+              max="65"
+              step="0.5"
+              value={form.batteryTemp}
+              onChange={(e) => handleChange('batteryTemp', parseFloat(e.target.value))}
+              className="w-full accent-[#FF7900]"
+            />
+          </div>
+
+          {/* Current (Amps) */}
+          <div className="space-y-1">
+            <div className="flex justify-between">
+              <span className="text-[#A1A1AA]">Current Draw / Charge:</span>
+              <span className="font-bold text-[#F5F5F5]">
+                {form.current > 0 ? `+${form.current} A (Discharge)` : `${form.current} A (Charge)`}
+              </span>
             </div>
             <input
               type="range"
               min="-280"
-              max="320"
+              max="350"
               step="5"
               value={form.current}
               onChange={(e) => handleChange('current', parseFloat(e.target.value))}
@@ -264,16 +285,33 @@ export default function ThermalSimulatorPage() {
             />
           </div>
 
-          {/* Coolant Flow */}
+          {/* Voltage */}
           <div className="space-y-1">
             <div className="flex justify-between">
-              <span className="text-[#A1A1AA]">Coolant Pump Flow Rate (L/min):</span>
+              <span className="text-[#A1A1AA]">Bus Voltage:</span>
+              <span className="font-bold text-[#C0C0C0]">{form.voltage} V</span>
+            </div>
+            <input
+              type="range"
+              min="280"
+              max="450"
+              step="1"
+              value={form.voltage}
+              onChange={(e) => handleChange('voltage', parseFloat(e.target.value))}
+              className="w-full accent-[#FF7900]"
+            />
+          </div>
+
+          {/* Coolant Flow Rate */}
+          <div className="space-y-1">
+            <div className="flex justify-between">
+              <span className="text-[#A1A1AA]">Micro-Channel Coolant Flow:</span>
               <span className="font-bold text-[#38BDF8]">{form.coolantFlowRate} L/min</span>
             </div>
             <input
               type="range"
               min="0"
-              max="14"
+              max="10"
               step="0.2"
               value={form.coolantFlowRate}
               onChange={(e) => handleChange('coolantFlowRate', parseFloat(e.target.value))}
@@ -281,53 +319,64 @@ export default function ThermalSimulatorPage() {
             />
           </div>
 
-          {/* Coolant Delta */}
-          <div className="grid grid-cols-2 gap-3 pt-2">
-            <div>
-              <label className="text-[#A1A1AA] text-[10px] block mb-1">INLET TEMP (°C)</label>
-              <input
-                type="number"
-                step="0.5"
-                value={form.coolantInletTemp}
-                onChange={(e) => handleChange('coolantInletTemp', parseFloat(e.target.value))}
-                className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-1.5 text-[#F5F5F5] focus:outline-none"
-              />
+          {/* Coolant Inlet Temp */}
+          <div className="space-y-1">
+            <div className="flex justify-between">
+              <span className="text-[#A1A1AA]">Coolant Inlet Temp:</span>
+              <span className="font-bold text-[#38BDF8]">{form.coolantInletTemp}°C</span>
             </div>
-            <div>
-              <label className="text-[#A1A1AA] text-[10px] block mb-1">OUTLET TEMP (°C)</label>
-              <input
-                type="number"
-                step="0.5"
-                value={form.coolantOutletTemp}
-                onChange={(e) => handleChange('coolantOutletTemp', parseFloat(e.target.value))}
-                className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-1.5 text-[#F5F5F5] focus:outline-none"
-              />
-            </div>
+            <input
+              type="range"
+              min="10"
+              max="45"
+              step="0.5"
+              value={form.coolantInletTemp}
+              onChange={(e) => handleChange('coolantInletTemp', parseFloat(e.target.value))}
+              className="w-full accent-[#38BDF8]"
+            />
           </div>
 
-          <div className="pt-3 border-t border-[#34343A] flex items-center justify-between">
+          {/* Coolant Outlet Temp */}
+          <div className="space-y-1">
+            <div className="flex justify-between">
+              <span className="text-[#A1A1AA]">Coolant Outlet Temp:</span>
+              <span className="font-bold text-[#FF7900]">{form.coolantOutletTemp}°C</span>
+            </div>
+            <input
+              type="range"
+              min="15"
+              max="55"
+              step="0.5"
+              value={form.coolantOutletTemp}
+              onChange={(e) => handleChange('coolantOutletTemp', parseFloat(e.target.value))}
+              className="w-full accent-[#FF7900]"
+            />
+          </div>
+
+          <div className="pt-2">
             <button
               onClick={handleCommitToDatabase}
-              className="px-4 py-2 rounded bg-[#FF7900] hover:bg-[#FF922B] text-black font-bold uppercase flex items-center gap-2 shadow-[0_0_12px_rgba(255,121,0,0.3)] transition-colors"
+              className="w-full py-2.5 rounded bg-[#141416] hover:bg-[#FF7900] text-[#FF7900] hover:text-black border border-[#FF7900] font-bold uppercase transition-colors flex items-center justify-center gap-2"
             >
-              <Send className="w-4 h-4" />
-              <span>Commit Test Observation to DB</span>
+              <Send className="w-3.5 h-3.5" />
+              Commit Simulation Observation to Database
             </button>
             {commitSuccess && (
-              <span className="text-[#22C55E] flex items-center gap-1 font-bold">
-                <CheckCircle2 className="w-4 h-4" /> Persisted!
-              </span>
+              <div className="mt-2 text-center text-[11px] text-[#22C55E] flex items-center justify-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                Observation written to PostgreSQL and evaluated by BTMS rules!
+              </div>
             )}
           </div>
         </div>
 
-        {/* Right Col: AI Inference Result & Physical Actuation Directives */}
+        {/* Right Col: Diagnostics Output & Directives */}
         <div className="p-5 rounded-lg bg-[#1B1B1F] border border-[#34343A] flex flex-col justify-between space-y-4">
           <div>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-bold text-[#F5F5F5] uppercase tracking-wider flex items-center gap-2">
                 <Zap className="w-4 h-4 text-[#FF7900]" />
-                Thermal Intelligence Rule-Engine Output
+                BTMS Thermal Diagnostics &amp; Directives
               </h3>
               <span className="text-[10px] px-2 py-0.5 rounded bg-[#222226] text-[#A1A1AA] border border-[#34343A]">
                 KJS-CES-02 BTMS
@@ -337,53 +386,53 @@ export default function ThermalSimulatorPage() {
             {/* Risk Badge */}
             <div className="p-4 rounded-lg bg-[#141416] border border-[#34343A] flex items-center justify-between mb-4">
               <div>
-                <span className="text-[10px] text-[#A1A1AA] uppercase">Assessed Thermal Risk Score</span>
+                <span className="text-[10px] text-[#A1A1AA] uppercase">Thermal Risk Index</span>
                 <div className="text-3xl font-black mt-1 flex items-baseline gap-1">
                   <span className={
-                    aiResult?.riskLevel === 'CRITICAL' ? 'text-[#EF4444]' :
-                    aiResult?.riskLevel === 'HIGH' ? 'text-[#EF4444]' :
-                    aiResult?.riskLevel === 'MODERATE' ? 'text-[#FF7900]' : 'text-[#22C55E]'
+                    analysisResult?.riskLevel === 'CRITICAL' ? 'text-[#EF4444]' :
+                    analysisResult?.riskLevel === 'HIGH' ? 'text-[#EF4444]' :
+                    analysisResult?.riskLevel === 'MODERATE' ? 'text-[#FF7900]' : 'text-[#22C55E]'
                   }>
-                    {aiResult?.riskScore || 0}
+                    {analysisResult?.riskScore || 0}
                   </span>
                   <span className="text-xs text-[#A1A1AA]">/ 100</span>
                 </div>
               </div>
 
               <span className={`px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wider ${
-                aiResult?.riskLevel === 'CRITICAL' ? 'bg-[#EF4444] text-black font-extrabold animate-pulse' :
-                aiResult?.riskLevel === 'HIGH' ? 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/40 font-bold' :
-                aiResult?.riskLevel === 'MODERATE' ? 'bg-[#FF7900]/20 text-[#FF7900] border border-[#FF7900]/40 font-bold' :
+                analysisResult?.riskLevel === 'CRITICAL' ? 'bg-[#EF4444] text-white font-extrabold' :
+                analysisResult?.riskLevel === 'HIGH' ? 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/40 font-bold' :
+                analysisResult?.riskLevel === 'MODERATE' ? 'bg-[#FF7900]/20 text-[#FF7900] border border-[#FF7900]/40 font-bold' :
                 'bg-[#22C55E]/20 text-[#22C55E] border border-[#22C55E]/40 font-bold'
               }`}>
-                {aiResult?.riskLevel || 'EVALUATING'}
+                {analysisResult?.riskLevel || 'EVALUATING'}
               </span>
             </div>
 
-            {/* Key AI Physics Calculations */}
+            {/* Key Thermal Physics Calculations */}
             <div className="grid grid-cols-2 gap-3 text-xs mb-4">
               <div className="p-3 rounded bg-[#141416] border border-[#34343A]">
-                <span className="text-[10px] text-[#A1A1AA] block">HOTSPOT GRADIENT (ΔT)</span>
+                <span className="text-[10px] text-[#A1A1AA] block">HOTSPOT GRADIENT (Delta-T)</span>
                 <span className="font-bold text-[#F5F5F5] text-base mt-0.5 block">
-                  {aiResult?.tempGradient}°C {aiResult?.isHotspotDetected ? '⚠️ HOTSPOT' : '✓ UNIFORM'}
+                  {analysisResult?.tempGradient}°C {analysisResult?.isHotspotDetected ? '[HOTSPOT DETECTED]' : '[UNIFORM GRADIENT]'}
                 </span>
               </div>
               <div className="p-3 rounded bg-[#141416] border border-[#34343A]">
                 <span className="text-[10px] text-[#A1A1AA] block">JOULEAN HEAT (P = I²R)</span>
                 <span className="font-bold text-[#FF7900] text-base mt-0.5 block">
-                  {aiResult?.calculatedHeatGenWatts} W
+                  {analysisResult?.calculatedHeatGenWatts} W
                 </span>
               </div>
               <div className="p-3 rounded bg-[#141416] border border-[#34343A]">
                 <span className="text-[10px] text-[#A1A1AA] block">C-RATE STRESS INDEX</span>
                 <span className="font-bold text-[#C0C0C0] text-base mt-0.5 block">
-                  {aiResult?.cRate} C
+                  {analysisResult?.cRate} C
                 </span>
               </div>
               <div className="p-3 rounded bg-[#141416] border border-[#34343A]">
                 <span className="text-[10px] text-[#A1A1AA] block">COOLING SUFFICIENCY</span>
                 <span className="font-bold text-[#38BDF8] text-base mt-0.5 block">
-                  {aiResult?.coolingSufficiencyStatus}
+                  {analysisResult?.coolingSufficiencyStatus}
                 </span>
               </div>
             </div>
@@ -395,30 +444,28 @@ export default function ThermalSimulatorPage() {
               </span>
               <div className="flex items-center justify-between text-xs">
                 <span className="text-[#A1A1AA]">Cooling Pump Flow:</span>
-                <span className="font-bold text-[#38BDF8]">{aiResult?.recommendedCoolantFlowLpm} L/min</span>
+                <span className="font-bold text-[#38BDF8]">{analysisResult?.recommendedCoolantFlowLpm} L/min</span>
               </div>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[#A1A1AA]">Radiator Fan Duty:</span>
-                <span className="font-bold text-[#C0C0C0]">{aiResult?.recommendedRadiatorSpeedPercent}%</span>
+                <span className="text-[#A1A1AA]">Recommended Action:</span>
+                <span className="font-bold text-[#F5F5F5]">{analysisResult?.recommendedAction}</span>
               </div>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[#A1A1AA]">Powertrain Derate:</span>
-                <span className="font-bold text-[#EF4444]">
-                  {aiResult?.powertrainDeratePercent > 0 ? `-${aiResult?.powertrainDeratePercent}% Throttling` : '0% (Full Power)'}
-                </span>
-              </div>
-              <div className="text-[11px] text-[#F5F5F5] font-sans pt-2 border-t border-[#34343A]">
-                <strong>Action:</strong> {aiResult?.recommendedAction}
+                <span className="text-[#A1A1AA]">Inverter Current Limit:</span>
+                <span className="font-bold text-[#FF7900]">{analysisResult?.currentLimitAmps || 'Unlimited'} A</span>
               </div>
             </div>
           </div>
 
           {/* Diagnostic Log */}
-          <div className="space-y-1 text-[11px] text-[#A1A1AA]">
-            {aiResult?.diagnostics?.map((d, i) => (
-              <div key={i} className="flex items-start gap-1.5">
+          <div className="p-3.5 rounded bg-[#141416] border border-[#34343A] space-y-1">
+            <span className="text-[10px] text-[#A1A1AA] uppercase block mb-1">
+              Active Evaluation Reasons:
+            </span>
+            {analysisResult?.diagnostics?.map((diag, i) => (
+              <div key={i} className="text-[11px] text-[#C0C0C0] flex items-center gap-1.5">
                 <span className="text-[#FF7900]">&bull;</span>
-                <span>{d}</span>
+                <span>{diag}</span>
               </div>
             ))}
           </div>

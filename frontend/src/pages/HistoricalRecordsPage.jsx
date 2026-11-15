@@ -135,7 +135,7 @@ export default function HistoricalRecordsPage() {
           >
             {packs.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.packCode} ({p.vehicleModel})
+                {p.packName} ({p.packCode})
               </option>
             ))}
           </select>

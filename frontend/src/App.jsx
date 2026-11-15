@@ -12,21 +12,23 @@ import HistoricalRecordsPage from './pages/HistoricalRecordsPage';
 import ThermalSimulatorPage from './pages/ThermalSimulatorPage';
 import SettingsPage from './pages/SettingsPage';
 import { alertsApi, simulationApi } from './api/client';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 
 function AppContent() {
   const location = useLocation();
+  const { isDark } = useTheme();
   const [systemOnline, setSystemOnline] = useState(true);
   const [unreadAlerts, setUnreadAlerts] = useState(0);
 
   const routeMeta = {
     '/': { title: 'Fleet Thermal Overview', breadcrumbs: ['Operations', 'Dashboard'] },
     '/batteries': { title: 'Battery Pack Management', breadcrumbs: ['Assets', 'Battery Packs'] },
-    '/live': { title: 'Live Sensor Telemetry', breadcrumbs: ['Telemetry', 'Live Monitoring'] },
+    '/live': { title: 'Live Telemetry Stream', breadcrumbs: ['Telemetry', 'Live Monitoring'] },
     '/analytics': { title: 'Thermal Analytics & Trends', breadcrumbs: ['Engineering', 'Analytics'] },
     '/hotspots': { title: 'Hotspot & Gradient Diagnostics', breadcrumbs: ['Safety', 'Hotspots'] },
     '/alerts': { title: 'Thermal Alerts & Cooling Directives', breadcrumbs: ['Safety', 'Alerts'] },
-    '/history': { title: 'Historical Observations Database', breadcrumbs: ['Database', 'Records'] },
-    '/simulator': { title: 'What-If Thermal Sandbox', breadcrumbs: ['R&D', 'Simulator'] },
+    '/history': { title: 'Historical Records Database', breadcrumbs: ['Database', 'Records'] },
+    '/simulator': { title: 'Thermal Scenario Simulator', breadcrumbs: ['R&D', 'Simulator'] },
     '/settings': { title: 'System Configuration', breadcrumbs: ['Admin', 'Settings'] },
   };
 
@@ -53,7 +55,7 @@ function AppContent() {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-[#0B0B0D] flex text-[#F5F5F5]">
+    <div className={`min-h-screen flex transition-colors duration-150 ${isDark ? 'bg-[#0B0B0D] text-[#F5F5F5]' : 'bg-[#F8FAFC] text-[#0F172A]'}`}>
       {/* Persistent Left Sidebar */}
       <Sidebar systemOnline={systemOnline} activeSimulation={systemOnline} />
 
@@ -86,8 +88,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppContent />
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }

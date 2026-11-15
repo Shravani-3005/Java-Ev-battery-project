@@ -15,13 +15,22 @@ import {
 } from 'recharts';
 import { LineChart as AnalyticsIcon, Filter, Layers, RefreshCw } from 'lucide-react';
 import { batteriesApi, analyticsApi } from '../api/client';
+import { useTheme } from '../context/ThemeContext';
 
 export default function ThermalAnalyticsPage() {
+  const { isDark } = useTheme();
   const [packs, setPacks] = useState([]);
   const [selectedPackId, setSelectedPackId] = useState('');
   const [chartData, setChartData] = useState([]);
   const [limit, setLimit] = useState(40);
   const [isLoading, setIsLoading] = useState(false);
+
+  const primaryAccent = isDark ? '#FF7900' : '#2563EB';
+  const gridStroke = isDark ? '#222226' : '#E2E8F0';
+  const axisStroke = isDark ? '#A1A1AA' : '#64748B';
+  const tooltipBg = isDark ? '#141416' : '#FFFFFF';
+  const tooltipBorder = isDark ? '#34343A' : '#CBD5E1';
+  const tooltipText = isDark ? '#F5F5F5' : '#0F172A';
 
   const fetchPacks = async () => {
     try {
@@ -74,10 +83,10 @@ export default function ThermalAnalyticsPage() {
         <div>
           <h2 className="text-base font-bold text-[#F5F5F5] uppercase tracking-wider flex items-center gap-2">
             <AnalyticsIcon className="w-4 h-4 text-[#FF7900]" />
-            Deep Thermal Analytics &amp; Time-Series Correlation
+            Thermal Analytics &amp; Time-Series Correlation
           </h2>
           <p className="text-xs text-[#A1A1AA] mt-0.5">
-            Electrochemical heat generation, voltage sag, C-rate correlation, and coolant absorption trends
+            Electrochemical heat generation, voltage trends, and coolant absorption profiles
           </p>
         </div>
 
@@ -89,7 +98,7 @@ export default function ThermalAnalyticsPage() {
           >
             {packs.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.packCode} ({p.vehicleModel})
+                {p.packName} ({p.packCode})
               </option>
             ))}
           </select>
@@ -131,16 +140,16 @@ export default function ThermalAnalyticsPage() {
           <span className="text-[10px] text-[#A1A1AA]">Recorded peak</span>
         </div>
         <div className="p-4 rounded-lg bg-[#1B1B1F] border border-[#34343A]">
-          <span className="text-[10px] text-[#A1A1AA] uppercase block">Peak Current Draw</span>
+          <span className="text-[10px] text-[#A1A1AA] uppercase block">Peak Current Load</span>
           <span className="text-2xl font-bold text-[#FF7900] mt-1 block">{peakCurrent}A</span>
           <span className="text-[10px] text-[#A1A1AA]">Max absolute load</span>
         </div>
       </div>
 
-      {/* Chart 1: Battery Temperature & Thermal Gradient ΔT */}
+      {/* Chart 1: Battery Temperature & Thermal Gradient */}
       <div className="p-5 rounded-lg bg-[#1B1B1F] border border-[#34343A]">
         <h3 className="text-sm font-bold text-[#F5F5F5] uppercase tracking-wider mb-2">
-          1. Battery Temperature &amp; Inter-Cell Thermal Gradient (ΔT)
+          1. Battery Temperature &amp; Thermal Gradient (Delta-T)
         </h3>
         <p className="text-xs text-[#A1A1AA] mb-4">
           Visualizes pack average temp against maximum cell temp and localized hotspot gradient threshold (5.0°C)
@@ -148,14 +157,14 @@ export default function ThermalAnalyticsPage() {
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#222226" />
-              <XAxis dataKey="timestamp" stroke="#A1A1AA" fontSize={10} tickFormatter={(t) => (t ? new Date(t).toLocaleTimeString() : '')} />
-              <YAxis stroke="#A1A1AA" fontSize={10} domain={[15, 65]} />
-              <Tooltip contentStyle={{ backgroundColor: '#141416', borderColor: '#34343A', borderRadius: '6px', fontSize: '11px', color: '#F5F5F5' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
+              <XAxis dataKey="timestamp" stroke={axisStroke} fontSize={10} tickFormatter={(t) => (t ? new Date(t).toLocaleTimeString() : '')} />
+              <YAxis stroke={axisStroke} fontSize={10} domain={[15, 65]} />
+              <Tooltip contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, borderRadius: '6px', fontSize: '11px', color: tooltipText }} />
               <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
-              <Area type="monotone" dataKey="batteryTemp" name="Pack Temp (°C)" stroke="#FF7900" fill="#FF7900" fillOpacity={0.15} strokeWidth={2} />
+              <Area type="monotone" dataKey="batteryTemp" name="Pack Temp (°C)" stroke={primaryAccent} fill={primaryAccent} fillOpacity={0.15} strokeWidth={2} />
               <Line type="monotone" dataKey="maxCellTemp" name="Max Cell Temp (°C)" stroke="#EF4444" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="tempGradient" name="Thermal Gradient ΔT (°C)" stroke="#C0C0C0" strokeWidth={1.5} dot={false} />
+              <Line type="monotone" dataKey="tempGradient" name="Thermal Gradient ΔT (°C)" stroke={axisStroke} strokeWidth={1.5} dot={false} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -164,7 +173,7 @@ export default function ThermalAnalyticsPage() {
       {/* Chart 2: Voltage & Current Dynamics */}
       <div className="p-5 rounded-lg bg-[#1B1B1F] border border-[#34343A]">
         <h3 className="text-sm font-bold text-[#F5F5F5] uppercase tracking-wider mb-2">
-          2. Electrical Load Profile (Pack Voltage &amp; Current vs Joulean Heat)
+          2. Electrical Load Profile (Pack Voltage &amp; Current vs Heat Generation)
         </h3>
         <p className="text-xs text-[#A1A1AA] mb-4">
           Shows electrochemical load and power dissipation (Joulean heating: P = I²R)
@@ -172,15 +181,15 @@ export default function ThermalAnalyticsPage() {
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#222226" />
-              <XAxis dataKey="timestamp" stroke="#A1A1AA" fontSize={10} tickFormatter={(t) => (t ? new Date(t).toLocaleTimeString() : '')} />
-              <YAxis yAxisId="left" stroke="#A1A1AA" fontSize={10} domain={[300, 450]} />
-              <YAxis yAxisId="right" orientation="right" stroke="#FF7900" fontSize={10} />
-              <Tooltip contentStyle={{ backgroundColor: '#141416', borderColor: '#34343A', borderRadius: '6px', fontSize: '11px', color: '#F5F5F5' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
+              <XAxis dataKey="timestamp" stroke={axisStroke} fontSize={10} tickFormatter={(t) => (t ? new Date(t).toLocaleTimeString() : '')} />
+              <YAxis yAxisId="left" stroke={axisStroke} fontSize={10} domain={[300, 450]} />
+              <YAxis yAxisId="right" orientation="right" stroke={primaryAccent} fontSize={10} />
+              <Tooltip contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, borderRadius: '6px', fontSize: '11px', color: tooltipText }} />
               <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
-              <Line yAxisId="left" type="monotone" dataKey="voltage" name="Voltage (V)" stroke="#C0C0C0" strokeWidth={1.8} dot={false} />
-              <Line yAxisId="right" type="monotone" dataKey="current" name="Current (A)" stroke="#FF7900" strokeWidth={2} dot={false} />
-              <Line yAxisId="right" type="monotone" dataKey="heatGenW" name="Joulean Heat (W)" stroke="#EF4444" strokeWidth={1.5} strokeDasharray="3 3" dot={false} />
+              <Line yAxisId="left" type="monotone" dataKey="voltage" name="Voltage (V)" stroke={axisStroke} strokeWidth={1.8} dot={false} />
+              <Line yAxisId="right" type="monotone" dataKey="current" name="Current (A)" stroke={primaryAccent} strokeWidth={2} dot={false} />
+              <Line yAxisId="right" type="monotone" dataKey="heatGenW" name="Heat Gen (W)" stroke="#EF4444" strokeWidth={1.5} strokeDasharray="3 3" dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -197,14 +206,14 @@ export default function ThermalAnalyticsPage() {
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#222226" />
-              <XAxis dataKey="timestamp" stroke="#A1A1AA" fontSize={10} tickFormatter={(t) => (t ? new Date(t).toLocaleTimeString() : '')} />
-              <YAxis yAxisId="temp" stroke="#A1A1AA" fontSize={10} domain={[15, 55]} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
+              <XAxis dataKey="timestamp" stroke={axisStroke} fontSize={10} tickFormatter={(t) => (t ? new Date(t).toLocaleTimeString() : '')} />
+              <YAxis yAxisId="temp" stroke={axisStroke} fontSize={10} domain={[15, 55]} />
               <YAxis yAxisId="flow" orientation="right" stroke="#38BDF8" fontSize={10} domain={[0, 15]} />
-              <Tooltip contentStyle={{ backgroundColor: '#141416', borderColor: '#34343A', borderRadius: '6px', fontSize: '11px', color: '#F5F5F5' }} />
+              <Tooltip contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, borderRadius: '6px', fontSize: '11px', color: tooltipText }} />
               <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
-              <Line yAxisId="temp" type="monotone" dataKey="coolantInletTemp" name="Coolant Inlet (°C)" stroke="#C0C0C0" strokeWidth={1.8} dot={false} />
-              <Line yAxisId="temp" type="monotone" dataKey="coolantOutletTemp" name="Coolant Outlet (°C)" stroke="#FF7900" strokeWidth={1.8} dot={false} />
+              <Line yAxisId="temp" type="monotone" dataKey="coolantInletTemp" name="Coolant Inlet (°C)" stroke={axisStroke} strokeWidth={1.8} dot={false} />
+              <Line yAxisId="temp" type="monotone" dataKey="coolantOutletTemp" name="Coolant Outlet (°C)" stroke={primaryAccent} strokeWidth={1.8} dot={false} />
               <Line yAxisId="flow" type="stepAfter" dataKey="coolantFlowRate" name="Coolant Pump Flow (L/min)" stroke="#38BDF8" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>

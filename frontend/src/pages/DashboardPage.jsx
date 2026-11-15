@@ -28,6 +28,7 @@ import {
 import { dashboardApi, sensorsApi } from '../api/client';
 import KPICard from '../components/KPICard';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 const STATUS_COLORS = {
   NORMAL: '#22C55E',
@@ -37,6 +38,7 @@ const STATUS_COLORS = {
 };
 
 export default function DashboardPage() {
+  const { isDark } = useTheme();
   const [summary, setSummary] = useState(null);
   const [overviewChart, setOverviewChart] = useState([]);
   const [recentAlerts, setRecentAlerts] = useState([]);
@@ -44,6 +46,13 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
   const navigate = useNavigate();
+
+  const primaryAccent = isDark ? '#FF7900' : '#2563EB';
+  const gridStroke = isDark ? '#222226' : '#E2E8F0';
+  const axisStroke = isDark ? '#A1A1AA' : '#64748B';
+  const tooltipBg = isDark ? '#141416' : '#FFFFFF';
+  const tooltipBorder = isDark ? '#34343A' : '#CBD5E1';
+  const tooltipText = isDark ? '#F5F5F5' : '#0F172A';
 
   const fetchData = async () => {
     try {
@@ -85,7 +94,7 @@ export default function DashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-[#141416] border border-[#34343A]">
         <div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E] animate-pulse"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E]"></span>
             <span className="text-xs font-mono font-bold text-[#F5F5F5] uppercase tracking-wider">
               Fleet Thermal Telemetry Live
             </span>
@@ -179,22 +188,22 @@ export default function DashboardPage() {
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={overviewChart} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#222226" />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
                 <XAxis
                   dataKey="timestamp"
-                  stroke="#A1A1AA"
+                  stroke={axisStroke}
                   fontSize={10}
                   tickFormatter={(t) => (t ? new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '')}
                 />
-                <YAxis stroke="#A1A1AA" fontSize={10} domain={[15, 65]} />
+                <YAxis stroke={axisStroke} fontSize={10} domain={[15, 65]} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#141416', borderColor: '#34343A', borderRadius: '6px', fontSize: '11px', color: '#F5F5F5' }}
+                  contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, borderRadius: '6px', fontSize: '11px', color: tooltipText }}
                   labelFormatter={(t) => (t ? new Date(t).toLocaleTimeString() : '')}
                 />
                 <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
-                <Line type="monotone" dataKey="batteryTemp" name="Battery Temp (°C)" stroke="#FF7900" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />
+                <Line type="monotone" dataKey="batteryTemp" name="Battery Temp (°C)" stroke={primaryAccent} strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />
                 <Line type="monotone" dataKey="maxCellTemp" name="Max Cell Temp (°C)" stroke="#EF4444" strokeWidth={1.8} strokeDasharray="4 4" dot={false} />
-                <Line type="monotone" dataKey="coolantInletTemp" name="Coolant Inlet (°C)" stroke="#C0C0C0" strokeWidth={1.5} dot={false} />
+                <Line type="monotone" dataKey="coolantInletTemp" name="Coolant Inlet (°C)" stroke={axisStroke} strokeWidth={1.5} dot={false} />
                 <Line type="monotone" dataKey="coolantOutletTemp" name="Coolant Outlet (°C)" stroke="#38BDF8" strokeWidth={1.5} dot={false} />
               </LineChart>
             </ResponsiveContainer>
@@ -228,7 +237,7 @@ export default function DashboardPage() {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#141416', borderColor: '#34343A', borderRadius: '6px', fontSize: '11px', color: '#F5F5F5' }}
+                    contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, borderRadius: '6px', fontSize: '11px', color: tooltipText }}
                   />
                   <Legend wrapperStyle={{ fontSize: '10px' }} />
                 </PieChart>
@@ -272,10 +281,10 @@ export default function DashboardPage() {
           <div>
             <h2 className="text-sm font-bold text-[#F5F5F5] uppercase tracking-wider flex items-center gap-2">
               <Activity className="w-4 h-4 text-[#FF7900]" />
-              Live Battery Pack Ingestion &amp; Telemetry
+              Live Battery Pack Telemetry
             </h2>
             <p className="text-xs text-[#A1A1AA] font-mono mt-0.5">
-              Individual pack sensor streams, gradient ΔT, micro-channel cold plate flow and risk ratings
+              Individual pack sensor streams, gradient Delta-T, micro-channel cold plate flow and risk ratings
             </p>
           </div>
           <Link
@@ -295,7 +304,7 @@ export default function DashboardPage() {
                 <th className="py-2.5 px-3">Vehicle Model</th>
                 <th className="py-2.5 px-3">Chemistry</th>
                 <th className="py-2.5 px-3">Battery Temp</th>
-                <th className="py-2.5 px-3">Max Cell (ΔT)</th>
+                <th className="py-2.5 px-3">Max Cell (Delta-T)</th>
                 <th className="py-2.5 px-3">Voltage / Current</th>
                 <th className="py-2.5 px-3">Coolant Flow</th>
                 <th className="py-2.5 px-3">Thermal Risk</th>
@@ -337,7 +346,7 @@ export default function DashboardPage() {
                       <td className="py-3 px-3">
                         <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
                           reading.thermalRiskLevel === 'CRITICAL'
-                            ? 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/40 animate-pulse'
+                            ? 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/40'
                             : reading.thermalRiskLevel === 'HIGH'
                             ? 'bg-[#EF4444]/15 text-[#EF4444] border border-[#EF4444]/30'
                             : reading.thermalRiskLevel === 'MODERATE'
@@ -361,7 +370,7 @@ export default function DashboardPage() {
               ) : (
                 <tr>
                   <td colSpan="9" className="py-6 text-center text-[#A1A1AA]">
-                    No live sensor streams detected. Simulator generating readings...
+                    No live sensor streams detected. Telemetry generating readings...
                   </td>
                 </tr>
               )}
@@ -395,7 +404,7 @@ export default function DashboardPage() {
               >
                 <div className="flex items-start gap-2.5">
                   <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase mt-0.5 ${
-                    alert.severity === 'CRITICAL' ? 'bg-[#EF4444] text-black font-extrabold' :
+                    alert.severity === 'CRITICAL' ? 'bg-[#EF4444] text-white font-bold' :
                     alert.severity === 'DANGER' ? 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/40' :
                     alert.severity === 'WARNING' ? 'bg-[#FF7900]/20 text-[#FF7900] border border-[#FF7900]/40' :
                     'bg-[#C0C0C0]/20 text-[#C0C0C0]'

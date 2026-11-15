@@ -72,7 +72,7 @@ export default function HotspotDetectionPage() {
         <div>
           <h2 className="text-base font-bold text-[#F5F5F5] uppercase tracking-wider flex items-center gap-2 font-mono">
             <Flame className="w-4 h-4 text-[#FF7900]" />
-            Hotspot &amp; Thermal Gradient Diagnostic Engine
+            Hotspot &amp; Thermal Gradient Diagnostics
           </h2>
           <p className="text-xs text-[#A1A1AA] font-mono mt-0.5">
             Inter-cell temperature variance (ΔT = T_max - T_min) and localized micro-channel heat dissipation
@@ -87,7 +87,7 @@ export default function HotspotDetectionPage() {
           >
             {packs.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.packCode} ({p.vehicleModel})
+                {p.packName} ({p.packCode})
               </option>
             ))}
           </select>
@@ -119,7 +119,7 @@ export default function HotspotDetectionPage() {
           <span className="text-[10px] text-[#A1A1AA] uppercase block">Hotspot Status</span>
           <div className="text-base font-bold mt-2">
             {analysis?.isHotspotDetected ? (
-              <span className="px-2 py-0.5 rounded bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/40 font-bold inline-flex items-center gap-1.5 animate-pulse">
+              <span className="px-2 py-0.5 rounded bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/40 font-bold inline-flex items-center gap-1.5">
                 <AlertTriangle className="w-3.5 h-3.5" />
                 HOTSPOT DETECTED
               </span>
@@ -210,7 +210,7 @@ export default function HotspotDetectionPage() {
       {/* Physics Diagnostic Log */}
       <div className="p-5 rounded-lg bg-[#1B1B1F] border border-[#34343A]">
         <h3 className="text-sm font-bold text-[#F5F5F5] uppercase tracking-wider mb-2">
-          Diagnostic Audit Factors (Rule-Engine Output)
+          Diagnostic Factors (BTMS Rule Evaluation)
         </h3>
         <div className="space-y-1.5 mt-3">
           {analysis?.diagnostics && analysis.diagnostics.length > 0 ? (

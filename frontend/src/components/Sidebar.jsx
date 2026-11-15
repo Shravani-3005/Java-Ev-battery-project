@@ -33,7 +33,7 @@ export default function Sidebar({ systemOnline = true, activeSimulation = true }
       {/* Brand Header */}
       <div className="h-16 px-5 border-b border-[#34343A] flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded bg-[#1B1B1F] border border-[#FF7900] flex items-center justify-center text-[#FF7900] shadow-[0_0_12px_rgba(255,121,0,0.3)]">
+          <div className="w-9 h-9 rounded bg-[#1B1B1F] border border-[#FF7900] flex items-center justify-center text-[#FF7900]">
             <Zap className="w-5 h-5 fill-[#FF7900]" />
           </div>
           <div>
@@ -41,7 +41,7 @@ export default function Sidebar({ systemOnline = true, activeSimulation = true }
               THERMO<span className="text-[#FF7900]">CORE</span>
             </div>
             <div className="text-[9px] font-semibold tracking-widest text-[#A1A1AA] uppercase">
-              EV Thermal Intelligence
+              EV Thermal Management
             </div>
           </div>
         </div>
@@ -49,8 +49,8 @@ export default function Sidebar({ systemOnline = true, activeSimulation = true }
 
       {/* Navigation List */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        <div className="text-[10px] font-bold text-[#A1A1AA] uppercase px-3 mb-2 tracking-wider">
-          Platform Navigation
+        <div className="text-[10px] font-bold text-[#A1A1AA] uppercase px-3 mb-2 tracking-wider font-mono">
+          Navigation
         </div>
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -60,9 +60,9 @@ export default function Sidebar({ systemOnline = true, activeSimulation = true }
               to={item.path}
               end={item.path === '/'}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3.5 py-2.5 rounded text-xs font-medium transition-all duration-150 ${
+                `flex items-center gap-3 px-3.5 py-2.5 rounded text-xs font-medium transition-colors ${
                   isActive
-                    ? 'bg-[#1B1B1F] text-[#F5F5F5] border-l-2 border-[#FF7900] shadow-[inset_0_0_10px_rgba(255,121,0,0.1)] font-semibold'
+                    ? 'bg-[#1B1B1F] text-[#F5F5F5] border-l-2 border-[#FF7900] font-semibold'
                     : 'text-[#A1A1AA] hover:bg-[#141416] hover:text-[#C0C0C0]'
                 }`
               }
@@ -90,16 +90,16 @@ export default function Sidebar({ systemOnline = true, activeSimulation = true }
               <Server className="w-3 h-3 text-[#C0C0C0]" /> Spring Boot 3
             </span>
             <span className={`inline-flex items-center gap-1 font-bold ${systemOnline ? 'text-[#22C55E]' : 'text-[#EF4444]'}`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${systemOnline ? 'bg-[#22C55E] animate-pulse' : 'bg-[#EF4444]'}`}></span>
+              <span className={`w-1.5 h-1.5 rounded-full ${systemOnline ? 'bg-[#22C55E]' : 'bg-[#EF4444]'}`}></span>
               {systemOnline ? 'ONLINE' : 'OFFLINE'}
             </span>
           </div>
           <div className="flex items-center justify-between text-[10px] font-mono">
             <span className="text-[#A1A1AA] flex items-center gap-1.5">
-              <Radio className="w-3 h-3 text-[#FF7900]" /> Sensor Stream
+              <Radio className="w-3 h-3 text-[#FF7900]" /> Telemetry Stream
             </span>
             <span className="text-[#FF7900] font-semibold text-[9px] uppercase">
-              {activeSimulation ? '3.5s Real-time' : 'Paused'}
+              {activeSimulation ? 'Real-time' : 'Paused'}
             </span>
           </div>
         </div>

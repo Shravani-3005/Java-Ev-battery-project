@@ -387,7 +387,7 @@ export default function BatteryPacksPage() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Somaiya Shuttle Bus"
+                    placeholder="e.g. Cruiser"
                     value={formData.packName}
                     onChange={(e) => setFormData({ ...formData, packName: e.target.value })}
                     className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-1.5 text-[#F5F5F5] focus:border-[#FF7900] focus:outline-none"

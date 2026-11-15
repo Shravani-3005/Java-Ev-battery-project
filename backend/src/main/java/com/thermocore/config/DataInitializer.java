@@ -13,6 +13,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -54,13 +55,13 @@ public class DataInitializer implements CommandLineRunner {
 
             BatteryPack p1 = new BatteryPack();
             p1.setPackCode("BP-LFP-01");
-            p1.setPackName("Somaiya Campus e-Shuttle Bus");
-            p1.setVehicleModel("Tata Ultra T.7 Electric");
+            p1.setPackName("Cruiser");
+            p1.setVehicleModel("Tata Ultra");
             p1.setChemistry("LFP (Lithium Iron Phosphate)");
             p1.setCapacityKWh(65.0);
             p1.setNominalVoltage(384.0);
             p1.setCellCount(120);
-            p1.setCoolingType("Micro-channel Aluminum Cold Plate (Bottom-contact)");
+            p1.setCoolingType("Micro-channel Cold Plate");
             p1.setMaxSafeTemp(45.0);
             p1.setCriticalTemp(55.0);
             p1.setStatus(BatteryStatus.NORMAL);
@@ -69,13 +70,13 @@ public class DataInitializer implements CommandLineRunner {
 
             BatteryPack p2 = new BatteryPack();
             p2.setPackCode("BP-NMC-02");
-            p2.setPackName("Orion Racing EV Prototype");
-            p2.setVehicleModel("Formula Student Electric (FSE-24)");
+            p2.setPackName("Sprint");
+            p2.setVehicleModel("Formula EV");
             p2.setChemistry("NMC 811 (Nickel Manganese Cobalt)");
             p2.setCapacityKWh(18.5);
             p2.setNominalVoltage(400.0);
             p2.setCellCount(96);
-            p2.setCoolingType("Direct Dual-Sided Micro-channel Cooling Jacket");
+            p2.setCoolingType("Dual-Sided Micro-channel Cooling");
             p2.setMaxSafeTemp(48.0);
             p2.setCriticalTemp(58.0);
             p2.setStatus(BatteryStatus.MODERATE_WARMING);
@@ -84,13 +85,13 @@ public class DataInitializer implements CommandLineRunner {
 
             BatteryPack p3 = new BatteryPack();
             p3.setPackCode("BP-NMC-03");
-            p3.setPackName("Intra-City Delivery Van EV");
-            p3.setVehicleModel("Mahindra Zor Grand Electric");
+            p3.setPackName("Cargo");
+            p3.setVehicleModel("Mahindra Zor");
             p3.setChemistry("NMC 622");
             p3.setCapacityKWh(42.0);
             p3.setNominalVoltage(350.0);
             p3.setCellCount(96);
-            p3.setCoolingType("Micro-channel Serpentine Ribbon Plate");
+            p3.setCoolingType("Serpentine Micro-channel Plate");
             p3.setMaxSafeTemp(45.0);
             p3.setCriticalTemp(54.0);
             p3.setStatus(BatteryStatus.NORMAL);
@@ -99,13 +100,13 @@ public class DataInitializer implements CommandLineRunner {
 
             BatteryPack p4 = new BatteryPack();
             p4.setPackCode("BP-SS-04");
-            p4.setPackName("Next-Gen Solid-State Research Pack");
-            p4.setVehicleModel("AERIS Hyper-GT Platform");
+            p4.setPackName("Aero");
+            p4.setVehicleModel("AERIS GT");
             p4.setChemistry("Solid-State Li-Metal");
             p4.setCapacityKWh(85.0);
             p4.setNominalVoltage(800.0);
             p4.setCellCount(144);
-            p4.setCoolingType("Micro-channel Ceramic Substrate Heat Sink");
+            p4.setCoolingType("Ceramic Substrate Micro-channel Sink");
             p4.setMaxSafeTemp(60.0);
             p4.setCriticalTemp(75.0);
             p4.setStatus(BatteryStatus.NORMAL);
@@ -118,6 +119,32 @@ public class DataInitializer implements CommandLineRunner {
             simulationService.generateReadingForPack(p2, SimulationScenario.HIGH_LOAD_ACCELERATION);
             simulationService.generateReadingForPack(p3, SimulationScenario.NORMAL_DRIVING);
             simulationService.generateReadingForPack(p4, SimulationScenario.NORMAL_DRIVING);
+        } else {
+            // Update existing packs to ensure clean single-word names
+            List<BatteryPack> existing = packRepository.findAll();
+            for (BatteryPack p : existing) {
+                boolean changed = false;
+                if ("BP-LFP-01".equals(p.getPackCode()) && !"Cruiser".equals(p.getPackName())) {
+                    p.setPackName("Cruiser");
+                    p.setVehicleModel("Tata Ultra");
+                    changed = true;
+                } else if ("BP-NMC-02".equals(p.getPackCode()) && !"Sprint".equals(p.getPackName())) {
+                    p.setPackName("Sprint");
+                    p.setVehicleModel("Formula EV");
+                    changed = true;
+                } else if ("BP-NMC-03".equals(p.getPackCode()) && !"Cargo".equals(p.getPackName())) {
+                    p.setPackName("Cargo");
+                    p.setVehicleModel("Mahindra Zor");
+                    changed = true;
+                } else if ("BP-SS-04".equals(p.getPackCode()) && !"Aero".equals(p.getPackName())) {
+                    p.setPackName("Aero");
+                    p.setVehicleModel("AERIS GT");
+                    changed = true;
+                }
+                if (changed) {
+                    packRepository.save(p);
+                }
+            }
         }
     }
 }

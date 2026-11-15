@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Play, Pause, AlertTriangle, ShieldCheck, Clock } from 'lucide-react';
+import { Bell, Play, Pause, Clock, Sun, Moon } from 'lucide-react';
 import { simulationApi } from '../api/client';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Navbar({ title = 'Dashboard', breadcrumbs = [], unreadAlerts = 0 }) {
+  const { theme, toggleTheme, isDark } = useTheme();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [simState, setSimState] = useState({ isRunning: true, isPaused: false, activeScenario: 'NORMAL_DRIVING' });
   const [isToggling, setIsToggling] = useState(false);
@@ -60,7 +62,7 @@ export default function Navbar({ title = 'Dashboard', breadcrumbs = [], unreadAl
       </div>
 
       {/* Right Controls */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         {/* Simulation Scenario Pill */}
         <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded bg-[#1B1B1F] border border-[#34343A] text-xs">
           <span className="text-[10px] text-[#A1A1AA] font-mono uppercase">Scenario:</span>
@@ -86,6 +88,25 @@ export default function Navbar({ title = 'Dashboard', breadcrumbs = [], unreadAl
           <Clock className="w-3.5 h-3.5 text-[#FF7900]" />
           <span>{currentTime.toLocaleTimeString()}</span>
         </div>
+
+        {/* Theme Toggle Button */}
+        <button
+          onClick={toggleTheme}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-[#1B1B1F] border border-[#34343A] text-[#C0C0C0] hover:text-[#FF7900] hover:border-[#FF7900] transition-colors font-mono text-xs"
+          title={isDark ? 'Switch to Light Theme (White & Blue)' : 'Switch to Dark Theme (Black & Orange)'}
+        >
+          {isDark ? (
+            <>
+              <Sun className="w-3.5 h-3.5 text-[#FF7900]" />
+              <span className="text-[10px] font-semibold text-[#F5F5F5] hidden sm:inline">LIGHT</span>
+            </>
+          ) : (
+            <>
+              <Moon className="w-3.5 h-3.5 text-blue-600" />
+              <span className="text-[10px] font-semibold text-[#0F172A] hidden sm:inline">DARK</span>
+            </>
+          )}
+        </button>
 
         {/* Alerts Bell */}
         <Link

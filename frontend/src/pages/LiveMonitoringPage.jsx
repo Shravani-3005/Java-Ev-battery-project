@@ -135,7 +135,7 @@ export default function LiveMonitoringPage() {
             >
               {packs.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.packCode} ({p.vehicleModel})
+                  {p.packName} ({p.packCode})
                 </option>
               ))}
             </select>
@@ -302,7 +302,7 @@ export default function LiveMonitoringPage() {
               let bgColor = 'bg-[#141416] border-[#34343A] text-[#F5F5F5]';
               let badgeColor = 'text-[#22C55E]';
               if (temp >= 50.0 || cell.isHotspot) {
-                bgColor = 'bg-[#EF4444]/20 border-[#EF4444] text-[#EF4444] shadow-[0_0_15px_rgba(239,68,68,0.3)] animate-pulse';
+                bgColor = 'bg-[#EF4444]/20 border-[#EF4444] text-[#EF4444]';
                 badgeColor = 'text-[#EF4444]';
               } else if (temp >= 42.0) {
                 bgColor = 'bg-[#FF7900]/15 border-[#FF7900] text-[#FF7900]';
