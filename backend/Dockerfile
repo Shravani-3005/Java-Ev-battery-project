@@ -22,12 +22,14 @@ USER thermocore:thermocore
 # Copy the built jar from builder
 COPY --from=builder /app/target/*.jar app.jar
 
-# Render dynamic port binding (default 8082, overridden by $PORT at runtime)
-ENV PORT=8082
+# Render dynamic port binding (default 10000 on Render, 8082 fallback)
+ENV PORT=10000
+EXPOSE 10000
 EXPOSE 8082
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost:${PORT}/actuator/health || exit 1
 
-ENTRYPOINT ["sh", "-c", "java -Djava.security.egd=file:/dev/./urandom -jar app.jar"]
+# Render Free Tier memory optimization (-Xmx384m -XX:+UseSerialGC) and dynamic port
+ENTRYPOINT ["sh", "-c", "java -Xmx384m -Xms128m -XX:+UseSerialGC -Dserver.port=${PORT:-10000} -Djava.security.egd=file:/dev/./urandom -jar app.jar"]
