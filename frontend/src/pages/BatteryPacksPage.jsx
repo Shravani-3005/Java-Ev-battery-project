@@ -72,15 +72,16 @@ export default function BatteryPacksPage() {
 
   const handleOpenAdd = () => {
     setIsEditing(false);
+    const code = `BP-${Math.floor(100 + Math.random() * 900)}`;
     setFormData({
-      packCode: `BP-EV-${Math.floor(100 + Math.random() * 900)}`,
+      packCode: code,
       packName: '',
-      vehicleModel: '',
-      chemistry: 'LFP (Lithium Iron Phosphate)',
+      vehicleModel: 'Standard EV',
+      chemistry: 'Lithium-Ion (NMC)',
       capacityKWh: 50.0,
-      nominalVoltage: 380.0,
+      nominalVoltage: 400.0,
       cellCount: 96,
-      coolingType: 'Micro-channel Liquid Cold Plate',
+      coolingType: 'Micro-channel Cold Plate',
       maxSafeTemp: 45.0,
       criticalTemp: 55.0,
     });
@@ -91,16 +92,16 @@ export default function BatteryPacksPage() {
     setIsEditing(true);
     setFormData({
       id: pack.id,
-      packCode: pack.packCode,
+      packCode: pack.packCode || `BP-${pack.id}`,
       packName: pack.packName,
-      vehicleModel: pack.vehicleModel,
-      chemistry: pack.chemistry,
-      capacityKWh: pack.capacityKWh,
-      nominalVoltage: pack.nominalVoltage,
-      cellCount: pack.cellCount,
-      coolingType: pack.coolingType,
-      maxSafeTemp: pack.maxSafeTemp,
-      criticalTemp: pack.criticalTemp,
+      vehicleModel: pack.vehicleModel || 'Standard EV',
+      chemistry: pack.chemistry || 'Lithium-Ion (NMC)',
+      capacityKWh: pack.capacityKWh || 50.0,
+      nominalVoltage: pack.nominalVoltage || 400.0,
+      cellCount: pack.cellCount || 96,
+      coolingType: pack.coolingType || 'Micro-channel Cold Plate',
+      maxSafeTemp: pack.maxSafeTemp || 45.0,
+      criticalTemp: pack.criticalTemp || 55.0,
     });
     setIsModalOpen(true);
   };
@@ -108,10 +109,20 @@ export default function BatteryPacksPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const payload = {
+        ...formData,
+        packCode: formData.packCode || `BP-${Math.floor(100 + Math.random() * 900)}`,
+        vehicleModel: formData.vehicleModel || 'Standard EV',
+        cellCount: formData.cellCount || 96,
+        coolingType: formData.coolingType || 'Micro-channel Cold Plate',
+        maxSafeTemp: formData.maxSafeTemp || 45.0,
+        criticalTemp: formData.criticalTemp || 55.0,
+      };
+
       if (isEditing) {
-        await batteriesApi.update(formData.id, formData);
+        await batteriesApi.update(formData.id, payload);
       } else {
-        await batteriesApi.create(formData);
+        await batteriesApi.create(payload);
       }
       setIsModalOpen(false);
       fetchPacks();
@@ -214,23 +225,23 @@ export default function BatteryPacksPage() {
                 </span>
               </div>
 
-              {/* Specs Grid */}
+              {/* Simplified Specs */}
               <div className="grid grid-cols-2 gap-2 my-4 text-xs font-mono bg-[#141416] p-3 rounded border border-[#34343A]/60">
                 <div>
-                  <span className="text-[#A1A1AA] text-[10px] block">CHEMISTRY</span>
-                  <span className="text-[#C0C0C0] truncate block">{pack.chemistry}</span>
+                  <span className="text-[#A1A1AA] text-[10px] block">BATTERY TYPE</span>
+                  <span className="text-[#F5F5F5] font-semibold truncate block">{pack.chemistry}</span>
                 </div>
                 <div>
-                  <span className="text-[#A1A1AA] text-[10px] block">CAPACITY / VOLT</span>
-                  <span className="text-[#F5F5F5] font-semibold">{pack.capacityKWh} kWh / {pack.nominalVoltage}V</span>
+                  <span className="text-[#A1A1AA] text-[10px] block">CAPACITY</span>
+                  <span className="text-[#FF7900] font-bold">{pack.capacityKWh} kWh</span>
                 </div>
                 <div>
-                  <span className="text-[#A1A1AA] text-[10px] block">CELL COUNT</span>
-                  <span className="text-[#F5F5F5]">{pack.cellCount} Cells</span>
+                  <span className="text-[#A1A1AA] text-[10px] block">VOLTAGE</span>
+                  <span className="text-[#F5F5F5]">{pack.nominalVoltage} V</span>
                 </div>
                 <div>
-                  <span className="text-[#A1A1AA] text-[10px] block">THERMAL LIMITS</span>
-                  <span className="text-[#FF7900]">{pack.maxSafeTemp}°C / <span className="text-[#EF4444]">{pack.criticalTemp}°C</span></span>
+                  <span className="text-[#A1A1AA] text-[10px] block">STATUS</span>
+                  <span className="text-[#22C55E]">Optimal</span>
                 </div>
               </div>
 
@@ -371,127 +382,58 @@ export default function BatteryPacksPage() {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-3.5 text-xs font-mono">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[#A1A1AA] block mb-1">PACK CODE</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.packCode}
-                    onChange={(e) => setFormData({ ...formData, packCode: e.target.value })}
-                    className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-1.5 text-[#F5F5F5] focus:border-[#FF7900] focus:outline-none"
-                  />
-                </div>
+              <div className="space-y-3">
                 <div>
                   <label className="text-[#A1A1AA] block mb-1">BATTERY NAME</label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Cruiser"
+                    placeholder="e.g. City EV Battery 1"
                     value={formData.packName}
                     onChange={(e) => setFormData({ ...formData, packName: e.target.value })}
-                    className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-1.5 text-[#F5F5F5] focus:border-[#FF7900] focus:outline-none"
+                    className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-2 text-[#F5F5F5] focus:border-[#FF7900] focus:outline-none"
                   />
                 </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[#A1A1AA] block mb-1">VEHICLE MODEL</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Tata Ultra EV"
-                    value={formData.vehicleModel}
-                    onChange={(e) => setFormData({ ...formData, vehicleModel: e.target.value })}
-                    className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-1.5 text-[#F5F5F5] focus:border-[#FF7900] focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-[#A1A1AA] block mb-1">CHEMISTRY</label>
+                  <label className="text-[#A1A1AA] block mb-1">BATTERY TYPE</label>
                   <select
                     value={formData.chemistry}
                     onChange={(e) => setFormData({ ...formData, chemistry: e.target.value })}
-                    className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-1.5 text-[#F5F5F5] focus:border-[#FF7900] focus:outline-none"
+                    className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-2 text-[#F5F5F5] focus:border-[#FF7900] focus:outline-none"
                   >
-                    <option value="LFP (Lithium Iron Phosphate)">LFP (Lithium Iron Phosphate)</option>
-                    <option value="NMC 811 (Nickel Manganese Cobalt)">NMC 811 (Nickel Manganese Cobalt)</option>
-                    <option value="NMC 622">NMC 622</option>
-                    <option value="NCA (Nickel Cobalt Aluminum)">NCA (Nickel Cobalt Aluminum)</option>
-                    <option value="Solid-State Li-Metal">Solid-State Li-Metal</option>
+                    <option value="Lithium-Ion (NMC)">Lithium-Ion (NMC)</option>
+                    <option value="Lithium Iron Phosphate (LFP)">Lithium Iron Phosphate (LFP)</option>
+                    <option value="Solid-State Battery">Solid-State Battery</option>
                   </select>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="text-[#A1A1AA] block mb-1">CAPACITY (kWh)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    required
-                    value={formData.capacityKWh}
-                    onChange={(e) => setFormData({ ...formData, capacityKWh: parseFloat(e.target.value) })}
-                    className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-1.5 text-[#F5F5F5] focus:border-[#FF7900] focus:outline-none"
-                  />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[#A1A1AA] block mb-1">CAPACITY (kWh)</label>
+                    <input
+                      type="number"
+                      step="1"
+                      required
+                      placeholder="e.g. 50"
+                      value={formData.capacityKWh}
+                      onChange={(e) => setFormData({ ...formData, capacityKWh: parseFloat(e.target.value) || 0 })}
+                      className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-2 text-[#F5F5F5] focus:border-[#FF7900] focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[#A1A1AA] block mb-1">VOLTAGE (V)</label>
+                    <input
+                      type="number"
+                      step="1"
+                      required
+                      placeholder="e.g. 400"
+                      value={formData.nominalVoltage}
+                      onChange={(e) => setFormData({ ...formData, nominalVoltage: parseFloat(e.target.value) || 0 })}
+                      className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-2 text-[#F5F5F5] focus:border-[#FF7900] focus:outline-none"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="text-[#A1A1AA] block mb-1">VOLTAGE (V)</label>
-                  <input
-                    type="number"
-                    step="1"
-                    required
-                    value={formData.nominalVoltage}
-                    onChange={(e) => setFormData({ ...formData, nominalVoltage: parseFloat(e.target.value) })}
-                    className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-1.5 text-[#F5F5F5] focus:border-[#FF7900] focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-[#A1A1AA] block mb-1">CELL COUNT</label>
-                  <input
-                    type="number"
-                    required
-                    value={formData.cellCount}
-                    onChange={(e) => setFormData({ ...formData, cellCount: parseInt(e.target.value) })}
-                    className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-1.5 text-[#F5F5F5] focus:border-[#FF7900] focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[#A1A1AA] block mb-1">MAX SAFE TEMP (°C)</label>
-                  <input
-                    type="number"
-                    step="0.5"
-                    required
-                    value={formData.maxSafeTemp}
-                    onChange={(e) => setFormData({ ...formData, maxSafeTemp: parseFloat(e.target.value) })}
-                    className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-1.5 text-[#F5F5F5] focus:border-[#FF7900] focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-[#A1A1AA] block mb-1">CRITICAL TEMP (°C)</label>
-                  <input
-                    type="number"
-                    step="0.5"
-                    required
-                    value={formData.criticalTemp}
-                    onChange={(e) => setFormData({ ...formData, criticalTemp: parseFloat(e.target.value) })}
-                    className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-1.5 text-[#F5F5F5] focus:border-[#FF7900] focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-[#A1A1AA] block mb-1">COOLING ARCHITECTURE</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.coolingType}
-                  onChange={(e) => setFormData({ ...formData, coolingType: e.target.value })}
-                  className="w-full bg-[#141416] border border-[#34343A] rounded px-3 py-1.5 text-[#F5F5F5] focus:border-[#FF7900] focus:outline-none"
-                />
               </div>
 
               <div className="flex justify-end gap-2.5 pt-4 border-t border-[#34343A]">
