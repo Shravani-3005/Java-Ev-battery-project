@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -136,21 +137,22 @@ public class ThermalController {
 
         ThermalEvaluationHistory saved = evaluationHistoryRepository.save(history);
 
-        return ResponseEntity.ok(Map.of(
-            "id", saved.getId(),
-            "packCode", saved.getPackCode(),
-            "riskLevel", saved.getRiskLevel(),
-            "riskScore", saved.getRiskScore(),
-            "tempGradient", saved.getDeltaT(),
-            "calculatedHeatGenWatts", saved.getCalculatedHeatGenWatts(),
-            "cRate", saved.getcRate(),
-            "coolingSufficiencyStatus", saved.getCoolingSufficiencyStatus(),
-            "coolingRecommendation", saved.getCoolingRecommendation(),
-            "recommendedFlowLpm", saved.getRecommendedFlowLpm(),
-            "explanation", saved.getExplanation(),
-            "createdAt", saved.getCreatedAt(),
-            "diagnostics", analysis.getDiagnostics()
-        ));
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("id", saved.getId());
+        response.put("packCode", saved.getPackCode());
+        response.put("riskLevel", saved.getRiskLevel());
+        response.put("riskScore", saved.getRiskScore());
+        response.put("tempGradient", saved.getDeltaT());
+        response.put("calculatedHeatGenWatts", saved.getCalculatedHeatGenWatts());
+        response.put("cRate", saved.getcRate());
+        response.put("coolingSufficiencyStatus", saved.getCoolingSufficiencyStatus());
+        response.put("coolingRecommendation", saved.getCoolingRecommendation());
+        response.put("recommendedFlowLpm", saved.getRecommendedFlowLpm());
+        response.put("explanation", saved.getExplanation());
+        response.put("createdAt", saved.getCreatedAt());
+        response.put("diagnostics", analysis.getDiagnostics());
+
+        return ResponseEntity.ok(response);
     }
 
     /**
