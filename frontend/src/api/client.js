@@ -465,6 +465,71 @@ export const thermalApi = {
         ],
       };
     }),
+
+  evaluate: (data) =>
+    safeCall(api.post('/thermal/evaluate', data), () => {
+      const max = data.maxCellTemp || 38.0;
+      const min = data.minCellTemp || 32.0;
+      const gradient = Math.round(Math.abs(max - min) * 10) / 10;
+      const current = data.current || 100.0;
+      const heatGenW = Math.round((Math.pow(current, 2) * 0.025 + Math.abs(current) * 1.5) * 10) / 10;
+      const cRate = Math.round((Math.abs(current) / 60.0) * 10) / 10;
+      let riskScore = Math.min(100, Math.max(5, Math.round((max - 25) * 2.2 + gradient * 4)));
+      let riskLevel = 'NORMAL';
+      if (max >= 55.0 || riskScore >= 75) riskLevel = 'CRITICAL';
+      else if (max >= 45.0 || riskScore >= 50) riskLevel = 'HIGH';
+      else if (max >= 38.0 || riskScore >= 30) riskLevel = 'MODERATE';
+
+      return {
+        id: Date.now(),
+        packCode: data.packCode || 'BP-LFP-01',
+        riskLevel,
+        riskScore,
+        tempGradient: gradient,
+        calculatedHeatGenWatts: heatGenW,
+        cRate,
+        coolingSufficiencyStatus: data.coolantFlowRate >= 4.0 ? 'SUFFICIENT' : 'MODERATE',
+        coolingRecommendation: max > 50 ? 'EMERGENCY_ISOLATION_AND_MAX_FLUSH' : max > 42 ? 'TURBO_MICROCHANNEL_COOLING' : 'PASSIVE_ECO_CIRCULATION',
+        recommendedFlowLpm: max > 45 ? 8.5 : 2.5,
+        explanation: `Evaluated max temp ${max}°C with inter-cell ΔT ${gradient}°C and ${heatGenW}W Joulean dissipation.`,
+        createdAt: new Date().toISOString(),
+        diagnostics: [
+          `Peak Cell Temp: ${max}°C`,
+          `Thermal Gradient: ${gradient}°C`,
+          `Heat Generation: ${heatGenW}W`
+        ]
+      };
+    }),
+
+  getEvaluations: (batteryId) =>
+    safeCall(api.get('/thermal/evaluations', { params: { batteryId } }), () => [
+      {
+        id: 1,
+        packCode: 'BP-LFP-01',
+        maxCellTemp: 48.5,
+        minCellTemp: 42.0,
+        deltaT: 6.5,
+        currentDraw: 180.0,
+        riskScore: 72.4,
+        riskLevel: 'HIGH',
+        coolingRecommendation: 'TURBO_MICROCHANNEL_COOLING_AND_DERATE',
+        recommendedFlowLpm: 8.5,
+        createdAt: new Date(Date.now() - 15 * 60000).toISOString()
+      },
+      {
+        id: 2,
+        packCode: 'BP-LFP-01',
+        maxCellTemp: 33.2,
+        minCellTemp: 31.8,
+        deltaT: 1.4,
+        currentDraw: 45.0,
+        riskScore: 18.0,
+        riskLevel: 'NORMAL',
+        coolingRecommendation: 'PASSIVE_ECO_CIRCULATION',
+        recommendedFlowLpm: 1.5,
+        createdAt: new Date(Date.now() - 65 * 60000).toISOString()
+      }
+    ]),
 };
 
 export const alertsApi = {

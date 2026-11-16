@@ -35,11 +35,26 @@ export default function ThermalSimulatorPage() {
   const [analysisResult, setAnalysisResult] = useState(null);
   const [isSimulating, setIsSimulating] = useState(false);
   const [commitSuccess, setCommitSuccess] = useState(false);
+  const [persistedHistory, setPersistedHistory] = useState([]);
+  const [isEvaluatingAndSaving, setIsEvaluatingAndSaving] = useState(false);
+  const [evaluationFeedback, setEvaluationFeedback] = useState(null);
+
+  const loadEvaluations = async (packId) => {
+    try {
+      const data = await thermalApi.getEvaluations(packId);
+      if (Array.isArray(data)) setPersistedHistory(data);
+    } catch (e) {
+      console.warn('Could not load evaluation history', e);
+    }
+  };
 
   useEffect(() => {
     batteriesApi.getAll().then((data) => {
       setPacks(data);
-      if (data.length > 0) setSelectedPackId(data[0].id);
+      if (data.length > 0) {
+        setSelectedPackId(data[0].id);
+        loadEvaluations(data[0].id);
+      }
     });
   }, []);
 
@@ -61,7 +76,10 @@ export default function ThermalSimulatorPage() {
   };
 
   useEffect(() => {
-    if (selectedPackId) runSimulation(form);
+    if (selectedPackId) {
+      runSimulation(form);
+      loadEvaluations(selectedPackId);
+    }
   }, [selectedPackId]);
 
   const handleChange = (field, val) => {
@@ -130,6 +148,32 @@ export default function ThermalSimulatorPage() {
     const merged = { ...form, ...preset };
     setForm(merged);
     runSimulation(merged);
+  };
+
+  const handleRunAndPersistEvaluation = async () => {
+    if (!selectedPackId) return;
+    setIsEvaluatingAndSaving(true);
+    setEvaluationFeedback(null);
+    try {
+      const payload = {
+        ...form,
+        batteryPackId: Number(selectedPackId),
+      };
+      const res = await thermalApi.evaluate(payload);
+      setAnalysisResult(res);
+      setEvaluationFeedback({
+        type: 'success',
+        message: `Evaluation #${res.id || 'new'} saved to database! Risk: ${res.riskLevel} (Score: ${res.riskScore}/100)`
+      });
+      loadEvaluations(selectedPackId);
+    } catch (e) {
+      setEvaluationFeedback({
+        type: 'error',
+        message: e.response?.data?.message || e.message || 'Evaluation request failed.'
+      });
+    } finally {
+      setIsEvaluatingAndSaving(false);
+    }
   };
 
   const handleCommitToDatabase = async () => {
@@ -353,18 +397,37 @@ export default function ThermalSimulatorPage() {
             />
           </div>
 
-          <div className="pt-2">
+          <div className="pt-2 space-y-2">
+            <button
+              onClick={handleRunAndPersistEvaluation}
+              disabled={isEvaluatingAndSaving}
+              className="w-full py-2.5 rounded bg-[#FF7900] hover:bg-[#ff8c1a] text-black font-extrabold uppercase transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 cursor-pointer"
+            >
+              <Zap className="w-4 h-4 fill-black" />
+              {isEvaluatingAndSaving ? 'Evaluating via Spring Boot & Saving...' : 'Run & Persist AI Thermal Diagnostic'}
+            </button>
+
+            {evaluationFeedback && (
+              <div className={`p-2.5 rounded text-xs border ${
+                evaluationFeedback.type === 'success'
+                  ? 'bg-[#22C55E]/15 border-[#22C55E]/50 text-[#22C55E]'
+                  : 'bg-[#EF4444]/15 border-[#EF4444]/50 text-[#EF4444]'
+              }`}>
+                {evaluationFeedback.message}
+              </div>
+            )}
+
             <button
               onClick={handleCommitToDatabase}
-              className="w-full py-2.5 rounded bg-[#141416] hover:bg-[#FF7900] text-[#FF7900] hover:text-black border border-[#FF7900] font-bold uppercase transition-colors flex items-center justify-center gap-2"
+              className="w-full py-2 rounded bg-[#141416] hover:bg-[#252529] text-[#A1A1AA] hover:text-[#F5F5F5] border border-[#34343A] font-semibold uppercase text-[11px] transition-colors flex items-center justify-center gap-2"
             >
               <Send className="w-3.5 h-3.5" />
-              Commit Simulation Observation to Database
+              Commit Raw Observation to Database
             </button>
             {commitSuccess && (
-              <div className="mt-2 text-center text-[11px] text-[#22C55E] flex items-center justify-center gap-1">
+              <div className="mt-1 text-center text-[11px] text-[#22C55E] flex items-center justify-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                Observation written to PostgreSQL and evaluated by BTMS rules!
+                Raw observation saved.
               </div>
             )}
           </div>
@@ -469,6 +532,75 @@ export default function ThermalSimulatorPage() {
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Persisted History Table for Phase 2 Checkpoint */}
+      <div className="p-5 rounded-lg bg-[#1B1B1F] border border-[#34343A] space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-[#FF7900]" />
+            <h3 className="text-sm font-bold text-[#F5F5F5] uppercase tracking-wider">
+              Persisted AI Thermal Diagnostic History (PostgreSQL Database)
+            </h3>
+          </div>
+          <button
+            onClick={() => loadEvaluations(selectedPackId)}
+            className="text-[11px] text-[#FF7900] hover:underline flex items-center gap-1"
+          >
+            <RotateCcw className="w-3 h-3" />
+            Refresh History
+          </button>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs border border-[#34343A]">
+            <thead className="bg-[#141416] text-[#A1A1AA] border-b border-[#34343A]">
+              <tr>
+                <th className="p-2.5">Time</th>
+                <th className="p-2.5">Pack</th>
+                <th className="p-2.5">Peak T / Delta-T</th>
+                <th className="p-2.5">Risk Score</th>
+                <th className="p-2.5">Risk Level</th>
+                <th className="p-2.5">Heat (Joulean)</th>
+                <th className="p-2.5">Prescribed Cooling Directive</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#2A2A30]">
+              {persistedHistory.map((item) => (
+                <tr key={item.id} className="hover:bg-[#141416]/50">
+                  <td className="p-2.5 text-[#A1A1AA]">{new Date(item.createdAt).toLocaleTimeString()}</td>
+                  <td className="p-2.5 font-bold text-[#F5F5F5]">{item.packCode || item.batteryPack?.packCode || 'BP-LFP-01'}</td>
+                  <td className="p-2.5 text-[#F5F5F5]">
+                    <span className="text-[#EF4444] font-semibold">{item.maxCellTemp}°C</span> / <span className="text-[#FF7900]">Δ{item.deltaT}°C</span>
+                  </td>
+                  <td className="p-2.5 font-bold">{item.riskScore} / 100</td>
+                  <td className="p-2.5">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                      item.riskLevel === 'CRITICAL' || item.riskLevel === 'CRITICAL_THERMAL_RUNAWAY'
+                        ? 'bg-[#EF4444] text-white'
+                        : item.riskLevel === 'HIGH'
+                        ? 'bg-[#EF4444]/20 text-[#EF4444]'
+                        : item.riskLevel === 'MODERATE'
+                        ? 'bg-[#FF7900]/20 text-[#FF7900]'
+                        : 'bg-[#22C55E]/20 text-[#22C55E]'
+                    }`}>
+                      {item.riskLevel}
+                    </span>
+                  </td>
+                  <td className="p-2.5 text-[#A1A1AA]">{item.calculatedHeatGenWatts ? `${item.calculatedHeatGenWatts} W` : '—'}</td>
+                  <td className="p-2.5 font-mono text-[11px] text-[#38BDF8]">{item.coolingRecommendation || item.recommendedAction}</td>
+                </tr>
+              ))}
+              {persistedHistory.length === 0 && (
+                <tr>
+                  <td colSpan="7" className="p-4 text-center text-[#A1A1AA]">
+                    No evaluations recorded yet. Run a diagnostic above to store into database.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
