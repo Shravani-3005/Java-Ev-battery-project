@@ -23,17 +23,43 @@ public class DataInitializer implements CommandLineRunner {
     private final BatteryPackRepository packRepository;
     private final SystemConfigRepository configRepository;
     private final SensorSimulationService simulationService;
+    private final com.thermocore.repository.UserRepository userRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     public DataInitializer(BatteryPackRepository packRepository,
                            SystemConfigRepository configRepository,
-                           SensorSimulationService simulationService) {
+                           SensorSimulationService simulationService,
+                           com.thermocore.repository.UserRepository userRepository,
+                           org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.packRepository = packRepository;
         this.configRepository = configRepository;
         this.simulationService = simulationService;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) {
+        // Initialize default operator and admin user for Phase 3 evaluation
+        if (!userRepository.existsByUsername("operator")) {
+            com.thermocore.entity.User defaultOperator = new com.thermocore.entity.User(
+                    "operator",
+                    passwordEncoder.encode("operator123"),
+                    "ROLE_OPERATOR"
+            );
+            userRepository.save(defaultOperator);
+            log.info("[THERMOCORE] Default security user 'operator' initialized (password: operator123).");
+        }
+        if (!userRepository.existsByUsername("admin")) {
+            com.thermocore.entity.User adminUser = new com.thermocore.entity.User(
+                    "admin",
+                    passwordEncoder.encode("admin123"),
+                    "ROLE_ADMIN"
+            );
+            userRepository.save(adminUser);
+            log.info("[THERMOCORE] Default security user 'admin' initialized (password: admin123).");
+        }
+
         // Initialize System Config
         if (configRepository.count() == 0) {
             SystemConfig config = new SystemConfig();

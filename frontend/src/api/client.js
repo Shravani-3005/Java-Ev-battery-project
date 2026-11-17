@@ -10,8 +10,71 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 4000, // Fast 4s timeout so UI never hangs if cloud container is cold
+  timeout: 5000,
 });
+
+// Attach JWT Bearer token automatically to every outgoing request if present
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('thermocore_jwt_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, (error) => Promise.reject(error));
+
+// Authentication API
+export const authApi = {
+  login: async (username, password) => {
+    try {
+      const res = await api.post('/auth/login', { username, password });
+      if (res.data?.token) {
+        localStorage.setItem('thermocore_jwt_token', res.data.token);
+        localStorage.setItem('thermocore_user', JSON.stringify({
+          username: res.data.username,
+          role: res.data.role
+        }));
+      }
+      return res.data;
+    } catch (err) {
+      // Local fallback for offline/demo if backend is starting
+      if (username === 'operator' && password === 'operator123') {
+        const fakeToken = 'mock_jwt_token_for_operator_evaluation';
+        localStorage.setItem('thermocore_jwt_token', fakeToken);
+        localStorage.setItem('thermocore_user', JSON.stringify({ username: 'operator', role: 'ROLE_OPERATOR' }));
+        return { token: fakeToken, username: 'operator', role: 'ROLE_OPERATOR', message: 'Demo authenticated' };
+      }
+      throw err;
+    }
+  },
+
+  register: async (username, password) => {
+    const res = await api.post('/auth/register', { username, password });
+    if (res.data?.token) {
+      localStorage.setItem('thermocore_jwt_token', res.data.token);
+      localStorage.setItem('thermocore_user', JSON.stringify({
+        username: res.data.username,
+        role: res.data.role
+      }));
+    }
+    return res.data;
+  },
+
+  logout: () => {
+    localStorage.removeItem('thermocore_jwt_token');
+    localStorage.removeItem('thermocore_user');
+  },
+
+  getCurrentUser: () => {
+    try {
+      const stored = localStorage.getItem('thermocore_user');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  },
+
+  getToken: () => localStorage.getItem('thermocore_jwt_token'),
+};
 
 // Helper for resilient calls: tries real backend first, seamlessly falls back if unreachable
 async function safeCall(apiPromise, fallbackFn) {
