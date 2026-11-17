@@ -4,8 +4,8 @@ import { authApi } from '../api/client';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('operator@somaiya.edu');
-  const [password, setPassword] = useState('operator123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -115,9 +115,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="text-[11px] text-[#6B7280] pt-2 border-t border-[#E5E7EB]">
-          Default evaluation credentials: <code className="text-[#202938]">operator@somaiya.edu</code> / <code className="text-[#202938]">operator123</code>
-        </div>
+
       </div>
     </div>
   );
