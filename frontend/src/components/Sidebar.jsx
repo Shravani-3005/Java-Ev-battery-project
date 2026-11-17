@@ -12,7 +12,8 @@ import {
   Settings,
   Zap,
   Radio,
-  Server
+  Server,
+  Lock
 } from 'lucide-react';
 
 const navItems = [
@@ -25,6 +26,7 @@ const navItems = [
   { name: 'Historical Records', path: '/history', icon: History },
   { name: 'Thermal Simulator', path: '/simulator', icon: Sliders },
   { name: 'Settings', path: '/settings', icon: Settings },
+  { name: 'Operator Login', path: '/login', icon: Lock },
 ];
 
 export default function Sidebar({ systemOnline = true, activeSimulation = true }) {

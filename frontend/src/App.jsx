@@ -11,6 +11,7 @@ import AlertsPage from './pages/AlertsPage';
 import HistoricalRecordsPage from './pages/HistoricalRecordsPage';
 import ThermalSimulatorPage from './pages/ThermalSimulatorPage';
 import SettingsPage from './pages/SettingsPage';
+import LoginPage from './pages/LoginPage';
 import { alertsApi, simulationApi } from './api/client';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 
@@ -19,6 +20,11 @@ function AppContent() {
   const { isDark } = useTheme();
   const [systemOnline, setSystemOnline] = useState(true);
   const [unreadAlerts, setUnreadAlerts] = useState(0);
+
+  // If viewing standalone login/signup page, don't show full dashboard chrome
+  if (location.pathname === '/login') {
+    return <LoginPage />;
+  }
 
   const routeMeta = {
     '/': { title: 'Fleet Thermal Overview', breadcrumbs: ['Operations', 'Dashboard'] },
@@ -79,6 +85,7 @@ function AppContent() {
             <Route path="/history" element={<HistoricalRecordsPage />} />
             <Route path="/simulator" element={<ThermalSimulatorPage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </main>
       </div>
