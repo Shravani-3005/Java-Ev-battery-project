@@ -6,6 +6,10 @@
   color-scheme: light;
 }
 
+html.dark {
+  color-scheme: dark;
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: #F7F8FA;
@@ -13,6 +17,58 @@ body {
   overflow-x: hidden;
   margin: 0;
   -webkit-font-smoothing: antialiased;
+}
+
+html.dark body {
+  background-color: #0E131F;
+  color: #F1F5F9;
+}
+
+/* Dark mode overrides for cards, inputs, and tables */
+html.dark .bg-white {
+  background-color: #172235 !important;
+  color: #F1F5F9;
+}
+
+html.dark .border-\[\#E5E7EB\] {
+  border-color: #223147 !important;
+}
+
+html.dark .text-\[\#202938\] {
+  color: #F1F5F9 !important;
+}
+
+html.dark .text-\[\#6B7280\] {
+  color: #94A3B8 !important;
+}
+
+html.dark .bg-\[\#F9FAFB\],
+html.dark .bg-\[\#FAFAFB\],
+html.dark .bg-\[\#F3F4F6\] {
+  background-color: #1B293E !important;
+  color: #F1F5F9;
+}
+
+html.dark .table-minimal th {
+  background-color: #1B293E;
+  color: #94A3B8;
+  border-bottom-color: #223147;
+}
+
+html.dark .table-minimal td {
+  color: #F1F5F9;
+  border-bottom-color: #223147;
+}
+
+html.dark .table-minimal tr:hover td {
+  background-color: #1E2D44;
+}
+
+html.dark input,
+html.dark select {
+  background-color: #1B293E !important;
+  color: #F1F5F9 !important;
+  border-color: #223147 !important;
 }
 
 /* Restrained scrollbar */

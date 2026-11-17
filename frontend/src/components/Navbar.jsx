@@ -1,7 +1,8 @@
 import React from 'react';
-import { Bell, LogOut, User } from 'lucide-react';
+import { Bell, LogOut, Sun, Moon } from 'lucide-react';
 import { authApi } from '../api/client';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Navbar({
   title = 'Overview',
@@ -11,6 +12,7 @@ export default function Navbar({
   unreadAlerts = 0,
 }) {
   const user = authApi.getCurrentUser();
+  const { isDark, toggleTheme } = useTheme();
 
   const handleLogout = () => {
     authApi.logout();
@@ -18,7 +20,7 @@ export default function Navbar({
   };
 
   return (
-    <header className="h-14 bg-white border-b border-[#E5E7EB] px-6 flex items-center justify-between sticky top-0 z-20">
+    <header className="h-14 bg-white border-b border-[#E5E7EB] px-6 flex items-center justify-between sticky top-0 z-20 transition-colors">
       {/* Page Title */}
       <div className="flex items-center gap-4">
         <h1 className="text-xl font-semibold text-[#202938] tracking-tight">
@@ -43,7 +45,16 @@ export default function Navbar({
       </div>
 
       {/* Right Controls */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5">
+        {/* Dark / Light Mode Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="p-1.5 text-[#6B7280] hover:text-[#202938] rounded hover:bg-[#F3F4F6] transition-colors"
+          title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        >
+          {isDark ? <Sun className="w-4 h-4 text-[#D69A32]" /> : <Moon className="w-4 h-4" />}
+        </button>
+
         {/* Alerts Link */}
         <Link
           to="/alerts"
@@ -59,7 +70,7 @@ export default function Navbar({
         </Link>
 
         {/* User Profile */}
-        <div className="flex items-center gap-2 pl-3 border-l border-[#E5E7EB] text-xs">
+        <div className="flex items-center gap-2 pl-2.5 border-l border-[#E5E7EB] text-xs">
           <div className="w-7 h-7 rounded-full bg-[#E5E7EB] text-[#202938] flex items-center justify-center font-semibold text-[11px]">
             {user?.email ? user.email.charAt(0).toUpperCase() : 'U'}
           </div>
