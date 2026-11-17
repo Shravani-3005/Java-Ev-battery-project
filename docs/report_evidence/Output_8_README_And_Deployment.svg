@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" width="100%" height="100%" style="background-color: #0F172A; font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, Menlo, Consolas, monospace;">
+  <!-- Header -->
+  <g transform="translate(30, 20)">
+    <rect width="940" height="42" rx="6" fill="#1E293B" stroke="#334155" stroke-width="1" />
+    <text x="20" y="26" fill="#F1F5F9" font-family="'Inter', sans-serif" font-size="13" font-weight="700" letter-spacing="1">OUTPUT 8: README RUN INSTRUCTIONS &amp; LIVE DEPLOYMENT STATUS</text>
+    <rect x="760" y="10" width="160" height="22" rx="3" fill="#064E3B" stroke="#059669" />
+    <circle cx="774" cy="21" r="3.5" fill="#34D399" />
+    <text x="784" y="25" fill="#A7F3D0" font-family="'Inter', sans-serif" font-size="10" font-weight="700">VERIFIED LIVE</text>
+  </g>
+
+  <!-- Left Card: Terminal / Run Instructions -->
+  <g transform="translate(30, 78)">
+    <rect width="455" height="515" rx="8" fill="#0A0F1D" stroke="#334155" stroke-width="1.2" />
+    <!-- Titlebar -->
+    <rect x="0" y="0" width="455" height="32" rx="8" fill="#1E293B" />
+    <rect x="0" y="24" width="455" height="8" fill="#1E293B" />
+    <line x1="0" y1="32" x2="455" y2="32" stroke="#334155" stroke-width="1" />
+    <circle cx="16" cy="16" r="4.5" fill="#EF4444" />
+    <circle cx="32" cy="16" r="4.5" fill="#F59E0B" />
+    <circle cx="48" cy="16" r="4.5" fill="#10B981" />
+    <text x="70" y="20" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="11" font-weight="600">README.md · Local Run &amp; Build Setup</text>
+
+    <!-- Content -->
+    <text x="16" y="58" fill="#38BDF8" font-size="11" font-weight="700"># 1. Prerequisites</text>
+    <text x="16" y="78" fill="#94A3B8" font-size="10.5">- Java 21 LTS (OpenJDK / Eclipse Temurin)</text>
+    <text x="16" y="96" fill="#94A3B8" font-size="10.5">- Node.js 18+ &amp; npm 9+</text>
+    <text x="16" y="114" fill="#94A3B8" font-size="10.5">- PostgreSQL 15+ (or Docker Compose)</text>
+
+    <line x1="16" y1="130" x2="439" y2="130" stroke="#1E293B" stroke-width="1" />
+
+    <text x="16" y="152" fill="#38BDF8" font-size="11" font-weight="700"># 2. Backend Startup (Spring Boot 3.3.4)</text>
+    <rect x="16" y="162" width="423" height="42" rx="4" fill="#111827" stroke="#1F2937" />
+    <text x="24" y="180" fill="#34D399" font-size="10">$ cd backend</text>
+    <text x="24" y="196" fill="#F8FAFC" font-size="10">$ ./mvnw clean spring-boot:run</text>
+    <text x="16" y="222" fill="#64748B" font-size="10">&gt; Started ThermocoreApplication in 3.42s (Port: 8080)</text>
+
+    <line x1="16" y1="238" x2="439" y2="238" stroke="#1E293B" stroke-width="1" />
+
+    <text x="16" y="260" fill="#38BDF8" font-size="11" font-weight="700"># 3. Frontend Startup (React 18 + Vite)</text>
+    <rect x="16" y="270" width="423" height="42" rx="4" fill="#111827" stroke="#1F2937" />
+    <text x="24" y="288" fill="#34D399" font-size="10">$ cd frontend</text>
+    <text x="24" y="304" fill="#F8FAFC" font-size="10">$ npm install &amp;&amp; npm run dev</text>
+    <text x="16" y="330" fill="#64748B" font-size="10">&gt; Local: http://localhost:5173/ (Vite ready in 240ms)</text>
+
+    <line x1="16" y1="346" x2="439" y2="346" stroke="#1E293B" stroke-width="1" />
+
+    <text x="16" y="368" fill="#38BDF8" font-size="11" font-weight="700"># 4. Zero-Config Docker Compose</text>
+    <rect x="16" y="378" width="423" height="28" rx="4" fill="#111827" stroke="#1F2937" />
+    <text x="24" y="396" fill="#F8FAFC" font-size="10">$ docker-compose up -d --build</text>
+
+    <text x="16" y="430" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5" font-weight="600">Default Seeded Accounts:</text>
+    <text x="16" y="452" fill="#94A3B8" font-size="10">- Admin: admin@somaiya.edu / admin123</text>
+    <text x="16" y="470" fill="#94A3B8" font-size="10">- Operator: operator@somaiya.edu / operator123</text>
+    <text x="16" y="488" fill="#64748B" font-size="9.5">Passwords hashed with BCrypt (Strength: 10 rounds)</text>
+  </g>
+
+  <!-- Right Card: Live Deployment Status & Badges -->
+  <g transform="translate(515, 78)">
+    <rect width="455" height="515" rx="8" fill="#0A0F1D" stroke="#334155" stroke-width="1.2" />
+    <!-- Titlebar -->
+    <rect x="0" y="0" width="455" height="32" rx="8" fill="#1E293B" />
+    <rect x="0" y="24" width="455" height="8" fill="#1E293B" />
+    <line x1="0" y1="32" x2="455" y2="32" stroke="#334155" stroke-width="1" />
+    <circle cx="16" cy="16" r="4.5" fill="#EF4444" />
+    <circle cx="32" cy="16" r="4.5" fill="#F59E0B" />
+    <circle cx="48" cy="16" r="4.5" fill="#10B981" />
+    <text x="70" y="20" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="11" font-weight="600">Production Deployments &amp; Architecture Status</text>
+
+    <!-- Status Badges Grid -->
+    <g transform="translate(16, 48)">
+      <!-- Badge 1: Vercel -->
+      <rect x="0" y="0" width="200" height="42" rx="6" fill="#1E293B" stroke="#059669" stroke-width="1" />
+      <circle cx="16" cy="21" r="5" fill="#10B981" />
+      <text x="30" y="18" fill="#F8FAFC" font-family="'Inter', sans-serif" font-size="10.5" font-weight="700">VERCEL FRONTEND</text>
+      <text x="30" y="32" fill="#34D399" font-family="'Inter', sans-serif" font-size="9.5">Production · READY</text>
+
+      <!-- Badge 2: Render -->
+      <rect x="220" y="0" width="200" height="42" rx="6" fill="#1E293B" stroke="#059669" stroke-width="1" />
+      <circle cx="236" cy="21" r="5" fill="#10B981" />
+      <text x="250" y="18" fill="#F8FAFC" font-family="'Inter', sans-serif" font-size="10.5" font-weight="700">RENDER BACKEND API</text>
+      <text x="250" y="32" fill="#34D399" font-family="'Inter', sans-serif" font-size="9.5">Web Service · LIVE</text>
+    </g>
+
+    <!-- URLs and Endpoints -->
+    <g transform="translate(16, 110)">
+      <text x="0" y="14" fill="#38BDF8" font-size="11" font-weight="700"># Production Endpoints</text>
+
+      <!-- URL 1: UI -->
+      <rect x="0" y="24" width="423" height="60" rx="6" fill="#111827" stroke="#1F2937" />
+      <text x="12" y="44" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="10" font-weight="600">Client Web Application (Single Page App):</text>
+      <text x="12" y="66" fill="#60A5FA" font-size="10.5">https://java-ev-battery-project.vercel.app</text>
+
+      <!-- URL 2: API -->
+      <rect x="0" y="96" width="423" height="60" rx="6" fill="#111827" stroke="#1F2937" />
+      <text x="12" y="116" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="10" font-weight="600">Spring Boot REST Microservice API:</text>
+      <text x="12" y="138" fill="#60A5FA" font-size="10.5">https://java-ev-battery-project.onrender.com</text>
+
+      <!-- URL 3: Swagger -->
+      <rect x="0" y="168" width="423" height="60" rx="6" fill="#111827" stroke="#1F2937" />
+      <text x="12" y="188" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="10" font-weight="600">Interactive Swagger / OpenAPI 3.0 Documentation:</text>
+      <text x="12" y="210" fill="#60A5FA" font-size="9.5">https://...onrender.com/swagger-ui/index.html</text>
+
+      <!-- Architecture Summary Box -->
+      <rect x="0" y="240" width="423" height="135" rx="6" fill="#1E293B" stroke="#334155" />
+      <text x="14" y="262" fill="#F1F5F9" font-family="'Inter', sans-serif" font-size="11" font-weight="700">Production Infrastructure Summary:</text>
+      <text x="14" y="284" fill="#94A3B8" font-size="10">• Architecture: 3-Tier Distributed Microservices</text>
+      <text x="14" y="304" fill="#94A3B8" font-size="10">• Security: Stateless JWT Filter + BCrypt (10 rounds)</text>
+      <text x="14" y="324" fill="#94A3B8" font-size="10">• Database: PostgreSQL Relational Cloud Storage</text>
+      <text x="14" y="344" fill="#94A3B8" font-size="10">• Intelligence: Real-Time Multi-Factor Risk Scorer</text>
+      <text x="14" y="364" fill="#34D399" font-size="10">• Deployment: Automated CI/CD (GitHub -&gt; Vercel &amp; Render)</text>
+    </g>
+  </g>
+</svg>

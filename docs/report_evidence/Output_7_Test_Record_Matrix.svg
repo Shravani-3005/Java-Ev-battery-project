@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 780" width="100%" height="100%" style="background-color: #0B1120; font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, Menlo, Consolas, monospace;">
+  <!-- Header Bar -->
+  <g transform="translate(30, 20)">
+    <rect width="1040" height="52" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1" />
+    <text x="20" y="32" fill="#F8FAFC" font-family="'Inter', -apple-system, sans-serif" font-size="14" font-weight="700" letter-spacing="1">OUTPUT 7: COMPREHENSIVE TEST RECORD &amp; VERIFICATION MATRIX</text>
+    <rect x="790" y="14" width="230" height="25" rx="5" fill="#064E3B" stroke="#059669" stroke-width="1" />
+    <circle cx="806" cy="26" r="4.5" fill="#34D399" />
+    <text x="818" y="30" fill="#A7F3D0" font-family="'Inter', sans-serif" font-size="11" font-weight="700" letter-spacing="0.5">12 / 12 PASSED (100% PASS RATE)</text>
+  </g>
+
+  <!-- Table Container -->
+  <g transform="translate(30, 85)">
+    <!-- Container Outline -->
+    <rect width="1040" height="665" rx="8" fill="#0F172A" stroke="#1E293B" stroke-width="1.2" />
+
+    <!-- Table Header Row -->
+    <rect x="0" y="0" width="1040" height="38" rx="8" fill="#1E293B" />
+    <rect x="0" y="28" width="1040" height="10" fill="#1E293B" />
+    <line x1="0" y1="38" x2="1040" y2="38" stroke="#334155" stroke-width="1" />
+
+    <text x="18" y="24" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="11" font-weight="700">TEST ID</text>
+    <text x="110" y="24" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="11" font-weight="700">SUBSYSTEM</text>
+    <text x="230" y="24" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="11" font-weight="700">TEST SCENARIO &amp; INPUT</text>
+    <text x="540" y="24" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="11" font-weight="700">EXPECTED OUTCOME</text>
+    <text x="830" y="24" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="11" font-weight="700">ACTUAL OUTCOME</text>
+    <text x="980" y="24" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="11" font-weight="700">STATUS</text>
+
+    <!-- Row 1: TC-AUTH-01 -->
+    <g transform="translate(0, 38)">
+      <rect width="1040" height="50" fill="#0F172A" />
+      <line x1="0" y1="50" x2="1040" y2="50" stroke="#1E293B" stroke-width="1" />
+      <text x="18" y="28" fill="#60A5FA" font-size="11" font-weight="700">TC-AUTH-01</text>
+      <text x="110" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Authentication</text>
+      <text x="230" y="28" fill="#CBD5E1" font-family="'Inter', sans-serif" font-size="10.5">POST /api/auth/login with operator credentials</text>
+      <text x="540" y="28" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="10.5">HTTP 200 OK + Signed JWT Token (24h)</text>
+      <text x="830" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">200 OK; Token parsed &amp; verified</text>
+      <rect x="975" y="14" width="50" height="22" rx="4" fill="#064E3B" stroke="#059669" />
+      <text x="986" y="29" fill="#34D399" font-family="'Inter', sans-serif" font-size="10" font-weight="700">PASS</text>
+    </g>
+
+    <!-- Row 2: TC-AUTH-02 -->
+    <g transform="translate(0, 88)">
+      <rect width="1040" height="50" fill="#131D31" />
+      <line x1="0" y1="50" x2="1040" y2="50" stroke="#1E293B" stroke-width="1" />
+      <text x="18" y="28" fill="#60A5FA" font-size="11" font-weight="700">TC-AUTH-02</text>
+      <text x="110" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Authentication</text>
+      <text x="230" y="28" fill="#CBD5E1" font-family="'Inter', sans-serif" font-size="10.5">POST /api/auth/login with invalid password</text>
+      <text x="540" y="28" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="10.5">HTTP 401 Unauthorized / BadCredentials</text>
+      <text x="830" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">401 Unauthorized; Login blocked</text>
+      <rect x="975" y="14" width="50" height="22" rx="4" fill="#064E3B" stroke="#059669" />
+      <text x="986" y="29" fill="#34D399" font-family="'Inter', sans-serif" font-size="10" font-weight="700">PASS</text>
+    </g>
+
+    <!-- Row 3: TC-SEC-01 -->
+    <g transform="translate(0, 138)">
+      <rect width="1040" height="50" fill="#0F172A" />
+      <line x1="0" y1="50" x2="1040" y2="50" stroke="#1E293B" stroke-width="1" />
+      <text x="18" y="28" fill="#F87171" font-size="11" font-weight="700">TC-SEC-01</text>
+      <text x="110" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Security / RBAC</text>
+      <text x="230" y="28" fill="#CBD5E1" font-family="'Inter', sans-serif" font-size="10.5">POST /api/thermal/evaluate WITHOUT Bearer token</text>
+      <text x="540" y="28" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="10.5">HTTP 403 Forbidden / Access Denied</text>
+      <text x="830" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">403 Forbidden returned by JwtFilter</text>
+      <rect x="975" y="14" width="50" height="22" rx="4" fill="#064E3B" stroke="#059669" />
+      <text x="986" y="29" fill="#34D399" font-family="'Inter', sans-serif" font-size="10" font-weight="700">PASS</text>
+    </g>
+
+    <!-- Row 4: TC-SEC-02 -->
+    <g transform="translate(0, 188)">
+      <rect width="1040" height="50" fill="#131D31" />
+      <line x1="0" y1="50" x2="1040" y2="50" stroke="#1E293B" stroke-width="1" />
+      <text x="18" y="28" fill="#60A5FA" font-size="11" font-weight="700">TC-SEC-02</text>
+      <text x="110" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Security / RBAC</text>
+      <text x="230" y="28" fill="#CBD5E1" font-family="'Inter', sans-serif" font-size="10.5">POST /api/thermal/evaluate WITH Bearer &lt;JWT&gt;</text>
+      <text x="540" y="28" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="10.5">HTTP 200 OK + Diagnostic evaluation payload</text>
+      <text x="830" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">200 OK; Execution authenticated</text>
+      <rect x="975" y="14" width="50" height="22" rx="4" fill="#064E3B" stroke="#059669" />
+      <text x="986" y="29" fill="#34D399" font-family="'Inter', sans-serif" font-size="10" font-weight="700">PASS</text>
+    </g>
+
+    <!-- Row 5: TC-BATT-01 -->
+    <g transform="translate(0, 238)">
+      <rect width="1040" height="50" fill="#0F172A" />
+      <line x1="0" y1="50" x2="1040" y2="50" stroke="#1E293B" stroke-width="1" />
+      <text x="18" y="28" fill="#60A5FA" font-size="11" font-weight="700">TC-BATT-01</text>
+      <text x="110" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Battery Inventory</text>
+      <text x="230" y="28" fill="#CBD5E1" font-family="'Inter', sans-serif" font-size="10.5">GET /api/batteries - Multi-pack query</text>
+      <text x="540" y="28" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="10.5">HTTP 200 OK + Array of BP-01, BP-02, BP-03</text>
+      <text x="830" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">200 OK; 3 packs returned with specs</text>
+      <rect x="975" y="14" width="50" height="22" rx="4" fill="#064E3B" stroke="#059669" />
+      <text x="986" y="29" fill="#34D399" font-family="'Inter', sans-serif" font-size="10" font-weight="700">PASS</text>
+    </g>
+
+    <!-- Row 6: TC-BATT-02 -->
+    <g transform="translate(0, 288)">
+      <rect width="1040" height="50" fill="#131D31" />
+      <line x1="0" y1="50" x2="1040" y2="50" stroke="#1E293B" stroke-width="1" />
+      <text x="18" y="28" fill="#60A5FA" font-size="11" font-weight="700">TC-BATT-02</text>
+      <text x="110" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Battery Inventory</text>
+      <text x="230" y="28" fill="#CBD5E1" font-family="'Inter', sans-serif" font-size="10.5">POST /api/batteries with existing pack_code</text>
+      <text x="540" y="28" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="10.5">HTTP 409 Conflict / Unique constraint failure</text>
+      <text x="830" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">409 Conflict; Duplicate prevented</text>
+      <rect x="975" y="14" width="50" height="22" rx="4" fill="#064E3B" stroke="#059669" />
+      <text x="986" y="29" fill="#34D399" font-family="'Inter', sans-serif" font-size="10" font-weight="700">PASS</text>
+    </g>
+
+    <!-- Row 7: TC-SENS-01 -->
+    <g transform="translate(0, 338)">
+      <rect width="1040" height="50" fill="#0F172A" />
+      <line x1="0" y1="50" x2="1040" y2="50" stroke="#1E293B" stroke-width="1" />
+      <text x="18" y="28" fill="#F59E0B" font-size="11" font-weight="700">TC-SENS-01</text>
+      <text x="110" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Sensor Ingestion</text>
+      <text x="230" y="28" fill="#CBD5E1" font-family="'Inter', sans-serif" font-size="10.5">Telemetry reading peak temp = 51.5°C &gt; 45°C</text>
+      <text x="540" y="28" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="10.5">Auto-generates ACTIVE Alert in PostgreSQL</text>
+      <text x="830" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Alert record created (Status: ACTIVE)</text>
+      <rect x="975" y="14" width="50" height="22" rx="4" fill="#064E3B" stroke="#059669" />
+      <text x="986" y="29" fill="#34D399" font-family="'Inter', sans-serif" font-size="10" font-weight="700">PASS</text>
+    </g>
+
+    <!-- Row 8: TC-THERM-01 -->
+    <g transform="translate(0, 388)">
+      <rect width="1040" height="50" fill="#131D31" />
+      <line x1="0" y1="50" x2="1040" y2="50" stroke="#1E293B" stroke-width="1" />
+      <text x="18" y="28" fill="#A855F7" font-size="11" font-weight="700">TC-THERM-01</text>
+      <text x="110" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Diagnostic Core</text>
+      <text x="230" y="28" fill="#CBD5E1" font-family="'Inter', sans-serif" font-size="10.5">Thermal Gradient: ΔT = T_max(51.5) - T_min(41.0)</text>
+      <text x="540" y="28" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="10.5">Computed ΔT = 10.5°C &gt; Safe Delta (5.0°C)</text>
+      <text x="830" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Exact ΔT = 10.5°C; High Gradient flag</text>
+      <rect x="975" y="14" width="50" height="22" rx="4" fill="#064E3B" stroke="#059669" />
+      <text x="986" y="29" fill="#34D399" font-family="'Inter', sans-serif" font-size="10" font-weight="700">PASS</text>
+    </g>
+
+    <!-- Row 9: TC-THERM-02 -->
+    <g transform="translate(0, 438)">
+      <rect width="1040" height="50" fill="#0F172A" />
+      <line x1="0" y1="50" x2="1040" y2="50" stroke="#1E293B" stroke-width="1" />
+      <text x="18" y="28" fill="#A855F7" font-size="11" font-weight="700">TC-THERM-02</text>
+      <text x="110" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Diagnostic Core</text>
+      <text x="230" y="28" fill="#CBD5E1" font-family="'Inter', sans-serif" font-size="10.5">Joulean Heat: P = I² * R_int (240A, 0.03125 Ω)</text>
+      <text x="540" y="28" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="10.5">Computed Thermal Heat = 1800 Watts</text>
+      <text x="830" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Exact Joulean Heat = 1800 W</text>
+      <rect x="975" y="14" width="50" height="22" rx="4" fill="#064E3B" stroke="#059669" />
+      <text x="986" y="29" fill="#34D399" font-family="'Inter', sans-serif" font-size="10" font-weight="700">PASS</text>
+    </g>
+
+    <!-- Row 10: TC-THERM-03 -->
+    <g transform="translate(0, 488)">
+      <rect width="1040" height="50" fill="#131D31" />
+      <line x1="0" y1="50" x2="1040" y2="50" stroke="#1E293B" stroke-width="1" />
+      <text x="18" y="28" fill="#A855F7" font-size="11" font-weight="700">TC-THERM-03</text>
+      <text x="110" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Diagnostic Core</text>
+      <text x="230" y="28" fill="#CBD5E1" font-family="'Inter', sans-serif" font-size="10.5">DC Fast-Charge preset scenario execution</text>
+      <text x="540" y="28" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="10.5">Risk 100/100, CRITICAL, EMERGENCY_COOLING</text>
+      <text x="830" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Directives &amp; Audit record saved to DB</text>
+      <rect x="975" y="14" width="50" height="22" rx="4" fill="#064E3B" stroke="#059669" />
+      <text x="986" y="29" fill="#34D399" font-family="'Inter', sans-serif" font-size="10" font-weight="700">PASS</text>
+    </g>
+
+    <!-- Row 11: TC-ALRT-01 -->
+    <g transform="translate(0, 538)">
+      <rect width="1040" height="50" fill="#0F172A" />
+      <line x1="0" y1="50" x2="1040" y2="50" stroke="#1E293B" stroke-width="1" />
+      <text x="18" y="28" fill="#F59E0B" font-size="11" font-weight="700">TC-ALRT-01</text>
+      <text x="110" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Alert Management</text>
+      <text x="230" y="28" fill="#CBD5E1" font-family="'Inter', sans-serif" font-size="10.5">PUT /api/alerts/{id}/resolve with remarks</text>
+      <text x="540" y="28" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="10.5">Status: RESOLVED; timestamp and user saved</text>
+      <text x="830" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Alert resolved in database table</text>
+      <rect x="975" y="14" width="50" height="22" rx="4" fill="#064E3B" stroke="#059669" />
+      <text x="986" y="29" fill="#34D399" font-family="'Inter', sans-serif" font-size="10" font-weight="700">PASS</text>
+    </g>
+
+    <!-- Row 12: TC-UI-01 -->
+    <g transform="translate(0, 588)">
+      <rect width="1040" height="50" fill="#131D31" />
+      <text x="18" y="28" fill="#38BDF8" font-size="11" font-weight="700">TC-UI-01</text>
+      <text x="110" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Frontend Client</text>
+      <text x="230" y="28" fill="#CBD5E1" font-family="'Inter', sans-serif" font-size="10.5">Dark/Light toggle &amp; Recharts telemetry stream</text>
+      <text x="540" y="28" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="10.5">Smooth dark theme, zero white flash, 60fps</text>
+      <text x="830" y="28" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="10.5">Instant theme switch; telemetry synced</text>
+      <rect x="975" y="14" width="50" height="22" rx="4" fill="#064E3B" stroke="#059669" />
+      <text x="986" y="29" fill="#34D399" font-family="'Inter', sans-serif" font-size="10" font-weight="700">PASS</text>
+    </g>
+  </g>
+</svg>

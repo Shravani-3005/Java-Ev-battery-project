@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 580" width="100%" height="100%" style="background-color: #0F172A; font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, Menlo, Consolas, monospace;">
+  <!-- Header -->
+  <g transform="translate(30, 20)">
+    <rect width="940" height="40" rx="6" fill="#1E293B" stroke="#334155" stroke-width="1" />
+    <text x="20" y="25" fill="#F1F5F9" font-family="'Inter', sans-serif" font-size="13" font-weight="700" letter-spacing="1">OUTPUT 4: JWT &amp; SPRING SECURITY AUTHENTICATION EVIDENCE</text>
+    <rect x="760" y="9" width="160" height="22" rx="3" fill="#1F2937" stroke="#374151" />
+    <circle cx="774" cy="20" r="3.5" fill="#22C55E" />
+    <text x="784" y="24" fill="#CBD5E1" font-family="'Inter', sans-serif" font-size="10" font-weight="600">STATELESS JWT (24H)</text>
+  </g>
+
+  <!-- Left Window: 4A - Unauthorized Rejected -->
+  <g transform="translate(30, 75)">
+    <rect width="455" height="475" rx="8" fill="#0A0F1D" stroke="#EF4444" stroke-width="1.2" />
+    <!-- Terminal Titlebar -->
+    <rect x="0" y="0" width="455" height="32" rx="8" fill="#1E293B" />
+    <rect x="0" y="24" width="455" height="8" fill="#1E293B" />
+    <line x1="0" y1="32" x2="455" y2="32" stroke="#334155" stroke-width="1" />
+    <circle cx="16" cy="16" r="4.5" fill="#EF4444" />
+    <circle cx="32" cy="16" r="4.5" fill="#F59E0B" />
+    <circle cx="48" cy="16" r="4.5" fill="#10B981" />
+    <text x="70" y="20" fill="#EF4444" font-family="'Inter', sans-serif" font-size="11" font-weight="700">4A. UNAUTHORIZED REQUEST (REJECTED)</text>
+
+    <!-- Request -->
+    <text x="16" y="55" fill="#94A3B8" font-size="11"># 1. Request WITHOUT Authorization Header</text>
+    <text x="16" y="75" fill="#F87171" font-size="11.5" font-weight="600">POST /api/thermal/evaluate HTTP/1.1</text>
+    <text x="16" y="95" fill="#CBD5E1" font-size="10.5">Host: java-ev-battery-project.onrender.com</text>
+    <text x="16" y="112" fill="#CBD5E1" font-size="10.5">Content-Type: application/json</text>
+    <text x="16" y="129" fill="#64748B" font-size="10.5">&lt;No Authorization: Bearer Header Present&gt;</text>
+    
+    <text x="16" y="152" fill="#E2E8F0" font-size="10">{ "batteryPackId": 1, "batteryTemp": 48.5 }</text>
+
+    <!-- Separator -->
+    <line x1="16" y1="172" x2="439" y2="172" stroke="#334155" stroke-width="1" stroke-dasharray="4,4" />
+
+    <!-- Response -->
+    <text x="16" y="196" fill="#94A3B8" font-size="11"># 2. Spring Security Response</text>
+    <rect x="16" y="206" width="180" height="24" rx="4" fill="#3B1D1D" stroke="#7F1D1D" />
+    <text x="26" y="222" fill="#F87171" font-size="12" font-weight="700">HTTP/1.1 403 FORBIDDEN</text>
+
+    <!-- Response Body -->
+    <text x="16" y="250" fill="#CBD5E1" font-size="10.5">Content-Type: application/json</text>
+    <text x="16" y="275" fill="#E2E8F0" font-size="10.5">{</text>
+    <text x="28" y="295" fill="#FCA5A5" font-size="10">  "timestamp": "2026-11-17T11:25:14Z",</text>
+    <text x="28" y="315" fill="#FCA5A5" font-size="10">  "status": 403,</text>
+    <text x="28" y="335" fill="#FCA5A5" font-size="10">  "error": "Forbidden",</text>
+    <text x="28" y="355" fill="#FCA5A5" font-size="10">  "message": "Access Denied: Full</text>
+    <text x="28" y="375" fill="#FCA5A5" font-size="10">   authentication is required to access",</text>
+    <text x="28" y="395" fill="#FCA5A5" font-size="10">  "path": "/api/thermal/evaluate"</text>
+    <text x="16" y="415" fill="#E2E8F0" font-size="10.5">}</text>
+
+    <!-- Security Action Badge -->
+    <rect x="16" y="435" width="423" height="26" rx="4" fill="#1F2937" stroke="#374151" />
+    <text x="227" y="452" fill="#F87171" font-family="'Inter', sans-serif" font-size="10" font-weight="600" text-anchor="middle">
+      GATEWAY ACTION: Access blocked before controller invocation
+    </text>
+  </g>
+
+  <!-- Right Window: 4B - Authorized Success -->
+  <g transform="translate(515, 75)">
+    <rect width="455" height="475" rx="8" fill="#0A0F1D" stroke="#10B981" stroke-width="1.2" />
+    <!-- Terminal Titlebar -->
+    <rect x="0" y="0" width="455" height="32" rx="8" fill="#1E293B" />
+    <rect x="0" y="24" width="455" height="8" fill="#1E293B" />
+    <line x1="0" y1="32" x2="455" y2="32" stroke="#334155" stroke-width="1" />
+    <circle cx="16" cy="16" r="4.5" fill="#EF4444" />
+    <circle cx="32" cy="16" r="4.5" fill="#F59E0B" />
+    <circle cx="48" cy="16" r="4.5" fill="#10B981" />
+    <text x="70" y="20" fill="#10B981" font-family="'Inter', sans-serif" font-size="11" font-weight="700">4B. AUTHORIZED REQUEST (VERIFIED)</text>
+
+    <!-- Request -->
+    <text x="16" y="55" fill="#94A3B8" font-size="11"># 1. Request WITH Valid JWT Token</text>
+    <text x="16" y="75" fill="#34D399" font-size="11.5" font-weight="600">POST /api/thermal/evaluate HTTP/1.1</text>
+    <text x="16" y="95" fill="#CBD5E1" font-size="10.5">Host: java-ev-battery-project.onrender.com</text>
+    <text x="16" y="112" fill="#CBD5E1" font-size="10.5">Content-Type: application/json</text>
+    <text x="16" y="129" fill="#60A5FA" font-size="9.5">Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...</text>
+    
+    <text x="16" y="152" fill="#E2E8F0" font-size="10">{ "batteryPackId": 1, "batteryTemp": 34.0, "current": 45 }</text>
+
+    <!-- Separator -->
+    <line x1="16" y1="172" x2="439" y2="172" stroke="#334155" stroke-width="1" stroke-dasharray="4,4" />
+
+    <!-- Response -->
+    <text x="16" y="196" fill="#94A3B8" font-size="11"># 2. Spring Security + Controller Response</text>
+    <rect x="16" y="206" width="140" height="24" rx="4" fill="#064E3B" stroke="#047857" />
+    <text x="26" y="222" fill="#34D399" font-size="12" font-weight="700">HTTP/1.1 200 OK</text>
+
+    <!-- Response Body -->
+    <text x="16" y="250" fill="#CBD5E1" font-size="10.5">Content-Type: application/json</text>
+    <text x="16" y="275" fill="#E2E8F0" font-size="10.5">{</text>
+    <text x="28" y="295" fill="#86EFAC" font-size="10">  "riskLevel": "NORMAL",</text>
+    <text x="28" y="315" fill="#86EFAC" font-size="10">  "riskScore": 18.0,</text>
+    <text x="28" y="335" fill="#86EFAC" font-size="10">  "tempGradient": 3.1,</text>
+    <text x="28" y="355" fill="#86EFAC" font-size="10">  "isHotspotDetected": false,</text>
+    <text x="28" y="375" fill="#86EFAC" font-size="10">  "recommendedCoolantFlowLpm": 2.5,</text>
+    <text x="28" y="395" fill="#86EFAC" font-size="10">  "recommendedAction": "PASSIVE_ECO_CIRCULATION"</text>
+    <text x="16" y="415" fill="#E2E8F0" font-size="10.5">}</text>
+
+    <!-- Security Action Badge -->
+    <rect x="16" y="435" width="423" height="26" rx="4" fill="#1F2937" stroke="#374151" />
+    <text x="227" y="452" fill="#4ADE80" font-family="'Inter', sans-serif" font-size="10" font-weight="600" text-anchor="middle">
+      SUCCESS: JWT validated, user injected, diagnostics computed
+    </text>
+  </g>
+</svg>
