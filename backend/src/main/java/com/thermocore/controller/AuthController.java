@@ -33,41 +33,52 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Authenticate user and generate JWT token")
+    @Operation(summary = "Authenticate user via email and generate JWT token")
     public ResponseEntity<?> login(@RequestBody AuthRequestDto request) {
-        if (request.getUsername() == null || request.getPassword() == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Username and password are required"));
+        String identifier = request.getEmail() != null ? request.getEmail().trim() : (request.getUsername() != null ? request.getUsername().trim() : null);
+        if (identifier == null || request.getPassword() == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Email and password are required"));
         }
 
-        Optional<User> userOpt = userRepository.findByUsername(request.getUsername().trim());
+        Optional<User> userOpt = userRepository.findByEmail(identifier);
+        if (userOpt.isEmpty()) {
+            userOpt = userRepository.findByUsername(identifier);
+        }
+
         if (userOpt.isEmpty() || !passwordEncoder.matches(request.getPassword(), userOpt.get().getPassword())) {
-            return ResponseEntity.status(401).body(Map.of("error", "UNAUTHORIZED", "message", "Invalid username or password"));
+            return ResponseEntity.status(401).body(Map.of("error", "UNAUTHORIZED", "message", "Invalid email or password"));
         }
 
         User user = userOpt.get();
-        String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
-        return ResponseEntity.ok(new AuthResponseDto(token, user.getUsername(), user.getRole(), "Authentication successful"));
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
+        return ResponseEntity.ok(new AuthResponseDto(token, user.getEmail(), user.getUsername(), user.getRole(), "Authentication successful"));
     }
 
     @PostMapping("/register")
-    @Operation(summary = "Register a new operator/admin account")
+    @Operation(summary = "Register a new user account with email and password")
     public ResponseEntity<?> register(@RequestBody AuthRequestDto request) {
-        if (request.getUsername() == null || request.getPassword() == null ||
-            request.getUsername().trim().isEmpty() || request.getPassword().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Username and password cannot be empty"));
+        String email = request.getEmail() != null ? request.getEmail().trim().toLowerCase() : null;
+        if (email == null || email.isEmpty() || !email.contains("@")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "A valid email address is required"));
+        }
+        if (request.getPassword() == null || request.getPassword().length() < 6) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Password must be at least 6 characters"));
         }
 
-        String username = request.getUsername().trim();
-        if (userRepository.existsByUsername(username)) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Username already exists"));
+        if (userRepository.existsByEmail(email)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "An account with this email already exists"));
         }
+
+        String username = request.getUsername() != null && !request.getUsername().trim().isEmpty()
+                ? request.getUsername().trim()
+                : email.split("@")[0];
 
         String encodedPassword = passwordEncoder.encode(request.getPassword());
-        User newUser = new User(username, encodedPassword, "ROLE_OPERATOR");
+        User newUser = new User(email, username, encodedPassword, "ROLE_OPERATOR");
         userRepository.save(newUser);
 
-        String token = jwtUtil.generateToken(username, "ROLE_OPERATOR");
-        return ResponseEntity.ok(new AuthResponseDto(token, username, "ROLE_OPERATOR", "User registered successfully"));
+        String token = jwtUtil.generateToken(email, "ROLE_OPERATOR");
+        return ResponseEntity.ok(new AuthResponseDto(token, email, username, "ROLE_OPERATOR", "User registered successfully"));
     }
 
     @GetMapping("/me")

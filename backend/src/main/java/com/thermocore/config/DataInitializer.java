@@ -41,23 +41,25 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // Initialize default operator and admin user for Phase 3 evaluation
-        if (!userRepository.existsByUsername("operator")) {
+        if (!userRepository.existsByEmail("operator@somaiya.edu")) {
             com.thermocore.entity.User defaultOperator = new com.thermocore.entity.User(
+                    "operator@somaiya.edu",
                     "operator",
                     passwordEncoder.encode("operator123"),
                     "ROLE_OPERATOR"
             );
             userRepository.save(defaultOperator);
-            log.info("[THERMOCORE] Default security user 'operator' initialized (password: operator123).");
+            log.info("[THERMOCORE] Default security user 'operator@somaiya.edu' initialized (password: operator123).");
         }
-        if (!userRepository.existsByUsername("admin")) {
+        if (!userRepository.existsByEmail("admin@somaiya.edu")) {
             com.thermocore.entity.User adminUser = new com.thermocore.entity.User(
+                    "admin@somaiya.edu",
                     "admin",
                     passwordEncoder.encode("admin123"),
                     "ROLE_ADMIN"
             );
             userRepository.save(adminUser);
-            log.info("[THERMOCORE] Default security user 'admin' initialized (password: admin123).");
+            log.info("[THERMOCORE] Default security user 'admin@somaiya.edu' initialized (password: admin123).");
         }
 
         // Initialize System Config

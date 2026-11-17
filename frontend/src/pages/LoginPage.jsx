@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Zap, Lock, User, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Zap, Lock, Mail, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { authApi } from '../api/client';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
-  const [username, setUsername] = useState('operator');
+  const [email, setEmail] = useState('operator@somaiya.edu');
   const [password, setPassword] = useState('operator123');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -18,17 +19,17 @@ export default function LoginPage() {
 
     try {
       if (isLogin) {
-        await authApi.login(username, password);
+        await authApi.login(email, password);
       } else {
-        await authApi.register(username, password);
+        await authApi.register(email, password);
       }
       navigate('/');
-      window.location.reload(); // refresh session state in navbar
+      window.location.reload();
     } catch (err) {
       setError(
         err.response?.data?.message ||
         err.response?.data?.error ||
-        (isLogin ? 'Invalid credentials. Default: operator / operator123' : 'Registration failed.')
+        (isLogin ? 'Invalid email or password.' : 'Registration failed. Please check your email format.')
       );
     } finally {
       setLoading(false);
@@ -37,7 +38,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#0B0B0D] flex flex-col justify-center items-center p-4 font-sans select-none">
-      {/* Background Glow */}
+      {/* Ambient background glow */}
       <div className="absolute w-96 h-96 bg-[#FF7900]/10 rounded-full blur-3xl pointer-events-none"></div>
 
       <div className="max-w-md w-full bg-[#141416] border border-[#34343A] rounded-3xl p-8 shadow-2xl relative z-10 space-y-6">
@@ -90,28 +91,38 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div>
             <label className="text-[#A1A1AA] block mb-1.5 font-semibold text-xs flex items-center gap-1.5">
-              <User className="w-4 h-4 text-[#FF7900]" />
-              Username
+              <Mail className="w-4 h-4 text-[#FF7900]" />
+              Email Address
             </label>
             <input
-              type="text"
+              type="email"
               required
-              placeholder="Enter your username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              placeholder="operator@somaiya.edu"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-[#1B1B1F] border border-[#34343A] rounded-2xl px-4 py-3 text-sm text-[#F5F5F5] placeholder-[#666] focus:border-[#FF7900] focus:outline-none transition-all"
             />
           </div>
 
           <div>
-            <label className="text-[#A1A1AA] block mb-1.5 font-semibold text-xs flex items-center gap-1.5">
-              <Lock className="w-4 h-4 text-[#FF7900]" />
-              Password
+            <label className="text-[#A1A1AA] block mb-1.5 font-semibold text-xs flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <Lock className="w-4 h-4 text-[#FF7900]" />
+                Password
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-[#A1A1AA] hover:text-[#F5F5F5] text-[11px] flex items-center gap-1"
+              >
+                {showPassword ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
             </label>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               required
-              placeholder="Enter your password"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-[#1B1B1F] border border-[#34343A] rounded-2xl px-4 py-3 text-sm text-[#F5F5F5] placeholder-[#666] focus:border-[#FF7900] focus:outline-none transition-all"
@@ -123,7 +134,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full py-3.5 rounded-2xl bg-[#FF7900] hover:bg-[#ff8c1a] text-black font-extrabold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#FF7900]/25 disabled:opacity-50 cursor-pointer mt-2"
           >
-            <span>{loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account')}</span>
+            <span>{loading ? 'Authenticating with Spring Security...' : (isLogin ? 'Sign In' : 'Create Account')}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
