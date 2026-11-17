@@ -46,32 +46,33 @@ export default function DashboardPage() {
   }, [timeFilter]);
 
   // Derived metrics
-  const totalPacks = summary?.totalBatteryPacks ?? packs.length ?? 4;
-  const meanTemp = summary?.meanFleetTemp ? Number(summary.meanFleetTemp).toFixed(1) : '34.8';
-  const maxTemp = summary?.maxObservedTemp ? Number(summary.maxObservedTemp).toFixed(1) : '41.2';
-  const activeAlertsCount = summary?.activeAlertsCount ?? recentAlerts.length ?? 0;
-  const flowRate = summary?.currentCoolantFlowLpm ? Number(summary.currentCoolantFlowLpm).toFixed(1) : '3.2';
+  const hasPacks = packs && packs.length > 0;
+  const totalPacks = packs ? packs.length : (summary?.totalBatteryPacks || 0);
+  const meanTemp = hasPacks ? (summary?.meanFleetTemp ? Number(summary.meanFleetTemp).toFixed(1) : '34.8') : '—';
+  const maxTemp = hasPacks ? (summary?.maxObservedTemp ? Number(summary.maxObservedTemp).toFixed(1) : '41.2') : '—';
+  const activeAlertsCount = hasPacks ? (summary?.activeAlertsCount ?? recentAlerts.length ?? 0) : 0;
+  const flowRate = hasPacks ? (summary?.currentCoolantFlowLpm ? Number(summary.currentCoolantFlowLpm).toFixed(1) : '3.2') : '0.0';
 
   // Latest telemetry reading for thermal performance box
-  const latest = latestReadings[0] || {};
-  const inletT = latest.coolantInletTemp != null ? Number(latest.coolantInletTemp).toFixed(1) : '24.0';
-  const outletT = latest.coolantOutletTemp != null ? Number(latest.coolantOutletTemp).toFixed(1) : '27.8';
-  const deltaT = (Number(outletT) - Number(inletT)).toFixed(1);
+  const latest = hasPacks ? (latestReadings[0] || {}) : {};
+  const inletT = hasPacks && latest.coolantInletTemp != null ? Number(latest.coolantInletTemp).toFixed(1) : '—';
+  const outletT = hasPacks && latest.coolantOutletTemp != null ? Number(latest.coolantOutletTemp).toFixed(1) : '—';
+  const deltaT = hasPacks && latest.coolantInletTemp != null ? (Number(outletT) - Number(inletT)).toFixed(1) : '0.0';
 
   return (
     <div className="space-y-5">
       {/* 1. Compact Metrics Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <KPICard label="Battery Packs" value={totalPacks} />
-        <KPICard label="Average Temp" value={meanTemp} unit="°C" />
-        <KPICard label="Maximum Temp" value={maxTemp} unit="°C" status={Number(maxTemp) > 45 ? 'warning' : 'default'} />
-        <KPICard label="State of Charge" value={latest.stateOfCharge != null ? Math.round(latest.stateOfCharge) : 78} unit="%" />
+        <KPICard label="Average Temp" value={meanTemp} unit={hasPacks ? '°C' : ''} />
+        <KPICard label="Maximum Temp" value={maxTemp} unit={hasPacks ? '°C' : ''} status={Number(maxTemp) > 45 ? 'warning' : 'default'} />
+        <KPICard label="State of Charge" value={hasPacks ? (latest.stateOfCharge != null ? Math.round(latest.stateOfCharge) : 78) : '—'} unit={hasPacks ? '%' : ''} />
         <KPICard
           label="Thermal Status"
-          value={activeAlertsCount === 0 ? 'Normal' : `${activeAlertsCount} Alert`}
-          status={activeAlertsCount === 0 ? 'normal' : 'warning'}
+          value={!hasPacks ? 'Standby' : (activeAlertsCount === 0 ? 'Normal' : `${activeAlertsCount} Alert`)}
+          status={!hasPacks ? 'default' : (activeAlertsCount === 0 ? 'normal' : 'warning')}
         />
-        <KPICard label="Cooling System" value={flowRate} unit="L/min" status="normal" />
+        <KPICard label="Cooling System" value={flowRate} unit={hasPacks ? 'L/min' : ''} status="normal" />
       </div>
 
       {/* 2. Middle Row: Temperature Trend Chart + Thermal Performance */}
@@ -245,6 +246,13 @@ export default function DashboardPage() {
                     </tr>
                   );
                 })}
+                {packs.length === 0 && (
+                  <tr>
+                    <td colSpan="5" className="text-center py-6 text-xs text-[#6B7280]">
+                      No battery packs registered. <Link to="/batteries" className="text-[#2563A6] font-medium hover:underline">Add your first battery pack &rarr;</Link>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

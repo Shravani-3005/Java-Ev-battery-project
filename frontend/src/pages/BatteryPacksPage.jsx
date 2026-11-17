@@ -172,8 +172,16 @@ export default function BatteryPacksPage() {
               ))}
               {packs.length === 0 && (
                 <tr>
-                  <td colSpan="8" className="py-8 text-center text-sm text-[#6B7280]">
-                    No battery packs found.
+                  <td colSpan="8" className="py-12 text-center text-xs text-[#6B7280]">
+                    <p className="font-semibold text-sm text-[#202938] mb-1">No battery packs configured yet.</p>
+                    <p className="mb-4">Register your battery pack manually to begin monitoring thermal and electrical telemetry.</p>
+                    <button
+                      onClick={handleOpenAdd}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#2563A6] hover:bg-[#1D4F85] text-white text-xs font-medium rounded transition-colors"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Battery Pack</span>
+                    </button>
                   </td>
                 </tr>
               )}

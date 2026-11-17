@@ -49,20 +49,25 @@ export default function HotspotDetectionPage() {
           <select
             value={selectedPackId}
             onChange={(e) => setSelectedPackId(e.target.value)}
-            className="text-xs bg-white border border-[#E5E7EB] text-[#202938] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
+            disabled={packs.length === 0}
+            className="text-xs bg-white border border-[#E5E7EB] text-[#202938] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6] disabled:opacity-60"
           >
-            {packs.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.packName} ({p.packCode})
-              </option>
-            ))}
+            {packs.length === 0 ? (
+              <option value="">No battery packs registered</option>
+            ) : (
+              packs.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.packName} ({p.packCode})
+                </option>
+              ))
+            )}
           </select>
         </div>
 
         <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded ${
-          isHotspot ? 'bg-[#FEF5E7] text-[#D69A32]' : 'bg-[#EBF7EE] text-[#27834A]'
+          packs.length === 0 ? 'bg-[#F3F4F6] text-[#6B7280]' : (isHotspot ? 'bg-[#FEF5E7] text-[#D69A32]' : 'bg-[#EBF7EE] text-[#27834A]')
         }`}>
-          {isHotspot ? 'Hotspot Condition Active' : 'Thermal Distribution Uniform'}
+          {packs.length === 0 ? 'Standby — No Packs' : (isHotspot ? 'Hotspot Condition Active' : 'Thermal Distribution Uniform')}
         </span>
       </div>
 

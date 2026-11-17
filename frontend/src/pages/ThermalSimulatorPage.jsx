@@ -171,13 +171,18 @@ export default function ThermalSimulatorPage() {
           <select
             value={selectedPackId}
             onChange={(e) => setSelectedPackId(e.target.value)}
-            className="text-xs bg-white border border-[#E5E7EB] text-[#202938] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
+            disabled={packs.length === 0}
+            className="text-xs bg-white border border-[#E5E7EB] text-[#202938] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6] disabled:opacity-60"
           >
-            {packs.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.packName} ({p.packCode})
-              </option>
-            ))}
+            {packs.length === 0 ? (
+              <option value="">No battery packs registered</option>
+            ) : (
+              packs.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.packName} ({p.packCode})
+                </option>
+              ))
+            )}
           </select>
         </div>
 

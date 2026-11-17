@@ -54,7 +54,12 @@ function AppContent() {
       setUnreadAlerts(activeCount);
       if (packsData && packsData.length > 0) {
         setPacks(packsData);
-        if (!selectedPackId) setSelectedPackId(String(packsData[0].id));
+        if (!selectedPackId || !packsData.some(p => String(p.id) === String(selectedPackId))) {
+          setSelectedPackId(String(packsData[0].id));
+        }
+      } else {
+        setPacks([]);
+        setSelectedPackId('');
       }
     } catch (e) {
       setSystemOnline(false);

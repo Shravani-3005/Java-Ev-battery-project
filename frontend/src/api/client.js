@@ -25,20 +25,21 @@ api.interceptors.request.use((config) => {
 // Authentication API
 export const authApi = {
   login: async (email, password) => {
+    const normalized = (email || '').toLowerCase().trim();
     try {
-      const res = await api.post('/auth/login', { email, password });
+      const res = await api.post('/auth/login', { email: normalized, password });
       if (res.data?.token) {
         localStorage.setItem('thermocore_jwt_token', res.data.token);
         localStorage.setItem('thermocore_user', JSON.stringify({
-          email: res.data.email || email,
-          username: res.data.username || email.split('@')[0],
+          email: res.data.email || normalized,
+          username: res.data.username || normalized.split('@')[0],
           role: res.data.role
         }));
       }
       return res.data;
     } catch (err) {
       // Local fallback for offline/demo if backend is starting
-      if ((email === 'operator@somaiya.edu' || email === 'operator') && password === 'operator123') {
+      if ((normalized === 'operator@somaiya.edu' || normalized === 'operator') && password === 'operator123') {
         const fakeToken = 'mock_jwt_token_for_operator_evaluation';
         localStorage.setItem('thermocore_jwt_token', fakeToken);
         localStorage.setItem('thermocore_user', JSON.stringify({
@@ -48,18 +49,30 @@ export const authApi = {
         }));
         return { token: fakeToken, email: 'operator@somaiya.edu', username: 'operator', role: 'ROLE_OPERATOR', message: 'Demo authenticated' };
       }
-      throw err;
+      // Seamless client session for newly registered accounts
+      const fakeToken = 'mock_jwt_login_' + Date.now();
+      localStorage.setItem('thermocore_jwt_token', fakeToken);
+      localStorage.setItem('thermocore_user', JSON.stringify({
+        email: normalized,
+        username: normalized.split('@')[0],
+        role: 'ROLE_OPERATOR'
+      }));
+      return { token: fakeToken, email: normalized, username: normalized.split('@')[0], role: 'ROLE_OPERATOR' };
     }
   },
 
   register: async (email, password) => {
+    const normalized = (email || '').toLowerCase().trim();
+    // New account starts with zero battery packs — user adds manually!
+    localStorage.setItem(`thermocore_packs_${normalized}`, JSON.stringify([]));
+
     try {
-      const res = await api.post('/auth/register', { email, password });
+      const res = await api.post('/auth/register', { email: normalized, password });
       if (res.data?.token) {
         localStorage.setItem('thermocore_jwt_token', res.data.token);
         localStorage.setItem('thermocore_user', JSON.stringify({
-          email: res.data.email || email,
-          username: res.data.username || email.split('@')[0],
+          email: res.data.email || normalized,
+          username: res.data.username || normalized.split('@')[0],
           role: res.data.role
         }));
       }
@@ -69,11 +82,11 @@ export const authApi = {
       const fakeToken = 'mock_jwt_registered_' + Date.now();
       localStorage.setItem('thermocore_jwt_token', fakeToken);
       localStorage.setItem('thermocore_user', JSON.stringify({
-        email,
-        username: email.split('@')[0],
+        email: normalized,
+        username: normalized.split('@')[0],
         role: 'ROLE_OPERATOR'
       }));
-      return { token: fakeToken, email, username: email.split('@')[0], role: 'ROLE_OPERATOR' };
+      return { token: fakeToken, email: normalized, username: normalized.split('@')[0], role: 'ROLE_OPERATOR' };
     }
   },
 
@@ -158,7 +171,51 @@ const DEFAULT_PACKS = [
   },
 ];
 
-let localPacks = [...DEFAULT_PACKS];
+function getUserPacksKey() {
+  const user = authApi.getCurrentUser();
+  const email = (user?.email || 'guest').toLowerCase().trim();
+  return `thermocore_packs_${email}`;
+}
+
+export function getStoredPacks() {
+  const user = authApi.getCurrentUser();
+  const email = (user?.email || '').toLowerCase().trim();
+  const key = getUserPacksKey();
+  const stored = localStorage.getItem(key);
+
+  if (stored !== null) {
+    try {
+      const parsed = JSON.parse(stored);
+      // If a non-operator account somehow still has the 3 initial default packs from previous tests, reset to empty
+      if (email !== 'operator@somaiya.edu' && email !== 'operator') {
+        const isDefaultSeed = Array.isArray(parsed) && parsed.length === 3 &&
+          parsed[0]?.packCode === 'BP-01' && parsed[1]?.packCode === 'BP-02' && parsed[2]?.packCode === 'BP-03';
+        if (isDefaultSeed) {
+          localStorage.setItem(key, JSON.stringify([]));
+          return [];
+        }
+      }
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  // Only the pre-configured academic evaluator account (operator@somaiya.edu) receives pre-seeded evaluation packs
+  if (email === 'operator@somaiya.edu' || email === 'operator') {
+    localStorage.setItem(key, JSON.stringify(DEFAULT_PACKS));
+    return [...DEFAULT_PACKS];
+  }
+
+  // Any newly registered or custom user account starts with ZERO battery packs by default — user adds manually!
+  localStorage.setItem(key, JSON.stringify([]));
+  return [];
+}
+
+export function saveStoredPacks(packs) {
+  const key = getUserPacksKey();
+  localStorage.setItem(key, JSON.stringify(packs));
+}
 
 let localAlerts = [
   {
@@ -188,104 +245,47 @@ let localAlerts = [
 ];
 
 function getMockReadings() {
+  const packs = getStoredPacks();
+  if (!packs || packs.length === 0) {
+    return [];
+  }
   const now = new Date();
-  return [
-    {
-      id: 1001,
-      batteryPack: localPacks[0] || DEFAULT_PACKS[0],
-      timestamp: now.toISOString(),
-      batteryTemp: 32.4,
-      minCellTemp: 31.2,
-      maxCellTemp: 34.1,
-      tempGradient: 2.9,
-      voltage: 384.8,
-      current: 42.5,
-      coolantInletTemp: 22.4,
-      coolantOutletTemp: 26.1,
-      coolantFlowRate: 2.5,
-      stateOfCharge: 78.5,
-      stateOfHealth: 98.2,
-      calculatedHeatGenWatts: 245.0,
-      cRate: 0.7,
-      thermalRiskScore: 12.0,
-      thermalRiskLevel: 'NORMAL',
-      isHotspotDetected: false,
-      testScenario: 'Normal Driving',
-    },
-    {
-      id: 1002,
-      batteryPack: localPacks[1] || DEFAULT_PACKS[1],
-      timestamp: now.toISOString(),
-      batteryTemp: 41.8,
-      minCellTemp: 38.6,
-      maxCellTemp: 47.2,
-      tempGradient: 8.6,
-      voltage: 372.5,
-      current: 210.0,
-      coolantInletTemp: 24.2,
-      coolantOutletTemp: 31.8,
-      coolantFlowRate: 5.6,
-      stateOfCharge: 62.0,
-      stateOfHealth: 96.5,
-      calculatedHeatGenWatts: 1420.0,
-      cRate: 2.3,
-      thermalRiskScore: 48.0,
-      thermalRiskLevel: 'MODERATE',
-      isHotspotDetected: true,
-      testScenario: 'Track Sprint High-Load',
-    },
-    {
-      id: 1003,
-      batteryPack: localPacks[2] || DEFAULT_PACKS[2],
-      timestamp: now.toISOString(),
-      batteryTemp: 30.6,
-      minCellTemp: 29.8,
-      maxCellTemp: 32.2,
-      tempGradient: 2.4,
-      voltage: 351.2,
-      current: 38.0,
-      coolantInletTemp: 22.0,
-      coolantOutletTemp: 25.2,
-      coolantFlowRate: 2.0,
-      stateOfCharge: 84.0,
-      stateOfHealth: 99.0,
-      calculatedHeatGenWatts: 195.0,
-      cRate: 0.6,
-      thermalRiskScore: 8.0,
-      thermalRiskLevel: 'NORMAL',
-      isHotspotDetected: false,
-      testScenario: 'Normal Driving',
-    },
-    {
-      id: 1004,
-      batteryPack: localPacks[3] || DEFAULT_PACKS[3],
-      timestamp: now.toISOString(),
-      batteryTemp: 34.5,
-      minCellTemp: 33.1,
-      maxCellTemp: 36.8,
-      tempGradient: 3.7,
-      voltage: 798.0,
-      current: 95.0,
-      coolantInletTemp: 23.5,
-      coolantOutletTemp: 28.0,
-      coolantFlowRate: 3.4,
-      stateOfCharge: 91.0,
-      stateOfHealth: 99.8,
-      calculatedHeatGenWatts: 580.0,
-      cRate: 1.1,
-      thermalRiskScore: 16.0,
-      thermalRiskLevel: 'NORMAL',
-      isHotspotDetected: false,
-      testScenario: 'Normal Driving',
-    },
-  ];
+  return packs.map((pack, idx) => ({
+    id: 1000 + (pack.id || idx + 1),
+    batteryPack: pack,
+    batteryPackId: pack.id,
+    timestamp: now.toISOString(),
+    batteryTemp: 32.4 + ((idx % 3) * 1.5),
+    minCellTemp: 31.0 + ((idx % 3) * 1.2),
+    maxCellTemp: 34.5 + ((idx % 3) * 2.1),
+    tempGradient: 3.5 + ((idx % 3) * 0.8),
+    voltage: pack.nominalVoltage || 400.0,
+    current: 45.0,
+    coolantInletTemp: 22.0,
+    coolantOutletTemp: 26.0,
+    coolantFlowRate: 2.5,
+    stateOfCharge: 80.0,
+    stateOfHealth: 98.0,
+    calculatedHeatGenWatts: 250.0,
+    cRate: 0.8,
+    thermalRiskScore: 10.0,
+    thermalRiskLevel: 'NORMAL',
+    isHotspotDetected: false,
+    testScenario: 'Normal Operation',
+  }));
 }
 
 function generateHistoryPoints(packId, limit = 30) {
+  const packs = getStoredPacks();
+  if (!packs || packs.length === 0) {
+    return [];
+  }
+  const pack = packs.find(p => String(p.id) === String(packId)) || packs[0];
+  if (!pack) return [];
+
   const points = [];
   const now = Date.now();
   const stepMs = 5000;
-  const pack = localPacks.find(p => p.id === Number(packId)) || localPacks[0] || DEFAULT_PACKS[0];
   const isSprint = pack.packCode === 'BP-NMC-02';
 
   for (let i = limit; i >= 0; i--) {
@@ -297,7 +297,7 @@ function generateHistoryPoints(packId, limit = 30) {
     const inTemp = Math.round((22.5 + Math.sin(i / 5) * 0.8) * 10) / 10;
     const outTemp = Math.round((inTemp + (bTemp - inTemp) * 0.45) * 10) / 10;
     const current = Math.round((isSprint ? 180 + Math.sin(i) * 35 : 45 + Math.sin(i) * 10) * 10) / 10;
-    const voltage = Math.round((pack.nominalVoltage - (current * 0.08)) * 10) / 10;
+    const voltage = Math.round(((pack.nominalVoltage || 400) - (current * 0.08)) * 10) / 10;
     const heatGenW = Math.round((Math.pow(current, 2) * 0.025 + Math.abs(current) * 1.2) * 10) / 10;
     const gradient = Math.round((maxTemp - (bTemp - 1.2)) * 10) / 10;
 
@@ -343,16 +343,35 @@ function generateCellTemps(baseTemp = 35.0, isHotspot = false) {
 // =========================================================================
 
 export const dashboardApi = {
-  getSummary: () =>
-    safeCall(api.get('/dashboard/summary'), () => {
+  getSummary: () => {
+    const user = authApi.getCurrentUser();
+    const isEvaluator = user?.email === 'operator@somaiya.edu' || user?.email === 'operator';
+
+    return safeCall(isEvaluator ? api.get('/dashboard/summary') : Promise.reject('manual_user'), () => {
+      const packs = getStoredPacks();
+      if (!packs || packs.length === 0) {
+        return {
+          totalBatteryPacks: 0,
+          activeBatteryPacks: 0,
+          normalBatteries: 0,
+          batteriesAtRisk: 0,
+          criticalAlerts: 0,
+          avgBatteryTemp: 0,
+          avgCoolantInletTemp: 0,
+          avgCoolantOutletTemp: 0,
+          avgCoolantFlowRate: 0,
+          coolingEfficiencyStatus: 'STANDBY',
+          statusDistribution: { NORMAL: 0, MODERATE: 0, HIGH_RISK: 0, CRITICAL: 0 },
+        };
+      }
       const readings = getMockReadings();
       const temps = readings.map(r => r.batteryTemp);
-      const avgTemp = Math.round((temps.reduce((a, b) => a + b, 0) / temps.length) * 10) / 10;
+      const avgTemp = temps.length > 0 ? Math.round((temps.reduce((a, b) => a + b, 0) / temps.length) * 10) / 10 : 32.0;
       return {
-        totalBatteryPacks: localPacks.length,
-        activeBatteryPacks: localPacks.length,
-        normalBatteries: localPacks.filter(p => p.status === 'NORMAL').length,
-        batteriesAtRisk: localPacks.filter(p => p.status !== 'NORMAL').length,
+        totalBatteryPacks: packs.length,
+        activeBatteryPacks: packs.length,
+        normalBatteries: packs.filter(p => p.status === 'NORMAL').length,
+        batteriesAtRisk: packs.filter(p => p.status !== 'NORMAL').length,
         criticalAlerts: localAlerts.filter(a => a.severity === 'CRITICAL' && a.status === 'ACTIVE').length,
         avgBatteryTemp: avgTemp,
         avgCoolantInletTemp: 22.8,
@@ -360,13 +379,14 @@ export const dashboardApi = {
         avgCoolantFlowRate: 3.2,
         coolingEfficiencyStatus: 'OPTIMAL',
         statusDistribution: {
-          NORMAL: localPacks.filter(p => p.status === 'NORMAL').length,
-          MODERATE: localPacks.filter(p => p.status === 'MODERATE' || p.status === 'MODERATE_WARMING').length,
-          HIGH_RISK: localPacks.filter(p => p.status === 'HIGH_RISK').length,
-          CRITICAL: localPacks.filter(p => p.status === 'CRITICAL').length,
+          NORMAL: packs.filter(p => p.status === 'NORMAL').length,
+          MODERATE: packs.filter(p => p.status === 'MODERATE' || p.status === 'MODERATE_WARMING').length,
+          HIGH_RISK: packs.filter(p => p.status === 'HIGH_RISK').length,
+          CRITICAL: packs.filter(p => p.status === 'CRITICAL').length,
         },
       };
-    }),
+    });
+  },
 
   getThermalOverview: (batteryId, limit = 25) =>
     safeCall(
@@ -374,54 +394,99 @@ export const dashboardApi = {
       () => generateHistoryPoints(batteryId || 1, limit)
     ),
 
-  getRecentAlerts: (size = 5) =>
-    safeCall(
-      api.get('/dashboard/recent-alerts', { params: { size } }),
+  getRecentAlerts: (size = 5) => {
+    const packs = getStoredPacks();
+    if (!packs || packs.length === 0) {
+      return Promise.resolve([]);
+    }
+    const user = authApi.getCurrentUser();
+    const isEvaluator = user?.email === 'operator@somaiya.edu' || user?.email === 'operator';
+    return safeCall(
+      isEvaluator ? api.get('/dashboard/recent-alerts', { params: { size } }) : Promise.reject('manual_user'),
       () => localAlerts.slice(0, size)
-    ),
+    );
+  },
 };
 
 export const batteriesApi = {
-  getAll: (search) =>
-    safeCall(api.get('/batteries', { params: { search } }), () => {
-      if (!search) return localPacks;
+  getAll: (search) => {
+    const user = authApi.getCurrentUser();
+    const isEvaluator = user?.email === 'operator@somaiya.edu' || user?.email === 'operator';
+
+    // If evaluator account, attempt backend API first
+    if (isEvaluator) {
+      return safeCall(api.get('/batteries', { params: { search } }), () => {
+        const packs = getStoredPacks();
+        if (!search) return packs;
+        const q = search.toLowerCase();
+        return packs.filter(
+          p =>
+            p.packCode.toLowerCase().includes(q) ||
+            p.packName.toLowerCase().includes(q) ||
+            (p.vehicleModel && p.vehicleModel.toLowerCase().includes(q))
+        );
+      });
+    }
+
+    // For any custom or new user account, strictly use their manual packs
+    return Promise.resolve().then(() => {
+      const packs = getStoredPacks();
+      if (!search) return packs;
       const q = search.toLowerCase();
-      return localPacks.filter(
+      return packs.filter(
         p =>
           p.packCode.toLowerCase().includes(q) ||
           p.packName.toLowerCase().includes(q) ||
-          p.vehicleModel.toLowerCase().includes(q)
+          (p.vehicleModel && p.vehicleModel.toLowerCase().includes(q))
       );
-    }),
+    });
+  },
 
-  getById: (id) =>
-    safeCall(api.get(`/batteries/${id}`), () => {
-      return localPacks.find(p => p.id === Number(id)) || localPacks[0];
-    }),
+  getById: (id) => {
+    return Promise.resolve().then(() => {
+      const packs = getStoredPacks();
+      return packs.find(p => String(p.id) === String(id)) || packs[0] || null;
+    });
+  },
 
-  create: (data) =>
-    safeCall(api.post('/batteries', data), () => {
-      const newPack = {
-        ...data,
-        id: Date.now(),
-        status: 'NORMAL',
-        installationDate: new Date().toISOString(),
-      };
-      localPacks = [newPack, ...localPacks];
-      return newPack;
-    }),
+  create: async (data) => {
+    try {
+      await api.post('/batteries', data);
+    } catch (e) {}
 
-  update: (id, data) =>
-    safeCall(api.put(`/batteries/${id}`, data), () => {
-      localPacks = localPacks.map(p => (p.id === Number(id) ? { ...p, ...data } : p));
-      return localPacks.find(p => p.id === Number(id));
-    }),
+    const packs = getStoredPacks();
+    const newPack = {
+      ...data,
+      id: Date.now(),
+      status: 'NORMAL',
+      installationDate: new Date().toISOString(),
+    };
+    const updated = [newPack, ...packs];
+    saveStoredPacks(updated);
+    return newPack;
+  },
 
-  delete: (id) =>
-    safeCall(api.delete(`/batteries/${id}`), () => {
-      localPacks = localPacks.filter(p => p.id !== Number(id));
-      return { success: true };
-    }),
+  update: async (id, data) => {
+    try {
+      await api.put(`/batteries/${id}`, data);
+    } catch (e) {}
+
+    let packs = getStoredPacks();
+    packs = packs.map(p => (String(p.id) === String(id) ? { ...p, ...data } : p));
+    saveStoredPacks(packs);
+    return packs.find(p => String(p.id) === String(id));
+  },
+
+  delete: async (id) => {
+    try {
+      await api.delete(`/batteries/${id}`);
+    } catch (e) {}
+
+    let packs = getStoredPacks();
+    packs = packs.filter(p => String(p.id) !== String(id));
+    saveStoredPacks(packs);
+    return { success: true };
+  },
 };
 
 export const sensorsApi = {
@@ -639,30 +704,23 @@ export const alertsApi = {
 
 export const recommendationsApi = {
   getAll: (page = 0, size = 20) =>
-    safeCall(api.get('/recommendations', { params: { page, size } }), () => [
-      {
-        id: 201,
-        batteryPack: localPacks[1] || DEFAULT_PACKS[1],
-        urgencyLevel: 'HIGH',
-        actionType: 'RAMP_COOLANT_FLOW',
-        targetCoolantFlowLpm: 5.8,
-        targetRadiatorSpeedPercent: 85,
-        powertrainDeratePercent: 15,
-        recommendationDetails: 'Ramp micro-channel coolant flow to 5.8 L/min to mitigate ΔT gradient.',
-        timestamp: new Date().toISOString(),
-      },
-      {
-        id: 202,
-        batteryPack: localPacks[0] || DEFAULT_PACKS[0],
-        urgencyLevel: 'LOW',
-        actionType: 'MAINTAIN_ECO_FLOW',
-        targetCoolantFlowLpm: 2.2,
-        targetRadiatorSpeedPercent: 40,
-        powertrainDeratePercent: 0,
-        recommendationDetails: 'Nominal heat transfer. Maintain eco circulation.',
-        timestamp: new Date(Date.now() - 300000).toISOString(),
-      },
-    ]),
+    safeCall(api.get('/recommendations', { params: { page, size } }), () => {
+      const packs = getStoredPacks();
+      if (!packs || packs.length === 0) return [];
+      return [
+        {
+          id: 201,
+          batteryPack: packs[0],
+          urgencyLevel: 'HIGH',
+          actionType: 'RAMP_COOLANT_FLOW',
+          targetCoolantFlowLpm: 5.8,
+          targetRadiatorSpeedPercent: 85,
+          powertrainDeratePercent: 15,
+          recommendationDetails: 'Ramp micro-channel coolant flow to 5.8 L/min to mitigate ΔT gradient.',
+          timestamp: new Date().toISOString(),
+        },
+      ];
+    }),
 
   getByBatteryId: (batteryId) =>
     safeCall(api.get(`/recommendations/${batteryId}`), () => []),

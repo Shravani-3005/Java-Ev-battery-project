@@ -75,13 +75,18 @@ export default function HistoricalRecordsPage() {
               setSelectedPackId(e.target.value);
               setPage(0);
             }}
-            className="bg-white border border-[#E5E7EB] text-[#202938] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
+            disabled={packs.length === 0}
+            className="bg-white border border-[#E5E7EB] text-[#202938] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6] disabled:opacity-60"
           >
-            {packs.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.packName} ({p.packCode})
-              </option>
-            ))}
+            {packs.length === 0 ? (
+              <option value="">No battery packs registered</option>
+            ) : (
+              packs.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.packName} ({p.packCode})
+                </option>
+              ))
+            )}
           </select>
 
           <span className="text-[#6B7280]">{totalElements} records logged</span>

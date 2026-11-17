@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   ResponsiveContainer,
   LineChart,
@@ -60,21 +61,41 @@ export default function LiveMonitoringPage() {
           <select
             value={selectedPackId}
             onChange={(e) => setSelectedPackId(e.target.value)}
-            className="text-xs bg-white border border-[#E5E7EB] text-[#202938] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
+            disabled={packs.length === 0}
+            className="text-xs bg-white border border-[#E5E7EB] text-[#202938] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6] disabled:opacity-60"
           >
-            {packs.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.packName} ({p.packCode}) — {p.chemistry}
-              </option>
-            ))}
+            {packs.length === 0 ? (
+              <option value="">No battery packs registered</option>
+            ) : (
+              packs.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.packName} ({p.packCode}) — {p.chemistry}
+                </option>
+              ))
+            )}
           </select>
         </div>
 
         <div className="flex items-center gap-2 text-xs">
-          <span className="w-2 h-2 rounded-full bg-[#27834A]"></span>
-          <span className="text-[#6B7280]">Telemetry Stream Active (1 Hz)</span>
+          <span className={`w-2 h-2 rounded-full ${packs.length > 0 ? 'bg-[#27834A]' : 'bg-[#9CA3AF]'}`}></span>
+          <span className="text-[#6B7280]">
+            {packs.length > 0 ? 'Telemetry Stream Active (1 Hz)' : 'Awaiting Battery Pack Registration'}
+          </span>
         </div>
       </div>
+
+      {packs.length === 0 && (
+        <div className="bg-white border border-[#E5E7EB] rounded p-6 text-center text-xs text-[#6B7280]">
+          <p className="font-semibold text-sm text-[#202938] mb-1">No battery pack registered yet.</p>
+          <p className="mb-3">Add your first battery pack manually to begin live telemetry streaming and cell array monitoring.</p>
+          <Link
+            to="/batteries"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#2563A6] text-white rounded font-medium hover:bg-[#1D4F85] transition-colors"
+          >
+            Go to Battery Packs &rarr;
+          </Link>
+        </div>
+      )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
