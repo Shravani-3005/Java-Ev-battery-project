@@ -1,0 +1,340 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1320" width="100%" height="100%" style="background-color: #0F172A; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <!-- Gradients & Shadows -->
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2563A6" />
+      <stop offset="100%" stop-color="#1D4F85" />
+    </linearGradient>
+
+    <linearGradient id="clientGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#182234" />
+    </linearGradient>
+
+    <linearGradient id="backendGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#151D2C" />
+    </linearGradient>
+
+    <linearGradient id="dbGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#131B27" />
+    </linearGradient>
+
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#60A5FA" />
+    </marker>
+
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#4ADE80" />
+    </marker>
+  </defs>
+
+  <!-- Title & Subtitle Banner -->
+  <g transform="translate(60, 40)">
+    <rect width="1080" height="70" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5" filter="url(#cardShadow)" />
+    <circle cx="35" cy="35" r="14" fill="#2563A6" />
+    <path d="M 31 35 L 35 39 L 41 31" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+    <text x="65" y="34" fill="#F1F5F9" font-size="18" font-weight="700" letter-spacing="1.5">THERMOCORE — SYSTEM ARCHITECTURE &amp; FULL-STACK WORKFLOW</text>
+    <text x="65" y="52" fill="#94A3B8" font-size="12" font-weight="400">EV Battery Thermal Management &amp; Diagnostics System (Phase 3 Integration Specification)</text>
+    <rect x="940" y="22" width="115" height="26" rx="4" fill="#1F2937" stroke="#374151" />
+    <circle cx="955" cy="35" r="4" fill="#22C55E" />
+    <text x="968" y="39" fill="#CBD5E1" font-size="11" font-weight="600">PRODUCTION</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 1. CLIENT TIER                             -->
+  <!-- ========================================== -->
+  <g transform="translate(60, 140)">
+    <!-- Container -->
+    <rect width="1080" height="180" rx="8" fill="url(#clientGrad)" stroke="#334155" stroke-width="1.5" filter="url(#cardShadow)" />
+    
+    <!-- Tier Badge -->
+    <rect x="0" y="0" width="1080" height="38" rx="8" fill="#172235" />
+    <rect x="0" y="28" width="1080" height="10" fill="#172235" />
+    <line x1="0" y1="38" x2="1080" y2="38" stroke="#334155" stroke-width="1" />
+    
+    <rect x="18" y="9" width="95" height="20" rx="4" fill="#2563A6" />
+    <text x="65" y="23" fill="#FFFFFF" font-size="10" font-weight="700" text-anchor="middle" letter-spacing="1">CLIENT TIER</text>
+    <text x="128" y="24" fill="#F1F5F9" font-size="14" font-weight="600">React 18 Single Page Application (SPA)</text>
+    <text x="1055" y="24" fill="#94A3B8" font-size="11" font-weight="500" text-anchor="end">Deployed on Vercel Edge Network</text>
+
+    <!-- Sub components inside Client Tier -->
+    <!-- Card 1: Build & Framework -->
+    <g transform="translate(25, 55)">
+      <rect width="240" height="105" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1" />
+      <text x="15" y="28" fill="#60A5FA" font-size="12" font-weight="600">Framework &amp; Tooling</text>
+      <text x="15" y="52" fill="#CBD5E1" font-size="12">• React 18.3.1 (Context API)</text>
+      <text x="15" y="72" fill="#CBD5E1" font-size="12">• Vite 5.4 High-Speed Bundler</text>
+      <text x="15" y="92" fill="#CBD5E1" font-size="12">• React Router v6 Client Routing</text>
+    </g>
+
+    <!-- Card 2: Styling & Design System -->
+    <g transform="translate(285, 55)">
+      <rect width="240" height="105" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1" />
+      <text x="15" y="28" fill="#60A5FA" font-size="12" font-weight="600">Styling &amp; Dark Theme</text>
+      <text x="15" y="52" fill="#CBD5E1" font-size="12">• Tailwind CSS 3.4 Utility Engine</text>
+      <text x="15" y="72" fill="#CBD5E1" font-size="12">• Enterprise #0F172A Dark Slate</text>
+      <text x="15" y="92" fill="#CBD5E1" font-size="12">• Lucide Outline Engineering Icons</text>
+    </g>
+
+    <!-- Card 3: Telemetry & Matrices -->
+    <g transform="translate(545, 55)">
+      <rect width="250" height="105" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1" />
+      <text x="15" y="28" fill="#60A5FA" font-size="12" font-weight="600">Telemetry &amp; Visualizations</text>
+      <text x="15" y="52" fill="#CBD5E1" font-size="12">• Recharts Live 1 Hz Line Charts</text>
+      <text x="15" y="72" fill="#CBD5E1" font-size="12">• 24-Cell Array Matrix (C-01..C-24)</text>
+      <text x="15" y="92" fill="#CBD5E1" font-size="12">• Localized Hotspot Gradients (ΔT)</text>
+    </g>
+
+    <!-- Card 4: Resilience & Circuit Breaker -->
+    <g transform="translate(815, 55)">
+      <rect width="240" height="105" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1" />
+      <text x="15" y="28" fill="#4ADE80" font-size="12" font-weight="600">Resilience &amp; Security</text>
+      <text x="15" y="52" fill="#CBD5E1" font-size="12">• Axios JWT Bearer Interceptors</text>
+      <text x="15" y="72" fill="#CBD5E1" font-size="12">• Non-blocking Circuit Breaker</text>
+      <text x="15" y="92" fill="#CBD5E1" font-size="12">• &lt;1ms Instant Local Telemetry</text>
+    </g>
+  </g>
+
+  <!-- Flow Connector 1 (Client -> Backend) -->
+  <g transform="translate(600, 320)">
+    <line x1="0" y1="0" x2="0" y2="60" stroke="#60A5FA" stroke-width="2.5" stroke-dasharray="6,4" marker-end="url(#arrow)" />
+    <rect x="-190" y="16" width="380" height="26" rx="13" fill="#1E293B" stroke="#60A5FA" stroke-width="1" />
+    <text x="0" y="33" fill="#93C5FD" font-size="11" font-weight="600" text-anchor="middle">
+      HTTPS / JSON REST API Requests (Authorization: Bearer &lt;JWT&gt;)
+    </text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 2. BACKEND TIER                            -->
+  <!-- ========================================== -->
+  <g transform="translate(60, 390)">
+    <!-- Container -->
+    <rect width="1080" height="430" rx="8" fill="url(#backendGrad)" stroke="#334155" stroke-width="1.5" filter="url(#cardShadow)" />
+    
+    <!-- Tier Badge -->
+    <rect x="0" y="0" width="1080" height="38" rx="8" fill="#172235" />
+    <rect x="0" y="28" width="1080" height="10" fill="#172235" />
+    <line x1="0" y1="38" x2="1080" y2="38" stroke="#334155" stroke-width="1" />
+    
+    <rect x="18" y="9" width="105" height="20" rx="4" fill="#2563A6" />
+    <text x="70" y="23" fill="#FFFFFF" font-size="10" font-weight="700" text-anchor="middle" letter-spacing="1">BACKEND TIER</text>
+    <text x="138" y="24" fill="#F1F5F9" font-size="14" font-weight="600">Spring Boot 3.3.4 Microservice &amp; REST Architecture (Java 17)</text>
+    <text x="1055" y="24" fill="#94A3B8" font-size="11" font-weight="500" text-anchor="end">Containerized on Render PaaS</text>
+
+    <!-- Sub-box 1: Security Layer -->
+    <g transform="translate(25, 55)">
+      <rect width="320" height="350" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1" />
+      <rect x="0" y="0" width="320" height="32" rx="6" fill="#1E293B" />
+      <rect x="0" y="24" width="320" height="8" fill="#1E293B" />
+      <line x1="0" y1="32" x2="320" y2="32" stroke="#334155" stroke-width="1" />
+      <text x="15" y="21" fill="#F59E0B" font-size="12" font-weight="700" letter-spacing="0.5">1. SECURITY &amp; AUTH LAYER</text>
+
+      <text x="15" y="58" fill="#E2E8F0" font-size="12" font-weight="600">SecurityConfig.java</text>
+      <text x="25" y="76" fill="#94A3B8" font-size="11">• SessionCreationPolicy.STATELESS</text>
+      <text x="25" y="94" fill="#94A3B8" font-size="11">• CORS Allowed Origins &amp; CSRF Disabled</text>
+
+      <text x="15" y="125" fill="#E2E8F0" font-size="12" font-weight="600">JwtAuthenticationFilter.java</text>
+      <text x="25" y="143" fill="#94A3B8" font-size="11">• Bearer Token Header Extraction</text>
+      <text x="25" y="161" fill="#94A3B8" font-size="11">• Claims Validation &amp; UserContext Injection</text>
+
+      <text x="15" y="192" fill="#E2E8F0" font-size="12" font-weight="600">BCryptPasswordEncoder</text>
+      <text x="25" y="210" fill="#94A3B8" font-size="11">• Salted Hashes for User Credentials</text>
+
+      <text x="15" y="241" fill="#E2E8F0" font-size="12" font-weight="600">OpenApiConfig.java (Swagger UI)</text>
+      <text x="25" y="259" fill="#94A3B8" font-size="11">• BearerScheme Definition (RFC 6750)</text>
+      <text x="25" y="277" fill="#94A3B8" font-size="11">• /swagger-ui/index.html &amp; /v3/api-docs</text>
+
+      <rect x="15" y="300" width="290" height="34" rx="4" fill="#1F2937" stroke="#374151" />
+      <text x="160" y="321" fill="#4ADE80" font-size="10.5" font-weight="600" text-anchor="middle">ROLE_OPERATOR &amp; ROLE_ADMIN RBAC</text>
+    </g>
+
+    <!-- Sub-box 2: REST Controllers Layer -->
+    <g transform="translate(370, 55)">
+      <rect width="330" height="350" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1" />
+      <rect x="0" y="0" width="330" height="32" rx="6" fill="#1E293B" />
+      <rect x="0" y="24" width="330" height="8" fill="#1E293B" />
+      <line x1="0" y1="32" x2="330" y2="32" stroke="#334155" stroke-width="1" />
+      <text x="15" y="21" fill="#60A5FA" font-size="12" font-weight="700" letter-spacing="0.5">2. REST CONTROLLER ENDPOINTS</text>
+
+      <!-- Auth Endpoint -->
+      <rect x="15" y="46" width="300" height="38" rx="4" fill="#1E293B" stroke="#334155" stroke-width="1" />
+      <text x="25" y="64" fill="#E2E8F0" font-size="11.5" font-weight="600">AuthController (/api/auth)</text>
+      <text x="25" y="77" fill="#94A3B8" font-size="10">POST /login (Issue JWT) | POST /register</text>
+
+      <!-- Battery Endpoint (Protected) -->
+      <rect x="15" y="92" width="300" height="48" rx="4" fill="#1E293B" stroke="#334155" stroke-width="1" />
+      <text x="25" y="110" fill="#E2E8F0" font-size="11.5" font-weight="600">BatteryController (/api/batteries)</text>
+      <rect x="235" y="100" width="70" height="16" rx="3" fill="#3B1D1D" stroke="#7F1D1D" />
+      <text x="270" y="112" fill="#F87171" font-size="9" font-weight="700" text-anchor="middle">JWT LOCKED</text>
+      <text x="25" y="128" fill="#94A3B8" font-size="10">GET (Public) | POST/PUT/DELETE (Auth)</text>
+
+      <!-- Sensor Endpoint -->
+      <rect x="15" y="148" width="300" height="38" rx="4" fill="#1E293B" stroke="#334155" stroke-width="1" />
+      <text x="25" y="166" fill="#E2E8F0" font-size="11.5" font-weight="600">SensorController (/api/sensors)</text>
+      <text x="25" y="179" fill="#94A3B8" font-size="10">GET /cells/{id} (24-Cell Array) | GET /readings</text>
+
+      <!-- Thermal Endpoint (Protected) -->
+      <rect x="15" y="194" width="300" height="48" rx="4" fill="#1E293B" stroke="#334155" stroke-width="1" />
+      <text x="25" y="212" fill="#E2E8F0" font-size="11.5" font-weight="600">ThermalController (/api/thermal)</text>
+      <rect x="235" y="202" width="70" height="16" rx="3" fill="#3B1D1D" stroke="#7F1D1D" />
+      <text x="270" y="214" fill="#F87171" font-size="9" font-weight="700" text-anchor="middle">JWT LOCKED</text>
+      <text x="25" y="230" fill="#94A3B8" font-size="10">POST /evaluate (AI Engine) | GET /history</text>
+
+      <!-- Alert Endpoint (Protected) -->
+      <rect x="15" y="250" width="300" height="42" rx="4" fill="#1E293B" stroke="#334155" stroke-width="1" />
+      <text x="25" y="268" fill="#E2E8F0" font-size="11.5" font-weight="600">AlertController (/api/alerts)</text>
+      <text x="25" y="282" fill="#94A3B8" font-size="10">GET (List) | PUT /{id}/resolve (Auth Action)</text>
+
+      <!-- Exception Handler -->
+      <rect x="15" y="300" width="300" height="36" rx="4" fill="#1F2937" stroke="#374151" stroke-width="1" />
+      <text x="25" y="316" fill="#A78BFA" font-size="11" font-weight="600">GlobalExceptionHandler.java</text>
+      <text x="25" y="328" fill="#94A3B8" font-size="9.5">Catches 400 Validation, 401/403 Security, 404 Entity</text>
+    </g>
+
+    <!-- Sub-box 3: Intelligent Diagnostic Core -->
+    <g transform="translate(725, 55)">
+      <rect width="330" height="350" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1" />
+      <rect x="0" y="0" width="330" height="32" rx="6" fill="#1E293B" />
+      <rect x="0" y="24" width="330" height="8" fill="#1E293B" />
+      <line x1="0" y1="32" x2="330" y2="32" stroke="#334155" stroke-width="1" />
+      <text x="15" y="21" fill="#4ADE80" font-size="12" font-weight="700" letter-spacing="0.5">3. INTELLIGENT DIAGNOSTIC CORE</text>
+
+      <text x="15" y="54" fill="#E2E8F0" font-size="12" font-weight="600">ThermalIntelligenceService.java</text>
+      
+      <!-- Feature 1: Joulean Heat -->
+      <rect x="15" y="68" width="300" height="42" rx="4" fill="#1E293B" stroke="#334155" stroke-width="1" />
+      <text x="25" y="85" fill="#CBD5E1" font-size="11" font-weight="600">Joulean Heating Rate (P_joule)</text>
+      <text x="25" y="100" fill="#93C5FD" font-family="monospace" font-size="10.5">P = I² × R_int + |I| × V_pol (W)</text>
+
+      <!-- Feature 2: Gradient ΔT -->
+      <rect x="15" y="118" width="300" height="42" rx="4" fill="#1E293B" stroke="#334155" stroke-width="1" />
+      <text x="25" y="135" fill="#CBD5E1" font-size="11" font-weight="600">Inter-Cell Thermal Gradient (ΔT)</text>
+      <text x="25" y="150" fill="#FBBF24" font-family="monospace" font-size="10.5">ΔT = T_max - T_min &gt; 5.0°C Hotspot</text>
+
+      <!-- Feature 3: C-Rate Index -->
+      <rect x="15" y="168" width="300" height="42" rx="4" fill="#1E293B" stroke="#334155" stroke-width="1" />
+      <text x="25" y="185" fill="#CBD5E1" font-size="11" font-weight="600">Dynamic C-Rate Stress Index</text>
+      <text x="25" y="200" fill="#93C5FD" font-family="monospace" font-size="10.5">C = |I| / Ah_capacity</text>
+
+      <!-- Feature 4: Risk Scoring Engine -->
+      <rect x="15" y="218" width="300" height="52" rx="4" fill="#1E293B" stroke="#334155" stroke-width="1" />
+      <text x="25" y="235" fill="#CBD5E1" font-size="11" font-weight="600">0–100 Multi-Factor Risk Classifier</text>
+      <text x="25" y="250" fill="#4ADE80" font-size="9.5">NORMAL (&lt;30)</text>
+      <text x="100" y="250" fill="#FBBF24" font-size="9.5">MODERATE (30-55)</text>
+      <text x="200" y="250" fill="#F87171" font-size="9.5">CRITICAL (&gt;80)</text>
+      <text x="25" y="263" fill="#94A3B8" font-size="9.5">Factoring T_cell, ΔT, C-Rate &amp; Coolant ΔT</text>
+
+      <!-- Feature 5: Prescriptive Directives -->
+      <rect x="15" y="278" width="300" height="58" rx="4" fill="#1F2937" stroke="#374151" stroke-width="1" />
+      <text x="25" y="295" fill="#E2E8F0" font-size="11" font-weight="600">Prescriptive Cooling Actuation Directives</text>
+      <text x="25" y="310" fill="#94A3B8" font-size="10">• Coolant Flow Target: 2.0 to 12.0 L/min</text>
+      <text x="25" y="324" fill="#94A3B8" font-size="10">• Radiator Fan Duty &amp; Powertrain Derate %</text>
+    </g>
+  </g>
+
+  <!-- Flow Connector 2 (Backend -> DB) -->
+  <g transform="translate(600, 820)">
+    <line x1="0" y1="0" x2="0" y2="60" stroke="#4ADE80" stroke-width="2.5" marker-end="url(#arrowGreen)" />
+    <rect x="-170" y="16" width="340" height="26" rx="13" fill="#1E293B" stroke="#4ADE80" stroke-width="1" />
+    <text x="0" y="33" fill="#86EFAC" font-size="11" font-weight="600" text-anchor="middle">
+      Spring Data JPA / Hibernate ORM (HikariCP Pool)
+    </text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 3. DATABASE TIER                            -->
+  <!-- ========================================== -->
+  <g transform="translate(60, 890)">
+    <!-- Container -->
+    <rect width="1080" height="370" rx="8" fill="url(#dbGrad)" stroke="#334155" stroke-width="1.5" filter="url(#cardShadow)" />
+    
+    <!-- Tier Badge -->
+    <rect x="0" y="0" width="1080" height="38" rx="8" fill="#172235" />
+    <rect x="0" y="28" width="1080" height="10" fill="#172235" />
+    <line x1="0" y1="38" x2="1080" y2="38" stroke="#334155" stroke-width="1" />
+    
+    <rect x="18" y="9" width="115" height="20" rx="4" fill="#2563A6" />
+    <text x="75" y="23" fill="#FFFFFF" font-size="10" font-weight="700" text-anchor="middle" letter-spacing="1">DATABASE TIER</text>
+    <text x="148" y="24" fill="#F1F5F9" font-size="14" font-weight="600">PostgreSQL Relational Storage Engine</text>
+    <text x="1055" y="24" fill="#94A3B8" font-size="11" font-weight="500" text-anchor="end">Supabase Cloud / Render DB</text>
+
+    <!-- 6 Relational Tables in 3x2 Grid -->
+    <!-- Table 1: Users -->
+    <g transform="translate(25, 55)">
+      <rect width="320" height="135" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1" />
+      <rect x="0" y="0" width="320" height="26" rx="6" fill="#1E293B" />
+      <text x="12" y="18" fill="#93C5FD" font-family="monospace" font-size="11" font-weight="700">thermocore_users</text>
+      <text x="15" y="46" fill="#CBD5E1" font-size="11">• id (BIGSERIAL, PK)</text>
+      <text x="15" y="66" fill="#CBD5E1" font-size="11">• email (VARCHAR, UNIQUE)</text>
+      <text x="15" y="86" fill="#CBD5E1" font-size="11">• password (BCrypt Salted Hash)</text>
+      <text x="15" y="106" fill="#CBD5E1" font-size="11">• role (ROLE_OPERATOR / ADMIN)</text>
+      <text x="15" y="124" fill="#64748B" font-size="10">Index: UNIQUE (email)</text>
+    </g>
+
+    <!-- Table 2: Battery Packs -->
+    <g transform="translate(375, 55)">
+      <rect width="330" height="135" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1" />
+      <rect x="0" y="0" width="330" height="26" rx="6" fill="#1E293B" />
+      <text x="12" y="18" fill="#93C5FD" font-family="monospace" font-size="11" font-weight="700">thermocore_battery_packs</text>
+      <text x="15" y="46" fill="#CBD5E1" font-size="11">• id (BIGSERIAL, PK)</text>
+      <text x="15" y="66" fill="#CBD5E1" font-size="11">• pack_code (VARCHAR, e.g. BP-01)</text>
+      <text x="15" y="86" fill="#CBD5E1" font-size="11">• chemistry (NMC / LFP / Solid-State)</text>
+      <text x="15" y="106" fill="#CBD5E1" font-size="11">• capacity_kwh, nominal_voltage</text>
+      <text x="15" y="124" fill="#64748B" font-size="10">Relation: 1-to-Many Sensor Readings</text>
+    </g>
+
+    <!-- Table 3: Sensor Readings -->
+    <g transform="translate(735, 55)">
+      <rect width="320" height="135" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1" />
+      <rect x="0" y="0" width="320" height="26" rx="6" fill="#1E293B" />
+      <text x="12" y="18" fill="#93C5FD" font-family="monospace" font-size="11" font-weight="700">thermocore_sensor_readings</text>
+      <text x="15" y="46" fill="#CBD5E1" font-size="11">• id (BIGSERIAL, PK)</text>
+      <text x="15" y="66" fill="#CBD5E1" font-size="11">• battery_pack_id (FK), timestamp</text>
+      <text x="15" y="86" fill="#CBD5E1" font-size="11">• battery_temp, voltage, current</text>
+      <text x="15" y="106" fill="#CBD5E1" font-size="11">• coolant_inlet/outlet_temp, flow_rate</text>
+      <text x="15" y="124" fill="#64748B" font-size="10">B-Tree Index: (battery_pack_id, timestamp)</text>
+    </g>
+
+    <!-- Table 4: Cell Temperatures -->
+    <g transform="translate(25, 205)">
+      <rect width="320" height="145" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1" />
+      <rect x="0" y="0" width="320" height="26" rx="6" fill="#1E293B" />
+      <text x="12" y="18" fill="#93C5FD" font-family="monospace" font-size="11" font-weight="700">thermocore_cell_temperatures</text>
+      <text x="15" y="46" fill="#CBD5E1" font-size="11">• id (BIGSERIAL, PK)</text>
+      <text x="15" y="66" fill="#CBD5E1" font-size="11">• sensor_reading_id (FK, ON CASCADE)</text>
+      <text x="15" y="86" fill="#CBD5E1" font-size="11">• cell_index (1 to 24), cell_label</text>
+      <text x="15" y="106" fill="#CBD5E1" font-size="11">• temperature, delta_from_avg</text>
+      <text x="15" y="126" fill="#CBD5E1" font-size="11">• is_hotspot (BOOLEAN)</text>
+    </g>
+
+    <!-- Table 5: Thermal Alerts -->
+    <g transform="translate(375, 205)">
+      <rect width="330" height="145" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1" />
+      <rect x="0" y="0" width="330" height="26" rx="6" fill="#1E293B" />
+      <text x="12" y="18" fill="#93C5FD" font-family="monospace" font-size="11" font-weight="700">thermocore_thermal_alerts</text>
+      <text x="15" y="46" fill="#CBD5E1" font-size="11">• id (BIGSERIAL, PK)</text>
+      <text x="15" y="66" fill="#CBD5E1" font-size="11">• battery_pack_id (FK)</text>
+      <text x="15" y="86" fill="#CBD5E1" font-size="11">• alert_type, severity (CRITICAL..INFO)</text>
+      <text x="15" y="106" fill="#CBD5E1" font-size="11">• status (ACTIVE, ACKNOWLEDGED, RESOLVED)</text>
+      <text x="15" y="126" fill="#CBD5E1" font-size="11">• acknowledged_by, resolved_at</text>
+    </g>
+
+    <!-- Table 6: Thermal Evaluation History -->
+    <g transform="translate(735, 205)">
+      <rect width="320" height="145" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1" />
+      <rect x="0" y="0" width="320" height="26" rx="6" fill="#1E293B" />
+      <text x="12" y="18" fill="#93C5FD" font-family="monospace" font-size="11" font-weight="700">thermocore_thermal_evaluations</text>
+      <text x="15" y="46" fill="#CBD5E1" font-size="11">• id (BIGSERIAL, PK)</text>
+      <text x="15" y="66" fill="#CBD5E1" font-size="11">• battery_pack_id (FK)</text>
+      <text x="15" y="86" fill="#CBD5E1" font-size="11">• risk_score (0-100), risk_level</text>
+      <text x="15" y="106" fill="#CBD5E1" font-size="11">• calculated_heat_gen_w, temp_gradient</text>
+      <text x="15" y="126" fill="#CBD5E1" font-size="11">• recommended_coolant_flow_lpm</text>
+    </g>
+  </g>
+</svg>
