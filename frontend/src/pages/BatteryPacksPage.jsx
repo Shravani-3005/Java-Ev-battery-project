@@ -192,37 +192,40 @@ export default function BatteryPacksPage() {
 
       {/* Modal Dialog for Add / Edit */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white border border-[#E5E7EB] rounded-lg max-w-md w-full p-5 shadow-lg">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
-              <h3 className="text-base font-semibold text-[#202938]">
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded-lg max-w-md w-full p-5 shadow-lg">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB] dark:border-[#334155]">
+              <h3 className="text-base font-semibold text-[#202938] dark:text-[#CBD5E1]">
                 {isEditing ? 'Edit Battery Pack' : 'Add Battery Pack'}
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-[#9CA3AF] hover:text-[#202938]">
+              <button onClick={() => setIsModalOpen(false)} className="text-[#9CA3AF] hover:text-[#202938] dark:hover:text-[#CBD5E1]">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="mt-4 space-y-3 text-xs">
               <div>
-                <label className="block mb-1 font-medium text-[#202938]">Pack Code</label>
+                <label className="block mb-1 font-medium text-[#202938] dark:text-[#CBD5E1]">Pack Code</label>
                 <input
                   type="text"
                   required
                   value={formData.packCode}
                   onChange={(e) => setFormData({ ...formData, packCode: e.target.value })}
-                  className="w-full border border-[#E5E7EB] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
+                  className="w-full bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
                 />
               </div>
 
               <div>
-                <label className="block mb-1 font-medium text-[#202938]">Pack Name</label>
+                <label className="block mb-1 font-medium text-[#202938] dark:text-[#CBD5E1]">Pack Name</label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Cruiser Pack"
+                  placeholder="e.g. Lithium-Ion Pack 1"
                   value={formData.packName}
                   onChange={(e) => setFormData({ ...formData, packName: e.target.value })}
+                  className="w-full bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
+                />
+              </div>
                   className="w-full border border-[#E5E7EB] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
                 />
               </div>

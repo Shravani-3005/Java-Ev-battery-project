@@ -20,20 +20,32 @@ body {
 }
 
 html.dark body {
-  background-color: #0D131F;
+  background-color: #0F172A;
   color: #CBD5E1;
 }
 
-/* Dark mode overrides: replace harsh white with matte grey (#CBD5E1 & #94A3B8) */
+/* ========================================================
+   DARK THEME: NO WHITE BACKGROUNDS — REFINED MATTE GREY
+   ======================================================== */
+
+/* App background: soft deep charcoal grey */
+html.dark .bg-\[\#F7F8FA\] {
+  background-color: #0F172A !important;
+}
+
+/* Main content surfaces & cards: slate dark grey (NO pure white) */
 html.dark .bg-white {
-  background-color: #172235 !important;
+  background-color: #1E293B !important;
   color: #CBD5E1 !important;
 }
 
-html.dark .border-\[\#E5E7EB\] {
-  border-color: #223147 !important;
+/* Borders & dividers: neutral dark grey */
+html.dark .border-\[\#E5E7EB\],
+html.dark .divide-\[\#E5E7EB\] > :not([hidden]) ~ :not([hidden]) {
+  border-color: #334155 !important;
 }
 
+/* Typography in Dark Mode: soft matte grey (NO stark white) */
 html.dark .text-\[\#202938\],
 html.dark .text-\[\#172235\] {
   color: #CBD5E1 !important;
@@ -54,58 +66,72 @@ html.dark h4 {
   color: #CBD5E1 !important;
 }
 
+/* Elevated/inner containers: neutral dark grey */
 html.dark .bg-\[\#F9FAFB\],
 html.dark .bg-\[\#FAFAFB\],
 html.dark .bg-\[\#F3F4F6\] {
-  background-color: #1B293E !important;
+  background-color: #1E293B !important;
   color: #CBD5E1 !important;
 }
 
+html.dark .bg-\[\#E5E7EB\] {
+  background-color: #334155 !important;
+  color: #CBD5E1 !important;
+}
+
+/* Hover states in dark mode: dark grey (NO white hover) */
+html.dark .hover\:bg-\[\#F3F4F6\]:hover,
+html.dark .hover\:bg-\[\#E5E7EB\]:hover {
+  background-color: #334155 !important;
+}
+
+/* Tables in Dark Mode: neutral dark grey */
 html.dark .table-minimal th {
-  background-color: #1B293E !important;
+  background-color: #1E293B !important;
   color: #94A3B8 !important;
-  border-bottom-color: #223147 !important;
+  border-bottom-color: #334155 !important;
 }
 
 html.dark .table-minimal td {
   color: #CBD5E1 !important;
-  border-bottom-color: #223147 !important;
+  border-bottom-color: #334155 !important;
 }
 
 html.dark .table-minimal tr:hover td {
-  background-color: #1E2D44 !important;
+  background-color: #243044 !important;
 }
 
+/* Form Controls in Dark Mode: neutral dark grey */
 html.dark input,
 html.dark select {
-  background-color: #1B293E !important;
+  background-color: #1E293B !important;
   color: #CBD5E1 !important;
-  border-color: #223147 !important;
+  border-color: #334155 !important;
 }
 
-/* Status Badges in Dark Mode - NO white background pills */
+/* Status Badges in Dark Mode: GREY background instead of white pills */
 html.dark .bg-\[\#EBF7EE\] {
-  background-color: #13271D !important;
+  background-color: #1F2937 !important;
   color: #4ADE80 !important;
-  border: 1px solid #1C4431 !important;
+  border: 1px solid #374151 !important;
 }
 
 html.dark .bg-\[\#FEF5E7\] {
-  background-color: #271E10 !important;
+  background-color: #1F2937 !important;
   color: #FBBF24 !important;
-  border: 1px solid #483518 !important;
+  border: 1px solid #374151 !important;
 }
 
 html.dark .bg-\[\#FBEBEB\] {
-  background-color: #271313 !important;
+  background-color: #1F2937 !important;
   color: #F87171 !important;
-  border: 1px solid #481F1F !important;
+  border: 1px solid #374151 !important;
 }
 
 /* Tooltip & Recharts dark mode overrides */
 html.dark .recharts-default-tooltip {
-  background-color: #172235 !important;
-  border-color: #223147 !important;
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
   color: #CBD5E1 !important;
 }
 

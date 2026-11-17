@@ -73,7 +73,7 @@ function AppContent() {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] text-[#202938] flex font-sans">
+    <div className="min-h-screen bg-[#F7F8FA] dark:bg-[#0F172A] text-[#202938] dark:text-[#CBD5E1] flex font-sans">
       {/* 1. Simple Dark Navy Sidebar */}
       <Sidebar systemOnline={systemOnline} />
 

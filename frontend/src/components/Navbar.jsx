@@ -20,19 +20,19 @@ export default function Navbar({
   };
 
   return (
-    <header className="h-14 bg-white border-b border-[#E5E7EB] px-6 flex items-center justify-between sticky top-0 z-20 transition-colors">
+    <header className="h-14 bg-white dark:bg-[#1E293B] border-b border-[#E5E7EB] dark:border-[#334155] px-6 flex items-center justify-between sticky top-0 z-20 transition-colors">
       {/* Page Title */}
       <div className="flex items-center gap-4">
-        <h1 className="text-xl font-semibold text-[#202938] tracking-tight">
+        <h1 className="text-xl font-semibold text-[#202938] dark:text-[#CBD5E1] tracking-tight">
           {title}
         </h1>
         {packs && packs.length > 0 && onSelectPack && (
-          <div className="flex items-center gap-2 pl-4 border-l border-[#E5E7EB]">
-            <label className="text-xs font-medium text-[#6B7280]">Battery Pack</label>
+          <div className="flex items-center gap-2 pl-4 border-l border-[#E5E7EB] dark:border-[#334155]">
+            <label className="text-xs font-medium text-[#6B7280] dark:text-[#94A3B8]">Battery Pack</label>
             <select
               value={selectedPackId}
               onChange={(e) => onSelectPack(e.target.value)}
-              className="text-xs bg-white border border-[#E5E7EB] text-[#202938] rounded px-2.5 py-1 focus:outline-none focus:border-[#2563A6]"
+              className="text-xs bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-2.5 py-1 focus:outline-none focus:border-[#2563A6]"
             >
               {packs.map((p) => (
                 <option key={p.id} value={p.id}>
