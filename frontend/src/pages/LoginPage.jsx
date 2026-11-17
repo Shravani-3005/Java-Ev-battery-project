@@ -35,25 +35,27 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] flex flex-col justify-center items-center p-4">
-      <div className="max-w-sm w-full bg-white border border-[#E5E7EB] rounded-lg p-6 shadow-sm space-y-5">
-        {/* Simple Brand */}
-        <div className="border-b border-[#E5E7EB] pb-4">
-          <span className="text-lg font-semibold tracking-wider text-[#172235]">
+    <div className="fixed inset-0 bg-[#F7F8FA] dark:bg-[#0E131F] flex items-center justify-center p-4 overflow-y-auto">
+      <div className="max-w-sm w-full bg-white dark:bg-[#172235] border border-[#E5E7EB] dark:border-[#223147] rounded-lg p-6 shadow-sm space-y-5 my-auto">
+        {/* Simple Brand - Centered */}
+        <div className="border-b border-[#E5E7EB] dark:border-[#223147] pb-4 text-center">
+          <span className="text-xl font-semibold tracking-wider text-[#172235] dark:text-[#F1F5F9] block">
             THERMOCORE
           </span>
-          <p className="text-xs text-[#6B7280] mt-0.5">
+          <p className="text-xs text-[#6B7280] dark:text-[#94A3B8] mt-1">
             EV Battery Thermal Management System
           </p>
         </div>
 
-        {/* Tab Switcher */}
-        <div className="flex border-b border-[#E5E7EB] text-xs">
+        {/* Tab Switcher - Centered 50/50 */}
+        <div className="flex border-b border-[#E5E7EB] dark:border-[#223147] text-xs">
           <button
             type="button"
             onClick={() => { setIsLogin(true); setError(''); }}
-            className={`pb-2 px-1 mr-4 font-medium transition-colors border-b-2 ${
-              isLogin ? 'border-[#2563A6] text-[#2563A6]' : 'border-transparent text-[#6B7280] hover:text-[#202938]'
+            className={`w-1/2 pb-2.5 text-center font-medium transition-colors border-b-2 ${
+              isLogin
+                ? 'border-[#2563A6] text-[#2563A6] dark:text-[#60A5FA] dark:border-[#60A5FA]'
+                : 'border-transparent text-[#6B7280] dark:text-[#94A3B8] hover:text-[#202938] dark:hover:text-[#F1F5F9]'
             }`}
           >
             Sign In
@@ -61,8 +63,10 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => { setIsLogin(false); setError(''); }}
-            className={`pb-2 px-1 font-medium transition-colors border-b-2 ${
-              !isLogin ? 'border-[#2563A6] text-[#2563A6]' : 'border-transparent text-[#6B7280] hover:text-[#202938]'
+            className={`w-1/2 pb-2.5 text-center font-medium transition-colors border-b-2 ${
+              !isLogin
+                ? 'border-[#2563A6] text-[#2563A6] dark:text-[#60A5FA] dark:border-[#60A5FA]'
+                : 'border-transparent text-[#6B7280] dark:text-[#94A3B8] hover:text-[#202938] dark:hover:text-[#F1F5F9]'
             }`}
           >
             Register Account
@@ -71,7 +75,7 @@ export default function LoginPage() {
 
         {/* Error Alert */}
         {error && (
-          <div className="p-2.5 bg-[#FBEBEB] border border-[#F4C5C5] text-[#C34848] rounded text-xs">
+          <div className="p-2.5 bg-[#FBEBEB] dark:bg-[#321B1B] border border-[#F4C5C5] dark:border-[#5C2B2B] text-[#C34848] dark:text-[#F87171] rounded text-xs text-center">
             {error}
           </div>
         )}
@@ -79,7 +83,7 @@ export default function LoginPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
           <div>
-            <label className="block mb-1 font-medium text-[#202938]">
+            <label className="block mb-1 font-medium text-[#202938] dark:text-[#F1F5F9]">
               Email Address
             </label>
             <input
@@ -88,12 +92,12 @@ export default function LoginPage() {
               placeholder="e.g. operator@somaiya.edu"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-white border border-[#E5E7EB] rounded px-3 py-2 text-xs text-[#202938] focus:border-[#2563A6] focus:outline-none"
+              className="w-full bg-white dark:bg-[#1B293E] border border-[#E5E7EB] dark:border-[#223147] rounded px-3 py-2 text-xs text-[#202938] dark:text-[#F1F5F9] focus:border-[#2563A6] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block mb-1 font-medium text-[#202938]">
+            <label className="block mb-1 font-medium text-[#202938] dark:text-[#F1F5F9]">
               Password
             </label>
             <input
@@ -102,7 +106,7 @@ export default function LoginPage() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white border border-[#E5E7EB] rounded px-3 py-2 text-xs text-[#202938] focus:border-[#2563A6] focus:outline-none"
+              className="w-full bg-white dark:bg-[#1B293E] border border-[#E5E7EB] dark:border-[#223147] rounded px-3 py-2 text-xs text-[#202938] dark:text-[#F1F5F9] focus:border-[#2563A6] focus:outline-none"
             />
           </div>
 
@@ -114,8 +118,6 @@ export default function LoginPage() {
             {loading ? 'Authenticating...' : (isLogin ? 'Sign In' : 'Create Account')}
           </button>
         </form>
-
-
       </div>
     </div>
   );
