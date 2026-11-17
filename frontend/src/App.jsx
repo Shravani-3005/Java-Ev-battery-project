@@ -13,6 +13,7 @@ import ThermalSimulatorPage from './pages/ThermalSimulatorPage';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
 import { alertsApi, simulationApi, authApi, batteriesApi } from './api/client';
+import { ThemeProvider } from './context/ThemeContext';
 
 function AppContent() {
   const location = useLocation();
@@ -102,8 +103,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppContent />
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
