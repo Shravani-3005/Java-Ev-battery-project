@@ -12,44 +12,49 @@ import HistoricalRecordsPage from './pages/HistoricalRecordsPage';
 import ThermalSimulatorPage from './pages/ThermalSimulatorPage';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
-import { alertsApi, simulationApi, authApi } from './api/client';
-import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { alertsApi, simulationApi, authApi, batteriesApi } from './api/client';
 
 function AppContent() {
   const location = useLocation();
-  const { isDark } = useTheme();
   const [systemOnline, setSystemOnline] = useState(true);
   const [unreadAlerts, setUnreadAlerts] = useState(0);
+  const [packs, setPacks] = useState([]);
+  const [selectedPackId, setSelectedPackId] = useState('');
   const currentUser = authApi.getCurrentUser();
 
-  // Authentication Gate: if user is not logged in, force Login / Sign-up page first
+  // Authentication Gate: if user is not logged in, show clean Login / Sign-up page
   if (!currentUser) {
     return <LoginPage />;
   }
 
-  const routeMeta = {
-    '/': { title: 'Fleet Thermal Overview', breadcrumbs: ['Operations', 'Dashboard'] },
-    '/batteries': { title: 'Battery Pack Management', breadcrumbs: ['Assets', 'Battery Packs'] },
-    '/live': { title: 'Live Telemetry Stream', breadcrumbs: ['Telemetry', 'Live Monitoring'] },
-    '/analytics': { title: 'Thermal Analytics & Trends', breadcrumbs: ['Engineering', 'Analytics'] },
-    '/hotspots': { title: 'Hotspot & Gradient Diagnostics', breadcrumbs: ['Safety', 'Hotspots'] },
-    '/alerts': { title: 'Thermal Alerts & Cooling Directives', breadcrumbs: ['Safety', 'Alerts'] },
-    '/history': { title: 'Historical Records Database', breadcrumbs: ['Database', 'Records'] },
-    '/simulator': { title: 'Thermal Scenario Simulator', breadcrumbs: ['R&D', 'Simulator'] },
-    '/settings': { title: 'System Configuration', breadcrumbs: ['Admin', 'Settings'] },
+  const routeTitles = {
+    '/': 'Overview',
+    '/batteries': 'Battery Packs',
+    '/live': 'Live Monitoring',
+    '/analytics': 'Thermal Analytics',
+    '/hotspots': 'Hotspot Detection',
+    '/alerts': 'Alerts',
+    '/history': 'Historical Records',
+    '/simulator': 'Thermal Simulator',
+    '/settings': 'Settings',
   };
 
-  const currentMeta = routeMeta[location.pathname] || { title: 'THERMOCORE', breadcrumbs: ['System'] };
+  const currentTitle = routeTitles[location.pathname] || 'THERMOCORE';
 
   const checkHealth = async () => {
     try {
-      const [alerts, sim] = await Promise.all([
+      const [alerts, sim, packsData] = await Promise.all([
         alertsApi.getAll({ status: 'ACTIVE' }),
         simulationApi.getStatus(),
+        batteriesApi.getAll(),
       ]);
       setSystemOnline(true);
       const activeCount = Array.isArray(alerts) ? alerts.length : alerts?.content?.length || 0;
       setUnreadAlerts(activeCount);
+      if (packsData && packsData.length > 0) {
+        setPacks(packsData);
+        if (!selectedPackId) setSelectedPackId(String(packsData[0].id));
+      }
     } catch (e) {
       setSystemOnline(false);
     }
@@ -62,19 +67,20 @@ function AppContent() {
   }, [location.pathname]);
 
   return (
-    <div className={`min-h-screen flex transition-colors duration-150 ${isDark ? 'bg-[#0B0B0D] text-[#F5F5F5]' : 'bg-[#F8FAFC] text-[#0F172A]'}`}>
-      {/* Persistent Left Sidebar */}
-      <Sidebar systemOnline={systemOnline} activeSimulation={systemOnline} />
+    <div className="min-h-screen bg-[#F7F8FA] text-[#202938] flex font-sans">
+      {/* 1. Simple Dark Navy Sidebar */}
+      <Sidebar systemOnline={systemOnline} />
 
-      {/* Main Container */}
-      <div className="flex-1 ml-64 flex flex-col min-w-0">
+      {/* 2. Main Work Content Area */}
+      <div className="flex-1 ml-56 flex flex-col min-w-0">
         <Navbar
-          title={currentMeta.title}
-          breadcrumbs={currentMeta.breadcrumbs}
+          title={currentTitle}
+          packs={packs}
+          selectedPackId={selectedPackId}
+          onSelectPack={setSelectedPackId}
           unreadAlerts={unreadAlerts}
         />
 
-        {/* Page Content View */}
         <main className="flex-1 p-6 overflow-y-auto">
           <Routes>
             <Route path="/" element={<DashboardPage />} />
@@ -96,10 +102,8 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <BrowserRouter>
-        <AppContent />
-      </BrowserRouter>
-    </ThemeProvider>
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   );
 }

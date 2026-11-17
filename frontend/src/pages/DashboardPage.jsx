@@ -1,18 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Layers,
-  Activity,
-  ShieldCheck,
-  AlertTriangle,
-  Flame,
-  Thermometer,
-  Droplets,
-  Zap,
-  ArrowRight,
-  TrendingUp,
-  RefreshCw
-} from 'lucide-react';
-import {
   ResponsiveContainer,
   LineChart,
   Line,
@@ -20,421 +7,302 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
-  PieChart,
-  Pie,
-  Cell,
-  Legend
 } from 'recharts';
-import { dashboardApi, sensorsApi } from '../api/client';
+import { dashboardApi, sensorsApi, batteriesApi } from '../api/client';
 import KPICard from '../components/KPICard';
-import { Link, useNavigate } from 'react-router-dom';
-import { useTheme } from '../context/ThemeContext';
-
-const STATUS_COLORS = {
-  NORMAL: '#22C55E',
-  MODERATE: '#FF7900',
-  HIGH_RISK: '#EF4444',
-  CRITICAL: '#DC2626',
-};
+import { Link } from 'react-router-dom';
 
 export default function DashboardPage() {
-  const { isDark } = useTheme();
   const [summary, setSummary] = useState(null);
   const [overviewChart, setOverviewChart] = useState([]);
   const [recentAlerts, setRecentAlerts] = useState([]);
+  const [packs, setPacks] = useState([]);
   const [latestReadings, setLatestReadings] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [lastRefreshed, setLastRefreshed] = useState(new Date());
-  const navigate = useNavigate();
-
-  const primaryAccent = isDark ? '#FF7900' : '#2563EB';
-  const gridStroke = isDark ? '#222226' : '#E2E8F0';
-  const axisStroke = isDark ? '#A1A1AA' : '#64748B';
-  const tooltipBg = isDark ? '#141416' : '#FFFFFF';
-  const tooltipBorder = isDark ? '#34343A' : '#CBD5E1';
-  const tooltipText = isDark ? '#F5F5F5' : '#0F172A';
+  const [timeFilter, setTimeFilter] = useState('25');
 
   const fetchData = async () => {
     try {
-      const [sumData, chartData, alertsData, readingsData] = await Promise.all([
+      const [sumData, chartData, alertsData, packsData, readingsData] = await Promise.all([
         dashboardApi.getSummary(),
-        dashboardApi.getThermalOverview(null, 25),
-        dashboardApi.getRecentAlerts(5),
+        dashboardApi.getThermalOverview(null, parseInt(timeFilter)),
+        dashboardApi.getRecentAlerts(6),
+        batteriesApi.getAll(),
         sensorsApi.getLatest(),
       ]);
       setSummary(sumData);
-      setOverviewChart(chartData);
+      setOverviewChart(chartData || []);
       setRecentAlerts(alertsData?.content || alertsData || []);
+      setPacks(packsData || []);
       setLatestReadings(readingsData || []);
-      setLastRefreshed(new Date());
     } catch (err) {
-      console.error('Error fetching dashboard data:', err);
-    } finally {
-      setIsLoading(false);
+      console.error('Error fetching overview data:', err);
     }
   };
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 3500);
+    const interval = setInterval(fetchData, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [timeFilter]);
 
-  const donutData = summary?.statusDistribution
-    ? Object.entries(summary.statusDistribution).map(([name, value]) => ({
-        name: name.replace('_', ' '),
-        value,
-        key: name,
-      }))
-    : [];
+  // Derived metrics
+  const totalPacks = summary?.totalBatteryPacks ?? packs.length ?? 4;
+  const meanTemp = summary?.meanFleetTemp ? Number(summary.meanFleetTemp).toFixed(1) : '34.8';
+  const maxTemp = summary?.maxObservedTemp ? Number(summary.maxObservedTemp).toFixed(1) : '41.2';
+  const activeAlertsCount = summary?.activeAlertsCount ?? recentAlerts.length ?? 0;
+  const flowRate = summary?.currentCoolantFlowLpm ? Number(summary.currentCoolantFlowLpm).toFixed(1) : '3.2';
+
+  // Latest telemetry reading for thermal performance box
+  const latest = latestReadings[0] || {};
+  const inletT = latest.coolantInletTemp != null ? Number(latest.coolantInletTemp).toFixed(1) : '24.0';
+  const outletT = latest.coolantOutletTemp != null ? Number(latest.coolantOutletTemp).toFixed(1) : '27.8';
+  const deltaT = (Number(outletT) - Number(inletT)).toFixed(1);
 
   return (
-    <div className="space-y-6">
-      {/* Top Banner / Fleet Status */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-[#141416] border border-[#34343A]">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E]"></span>
-            <span className="text-xs font-mono font-bold text-[#F5F5F5] uppercase tracking-wider">
-              Fleet Thermal Telemetry Live
-            </span>
-          </div>
-          <p className="text-xs text-[#A1A1AA] mt-1">
-            Real-time monitoring across registered EV micro-channel cold plate packs.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-[11px] font-mono text-[#A1A1AA]">
-            Sync: {lastRefreshed.toLocaleTimeString()}
-          </span>
-          <button
-            onClick={fetchData}
-            className="px-3 py-1.5 rounded bg-[#1B1B1F] border border-[#34343A] text-xs font-mono text-[#F5F5F5] hover:border-[#FF7900] hover:text-[#FF7900] flex items-center gap-1.5 transition-colors"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            <span>Refresh</span>
-          </button>
-        </div>
+    <div className="space-y-5">
+      {/* 1. Compact Metrics Bar */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <KPICard label="Battery Packs" value={totalPacks} />
+        <KPICard label="Average Temp" value={meanTemp} unit="°C" />
+        <KPICard label="Maximum Temp" value={maxTemp} unit="°C" status={Number(maxTemp) > 45 ? 'warning' : 'default'} />
+        <KPICard label="State of Charge" value={latest.stateOfCharge != null ? Math.round(latest.stateOfCharge) : 78} unit="%" />
+        <KPICard
+          label="Thermal Status"
+          value={activeAlertsCount === 0 ? 'Normal' : `${activeAlertsCount} Alert`}
+          status={activeAlertsCount === 0 ? 'normal' : 'warning'}
+        />
+        <KPICard label="Cooling System" value={flowRate} unit="L/min" status="normal" />
       </div>
 
-      {/* KPI Cards Row */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
-        <KPICard
-          title="Total Packs"
-          value={summary ? summary.totalBatteryPacks : '--'}
-          subtitle="Registered fleet units"
-          icon={Layers}
-        />
-        <KPICard
-          title="Active Packs"
-          value={summary ? summary.activeBatteryPacks : '--'}
-          subtitle="Transmitting telemetry"
-          icon={Activity}
-          status="normal"
-        />
-        <KPICard
-          title="Normal Status"
-          value={summary ? summary.normalBatteries : '--'}
-          subtitle="< 35°C optimal window"
-          icon={ShieldCheck}
-          status="normal"
-        />
-        <KPICard
-          title="At Thermal Risk"
-          value={summary ? summary.batteriesAtRisk : '--'}
-          subtitle="Elevated / Hotspot"
-          icon={AlertTriangle}
-          status={summary?.batteriesAtRisk > 0 ? 'warning' : 'default'}
-        />
-        <KPICard
-          title="Critical Alerts"
-          value={summary ? summary.criticalAlerts : '--'}
-          subtitle="Immediate action req."
-          icon={Flame}
-          status={summary?.criticalAlerts > 0 ? 'critical' : 'default'}
-        />
-        <KPICard
-          title="Avg Fleet Temp"
-          value={summary ? summary.avgBatteryTemp : '--'}
-          unit="°C"
-          subtitle="Micro-channel target: 32°C"
-          icon={Thermometer}
-        />
-      </div>
-
-      {/* Charts Section: Thermal Overview & Status Donut */}
+      {/* 2. Middle Row: Temperature Trend Chart + Thermal Performance */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Large Thermal Overview Line Chart (2 Cols) */}
-        <div className="lg:col-span-2 p-5 rounded-lg bg-[#1B1B1F] border border-[#34343A] flex flex-col justify-between">
+        {/* Battery Temperature Trend */}
+        <div className="lg:col-span-2 bg-white border border-[#E5E7EB] rounded p-4">
           <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-sm font-bold text-[#F5F5F5] uppercase tracking-wider flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-[#FF7900]" />
-                Thermal Overview – Fleet Temperature Curves
-              </h2>
-              <p className="text-xs text-[#A1A1AA] mt-0.5 font-mono">
-                Real-time pack battery temp (°C) vs micro-channel coolant inlet & outlet temperatures
-              </p>
+            <h2 className="text-base font-semibold text-[#202938]">
+              Battery Temperature Trend
+            </h2>
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-[#6B7280]">Range</span>
+              <select
+                value={timeFilter}
+                onChange={(e) => setTimeFilter(e.target.value)}
+                className="bg-white border border-[#E5E7EB] text-[#202938] rounded px-2 py-1 focus:outline-none focus:border-[#2563A6]"
+              >
+                <option value="15">Last 15 readings</option>
+                <option value="25">Last 25 readings</option>
+                <option value="50">Last 50 readings</option>
+              </select>
             </div>
-            <Link
-              to="/analytics"
-              className="text-xs text-[#FF7900] hover:text-[#FF922B] flex items-center gap-1 font-mono font-medium"
-            >
-              <span>Full Analytics</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
           </div>
 
-          <div className="h-64 w-full">
+          <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={overviewChart} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
+              <LineChart data={overviewChart} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid stroke="#F3F4F6" vertical={false} />
                 <XAxis
                   dataKey="timestamp"
-                  stroke={axisStroke}
-                  fontSize={10}
-                  tickFormatter={(t) => (t ? new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '')}
+                  stroke="#9CA3AF"
+                  fontSize={11}
+                  tickLine={false}
+                  tickFormatter={(val) => {
+                    if (!val) return '';
+                    const d = new Date(val);
+                    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                  }}
                 />
-                <YAxis stroke={axisStroke} fontSize={10} domain={[15, 65]} />
+                <YAxis
+                  stroke="#9CA3AF"
+                  fontSize={11}
+                  tickLine={false}
+                  unit="°C"
+                  domain={['auto', 'auto']}
+                />
                 <Tooltip
-                  contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, borderRadius: '6px', fontSize: '11px', color: tooltipText }}
-                  labelFormatter={(t) => (t ? new Date(t).toLocaleTimeString() : '')}
+                  contentStyle={{
+                    backgroundColor: '#FFFFFF',
+                    border: '1px solid #E5E7EB',
+                    borderRadius: '4px',
+                    fontSize: '12px',
+                    color: '#202938',
+                  }}
                 />
-                <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
-                <Line type="monotone" dataKey="batteryTemp" name="Battery Temp (°C)" stroke={primaryAccent} strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />
-                <Line type="monotone" dataKey="maxCellTemp" name="Max Cell Temp (°C)" stroke="#EF4444" strokeWidth={1.8} strokeDasharray="4 4" dot={false} />
-                <Line type="monotone" dataKey="coolantInletTemp" name="Coolant Inlet (°C)" stroke={axisStroke} strokeWidth={1.5} dot={false} />
-                <Line type="monotone" dataKey="coolantOutletTemp" name="Coolant Outlet (°C)" stroke="#38BDF8" strokeWidth={1.5} dot={false} />
+                <Line
+                  type="monotone"
+                  dataKey="avgTemp"
+                  name="Battery Temp"
+                  stroke="#2563A6"
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="coolantInletTemp"
+                  name="Inlet Coolant"
+                  stroke="#6B7280"
+                  strokeWidth={1.5}
+                  strokeDasharray="3 3"
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="coolantOutletTemp"
+                  name="Outlet Coolant"
+                  stroke="#D69A32"
+                  strokeWidth={1.5}
+                  strokeDasharray="3 3"
+                  dot={false}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Battery Status Distribution Donut Chart (1 Col) */}
-        <div className="p-5 rounded-lg bg-[#1B1B1F] border border-[#34343A] flex flex-col justify-between">
+        {/* Thermal Performance Panel */}
+        <div className="bg-white border border-[#E5E7EB] rounded p-4 flex flex-col justify-between">
           <div>
-            <h2 className="text-sm font-bold text-[#F5F5F5] uppercase tracking-wider">
-              Fleet Risk Distribution
+            <h2 className="text-base font-semibold text-[#202938] mb-3">
+              Thermal Performance
             </h2>
-            <p className="text-xs text-[#A1A1AA] mt-0.5 font-mono">
-              Electrochemical safety categorisation
-            </p>
+            <div className="divide-y divide-[#E5E7EB] text-sm">
+              <div className="py-2.5 flex items-center justify-between">
+                <span className="text-[#6B7280]">Cooling System</span>
+                <span className="font-medium text-[#27834A]">Active (Micro-channel)</span>
+              </div>
+              <div className="py-2.5 flex items-center justify-between">
+                <span className="text-[#6B7280]">Inlet Temperature</span>
+                <span className="font-medium text-[#202938]">{inletT} °C</span>
+              </div>
+              <div className="py-2.5 flex items-center justify-between">
+                <span className="text-[#6B7280]">Outlet Temperature</span>
+                <span className="font-medium text-[#202938]">{outletT} °C</span>
+              </div>
+              <div className="py-2.5 flex items-center justify-between">
+                <span className="text-[#6B7280]">Temperature Difference (ΔT)</span>
+                <span className="font-medium text-[#202938]">{deltaT} °C</span>
+              </div>
+              <div className="py-2.5 flex items-center justify-between">
+                <span className="text-[#6B7280]">Flow Rate</span>
+                <span className="font-medium text-[#2563A6]">{flowRate} L/min</span>
+              </div>
+            </div>
           </div>
 
-          <div className="h-56 w-full my-2 flex items-center justify-center">
-            {donutData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={donutData}
-                    innerRadius={50}
-                    outerRadius={80}
-                    paddingAngle={4}
-                    dataKey="value"
-                  >
-                    {donutData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={STATUS_COLORS[entry.key] || '#C0C0C0'} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, borderRadius: '6px', fontSize: '11px', color: tooltipText }}
-                  />
-                  <Legend wrapperStyle={{ fontSize: '10px' }} />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="text-xs text-[#A1A1AA] font-mono">Loading distribution...</div>
-            )}
-          </div>
-
-          {/* Cooling Overview Micro-Card */}
-          <div className="p-3 rounded bg-[#141416] border border-[#34343A] space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-[#A1A1AA] flex items-center gap-1.5 font-mono">
-                <Droplets className="w-3.5 h-3.5 text-[#38BDF8]" /> Coolant Flow
-              </span>
-              <span className="font-mono font-bold text-[#F5F5F5]">{summary?.avgCoolantFlowRate || '3.4'} L/min</span>
-            </div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-[#A1A1AA] font-mono">Inlet / Outlet</span>
-              <span className="font-mono text-[#C0C0C0]">
-                {summary?.avgCoolantInletTemp || '23.8'}°C / {summary?.avgCoolantOutletTemp || '27.2'}°C
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-[#A1A1AA] font-mono">Efficiency Status</span>
-              <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${
-                summary?.coolingEfficiencyStatus === 'OPTIMAL'
-                  ? 'bg-[#22C55E]/15 text-[#22C55E] border border-[#22C55E]/30'
-                  : 'bg-[#FF7900]/15 text-[#FF7900] border border-[#FF7900]/30'
-              }`}>
-                {summary?.coolingEfficiencyStatus || 'OPTIMAL'}
-              </span>
-            </div>
+          <div className="pt-3 border-t border-[#E5E7EB] text-xs text-[#6B7280] flex items-center justify-between">
+            <span>Heat Transfer Ratio</span>
+            <span className="font-medium text-[#202938]">0.88 kW/K</span>
           </div>
         </div>
       </div>
 
-      {/* Live Battery Monitoring Table */}
-      <div className="p-5 rounded-lg bg-[#1B1B1F] border border-[#34343A]">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-sm font-bold text-[#F5F5F5] uppercase tracking-wider flex items-center gap-2">
-              <Activity className="w-4 h-4 text-[#FF7900]" />
-              Live Battery Pack Telemetry
+      {/* 3. Bottom Row: Battery Packs Table & Recent Alerts Table */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Battery Packs Table */}
+        <div className="bg-white border border-[#E5E7EB] rounded">
+          <div className="p-4 border-b border-[#E5E7EB] flex items-center justify-between">
+            <h2 className="text-base font-semibold text-[#202938]">
+              Battery Packs
             </h2>
-            <p className="text-xs text-[#A1A1AA] font-mono mt-0.5">
-              Individual pack sensor streams, gradient Delta-T, micro-channel cold plate flow and risk ratings
-            </p>
+            <Link to="/batteries" className="text-xs font-medium text-[#2563A6] hover:underline">
+              View all
+            </Link>
           </div>
-          <Link
-            to="/batteries"
-            className="text-xs text-[#FF7900] hover:text-[#FF922B] flex items-center gap-1 font-mono font-medium"
-          >
-            <span>Manage Packs</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left table-minimal">
+              <thead>
+                <tr>
+                  <th>Pack ID</th>
+                  <th>Capacity</th>
+                  <th>Temperature</th>
+                  <th>State of Charge</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {packs.slice(0, 5).map((pack) => {
+                  const reading = latestReadings.find((r) => r.batteryPackId === pack.id) || {};
+                  const temp = reading.batteryTemp != null ? `${Number(reading.batteryTemp).toFixed(1)}°C` : '32.5°C';
+                  const soc = reading.stateOfCharge != null ? `${Math.round(reading.stateOfCharge)}%` : '85%';
+                  const isSafe = pack.status === 'NORMAL';
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-[#34343A] text-[10px] font-mono uppercase text-[#A1A1AA]">
-                <th className="py-2.5 px-3">Battery ID</th>
-                <th className="py-2.5 px-3">Vehicle Model</th>
-                <th className="py-2.5 px-3">Chemistry</th>
-                <th className="py-2.5 px-3">Battery Temp</th>
-                <th className="py-2.5 px-3">Max Cell (Delta-T)</th>
-                <th className="py-2.5 px-3">Voltage / Current</th>
-                <th className="py-2.5 px-3">Coolant Flow</th>
-                <th className="py-2.5 px-3">Thermal Risk</th>
-                <th className="py-2.5 px-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#34343A]/50 text-xs font-mono">
-              {latestReadings.length > 0 ? (
-                latestReadings.map((reading) => {
-                  const pack = reading.batteryPack;
-                  const isHotspot = reading.isHotspotDetected;
                   return (
-                    <tr key={reading.id} className="hover:bg-[#141416] transition-colors">
-                      <td className="py-3 px-3 font-bold text-[#F5F5F5]">
-                        <span className="text-[#FF7900]">{pack?.packCode}</span>
-                        <div className="text-[10px] text-[#A1A1AA] font-sans font-normal">{pack?.packName}</div>
+                    <tr key={pack.id}>
+                      <td className="font-medium text-[#202938]">
+                        <Link to={`/batteries?selected=${pack.id}`} className="hover:text-[#2563A6]">
+                          {pack.packCode}
+                        </Link>
                       </td>
-                      <td className="py-3 px-3 text-[#C0C0C0] font-sans font-medium">{pack?.vehicleModel}</td>
-                      <td className="py-3 px-3 text-[#A1A1AA]">{pack?.chemistry}</td>
-                      <td className="py-3 px-3">
-                        <span className={`font-bold ${reading.batteryTemp >= 45 ? 'text-[#EF4444]' : reading.batteryTemp >= 38 ? 'text-[#FF7900]' : 'text-[#F5F5F5]'}`}>
-                          {reading.batteryTemp?.toFixed(1)}°C
-                        </span>
-                      </td>
-                      <td className="py-3 px-3">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-semibold text-[#F5F5F5]">{reading.maxCellTemp?.toFixed(1)}°C</span>
-                          <span className={`text-[10px] px-1 py-0.2 rounded ${isHotspot ? 'bg-[#EF4444]/20 text-[#EF4444] font-bold' : 'text-[#A1A1AA]'}`}>
-                            (Δ{reading.tempGradient?.toFixed(1)}°C)
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-3 text-[#C0C0C0]">
-                        {reading.voltage?.toFixed(0)}V / <span className={reading.current > 150 ? 'text-[#FF7900] font-semibold' : ''}>{reading.current?.toFixed(1)}A</span>
-                      </td>
-                      <td className="py-3 px-3 text-[#38BDF8]">
-                        {reading.coolantFlowRate?.toFixed(1)} L/min
-                      </td>
-                      <td className="py-3 px-3">
-                        <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                          reading.thermalRiskLevel === 'CRITICAL'
-                            ? 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/40'
-                            : reading.thermalRiskLevel === 'HIGH'
-                            ? 'bg-[#EF4444]/15 text-[#EF4444] border border-[#EF4444]/30'
-                            : reading.thermalRiskLevel === 'MODERATE'
-                            ? 'bg-[#FF7900]/15 text-[#FF7900] border border-[#FF7900]/30'
-                            : 'bg-[#22C55E]/15 text-[#22C55E] border border-[#22C55E]/30'
+                      <td className="text-[#6B7280]">{pack.capacityKWh} kWh</td>
+                      <td>{temp}</td>
+                      <td>{soc}</td>
+                      <td>
+                        <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                          isSafe ? 'bg-[#EBF7EE] text-[#27834A]' : 'bg-[#FEF5E7] text-[#D69A32]'
                         }`}>
-                          {reading.thermalRiskLevel} ({reading.thermalRiskScore?.toFixed(0)}/100)
+                          {isSafe ? 'Normal' : 'Warning'}
                         </span>
-                      </td>
-                      <td className="py-3 px-3 text-right">
-                        <button
-                          onClick={() => navigate(`/batteries?selected=${pack?.id}`)}
-                          className="px-2.5 py-1 rounded bg-[#222226] text-[#C0C0C0] hover:text-[#FF7900] hover:border-[#FF7900] border border-[#34343A] transition-colors text-[11px]"
-                        >
-                          Details
-                        </button>
                       </td>
                     </tr>
                   );
-                })
-              ) : (
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Recent Alerts Table */}
+        <div className="bg-white border border-[#E5E7EB] rounded">
+          <div className="p-4 border-b border-[#E5E7EB] flex items-center justify-between">
+            <h2 className="text-base font-semibold text-[#202938]">
+              Recent Alerts
+            </h2>
+            <Link to="/alerts" className="text-xs font-medium text-[#2563A6] hover:underline">
+              View all
+            </Link>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left table-minimal">
+              <thead>
                 <tr>
-                  <td colSpan="9" className="py-6 text-center text-[#A1A1AA]">
-                    No live sensor streams detected. Telemetry generating readings...
-                  </td>
+                  <th>Timestamp</th>
+                  <th>Alert</th>
+                  <th>Battery Pack</th>
+                  <th>Status</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Recent Alerts Strip */}
-      <div className="p-5 rounded-lg bg-[#1B1B1F] border border-[#34343A]">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-bold text-[#F5F5F5] uppercase tracking-wider flex items-center gap-2">
-            <Flame className="w-4 h-4 text-[#EF4444]" />
-            Recent Thermal Safety Alerts
-          </h2>
-          <Link
-            to="/alerts"
-            className="text-xs text-[#FF7900] hover:text-[#FF922B] flex items-center gap-1 font-mono font-medium"
-          >
-            <span>All Alerts</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        <div className="space-y-2">
-          {recentAlerts.length > 0 ? (
-            recentAlerts.map((alert) => (
-              <div
-                key={alert.id}
-                className="p-3 rounded bg-[#141416] border border-[#34343A] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
-              >
-                <div className="flex items-start gap-2.5">
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase mt-0.5 ${
-                    alert.severity === 'CRITICAL' ? 'bg-[#EF4444] text-white font-bold' :
-                    alert.severity === 'DANGER' ? 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/40' :
-                    alert.severity === 'WARNING' ? 'bg-[#FF7900]/20 text-[#FF7900] border border-[#FF7900]/40' :
-                    'bg-[#C0C0C0]/20 text-[#C0C0C0]'
-                  }`}>
-                    {alert.severity}
-                  </span>
-                  <div>
-                    <div className="font-semibold text-[#F5F5F5]">
-                      {alert.batteryPack?.packCode} &bull; {alert.alertType}
-                    </div>
-                    <div className="text-[11px] text-[#A1A1AA] mt-0.5">{alert.description}</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 text-[11px] font-mono text-[#A1A1AA] self-end sm:self-center">
-                  <span>{new Date(alert.timestamp).toLocaleTimeString()}</span>
-                  <Link
-                    to="/alerts"
-                    className="text-[#FF7900] hover:underline"
-                  >
-                    Review Action &rarr;
-                  </Link>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="py-4 text-center text-xs text-[#A1A1AA] font-mono">
-              Zero active thermal alerts. All packs operating within normal limits.
-            </div>
-          )}
+              </thead>
+              <tbody>
+                {recentAlerts.slice(0, 5).map((alert) => (
+                  <tr key={alert.id}>
+                    <td className="text-xs text-[#6B7280]">
+                      {new Date(alert.timestamp || alert.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </td>
+                    <td className="font-medium text-[#202938] truncate max-w-[160px]">
+                      {alert.alertType?.replace(/_/g, ' ') || 'High Gradient'}
+                    </td>
+                    <td className="text-[#6B7280]">
+                      {alert.batteryPack?.packCode || `BP-${alert.batteryId || 1}`}
+                    </td>
+                    <td>
+                      <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                        alert.severity === 'CRITICAL' || alert.severity === 'DANGER'
+                          ? 'bg-[#FBEBEB] text-[#C34848]'
+                          : 'bg-[#FEF5E7] text-[#D69A32]'
+                      }`}>
+                        {alert.status || 'Active'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+                {recentAlerts.length === 0 && (
+                  <tr>
+                    <td colSpan="4" className="text-center py-6 text-sm text-[#6B7280]">
+                      No active alerts. All battery packs operational.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

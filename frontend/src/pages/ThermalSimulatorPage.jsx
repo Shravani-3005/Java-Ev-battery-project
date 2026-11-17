@@ -1,18 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Sliders,
-  Zap,
-  Flame,
-  AlertTriangle,
-  ShieldCheck,
-  RotateCcw,
-  Send,
-  CheckCircle2,
-  HelpCircle,
-  TrendingDown,
-  Droplets
-} from 'lucide-react';
 import { batteriesApi, thermalApi, sensorsApi } from '../api/client';
+import KPICard from '../components/KPICard';
 
 export default function ThermalSimulatorPage() {
   const [packs, setPacks] = useState([]);
@@ -29,15 +17,14 @@ export default function ThermalSimulatorPage() {
     coolantFlowRate: 3.5,
     stateOfCharge: 75.0,
     stateOfHealth: 98.0,
-    testScenario: 'What-If Simulation Run',
+    testScenario: 'Simulation',
   });
 
   const [analysisResult, setAnalysisResult] = useState(null);
   const [isSimulating, setIsSimulating] = useState(false);
-  const [commitSuccess, setCommitSuccess] = useState(false);
   const [persistedHistory, setPersistedHistory] = useState([]);
   const [isEvaluatingAndSaving, setIsEvaluatingAndSaving] = useState(false);
-  const [evaluationFeedback, setEvaluationFeedback] = useState(null);
+  const [feedback, setFeedback] = useState(null);
 
   const loadEvaluations = async (packId) => {
     try {
@@ -50,9 +37,9 @@ export default function ThermalSimulatorPage() {
 
   useEffect(() => {
     batteriesApi.getAll().then((data) => {
-      setPacks(data);
-      if (data.length > 0) {
-        setSelectedPackId(data[0].id);
+      setPacks(data || []);
+      if (data && data.length > 0) {
+        setSelectedPackId(String(data[0].id));
         loadEvaluations(data[0].id);
       }
     });
@@ -62,11 +49,10 @@ export default function ThermalSimulatorPage() {
     if (!selectedPackId) return;
     setIsSimulating(true);
     try {
-      const payload = {
+      const result = await thermalApi.analyze({
         ...customForm,
         batteryPackId: Number(selectedPackId),
-      };
-      const result = await thermalApi.analyze(payload);
+      });
       setAnalysisResult(result);
     } catch (e) {
       console.error(e);
@@ -105,7 +91,7 @@ export default function ThermalSimulatorPage() {
         coolantFlowRate: 2.0,
         coolantInletTemp: 22.0,
         coolantOutletTemp: 24.5,
-        testScenario: 'Simulation: Eco City Cruise',
+        testScenario: 'Eco Cruise (30°C)',
       };
     } else if (key === 'sprint') {
       preset = {
@@ -117,19 +103,19 @@ export default function ThermalSimulatorPage() {
         coolantFlowRate: 5.5,
         coolantInletTemp: 24.0,
         coolantOutletTemp: 30.0,
-        testScenario: 'Simulation: Track Sprint High-Load',
+        testScenario: 'Sprint (220A)',
       };
     } else if (key === 'fastcharge') {
       preset = {
         batteryTemp: 46.5,
         minCellTemp: 41.0,
         maxCellTemp: 51.5,
-        current: -240.0, // Charging
+        current: -240.0,
         voltage: 415.0,
         coolantFlowRate: 7.0,
         coolantInletTemp: 26.0,
         coolantOutletTemp: 34.0,
-        testScenario: 'Simulation: Summer 350kW Fast-Charge',
+        testScenario: 'DC Fast-Charge (350kW)',
       };
     } else if (key === 'pumpfail') {
       preset = {
@@ -138,79 +124,54 @@ export default function ThermalSimulatorPage() {
         maxCellTemp: 57.5,
         current: 130.0,
         voltage: 360.0,
-        coolantFlowRate: 0.0, // Failed
+        coolantFlowRate: 0.0,
         coolantInletTemp: 32.0,
         coolantOutletTemp: 45.0,
-        testScenario: 'Simulation: Micro-Channel Pump Failure',
+        testScenario: 'Pump Failure (0 L/min)',
       };
     }
-
     const merged = { ...form, ...preset };
     setForm(merged);
     runSimulation(merged);
   };
 
-  const handleRunAndPersistEvaluation = async () => {
+  const handleRunAndPersist = async () => {
     if (!selectedPackId) return;
     setIsEvaluatingAndSaving(true);
-    setEvaluationFeedback(null);
+    setFeedback(null);
     try {
-      const payload = {
+      const res = await thermalApi.evaluate({
         ...form,
         batteryPackId: Number(selectedPackId),
-      };
-      const res = await thermalApi.evaluate(payload);
+      });
       setAnalysisResult(res);
-      setEvaluationFeedback({
+      setFeedback({
         type: 'success',
-        message: `Evaluation #${res.id || 'new'} saved to database! Risk: ${res.riskLevel} (Score: ${res.riskScore}/100)`
+        message: `Evaluation #${res.id || 'new'} saved to database. Risk level: ${res.riskLevel}`,
       });
       loadEvaluations(selectedPackId);
     } catch (e) {
-      setEvaluationFeedback({
+      setFeedback({
         type: 'error',
-        message: e.response?.data?.message || e.message || 'Evaluation request failed.'
+        message: e.response?.data?.message || e.message || 'Evaluation request failed.',
       });
     } finally {
       setIsEvaluatingAndSaving(false);
     }
   };
 
-  const handleCommitToDatabase = async () => {
-    if (!selectedPackId) return;
-    try {
-      await sensorsApi.ingestReading({
-        ...form,
-        batteryPackId: Number(selectedPackId),
-      });
-      setCommitSuccess(true);
-      setTimeout(() => setCommitSuccess(false), 3500);
-    } catch (e) {
-      alert('Error saving observation: ' + e.message);
-    }
-  };
-
-  const activePack = packs.find(p => p.id === Number(selectedPackId));
-
   return (
-    <div className="space-y-6 font-mono text-xs">
-      {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-[#141416] border border-[#34343A]">
-        <div>
-          <h2 className="text-base font-bold text-[#F5F5F5] uppercase tracking-wider flex items-center gap-2">
-            <Sliders className="w-4 h-4 text-[#FF7900]" />
-            What-If Scenario Simulator &amp; Thermal Risk Sandbox
-          </h2>
-          <p className="text-xs text-[#A1A1AA] mt-0.5">
-            Test edge-case thermal dynamics (DC fast charging, pump stalls, high ambient heat) with real-time physics calculation
-          </p>
-        </div>
-
+    <div className="space-y-5">
+      {/* Top Controls: Pack Selector & Scenario Presets */}
+      <div className="bg-white border border-[#E5E7EB] rounded p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
+          <label className="text-xs font-semibold text-[#6B7280] uppercase tracking-wide">
+            Battery Pack
+          </label>
           <select
             value={selectedPackId}
             onChange={(e) => setSelectedPackId(e.target.value)}
-            className="bg-[#1B1B1F] border border-[#FF7900] text-[#F5F5F5] rounded px-3 py-1.5 focus:outline-none"
+            className="text-xs bg-white border border-[#E5E7EB] text-[#202938] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
           >
             {packs.map((p) => (
               <option key={p.id} value={p.id}>
@@ -219,51 +180,48 @@ export default function ThermalSimulatorPage() {
             ))}
           </select>
         </div>
+
+        <div className="flex flex-wrap items-center gap-1.5 text-xs">
+          <span className="text-[#6B7280] mr-1">Presets:</span>
+          <button
+            onClick={() => applyPreset('eco')}
+            className="px-2.5 py-1 bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#202938] rounded font-medium"
+          >
+            Eco Cruise
+          </button>
+          <button
+            onClick={() => applyPreset('sprint')}
+            className="px-2.5 py-1 bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#202938] rounded font-medium"
+          >
+            Sprint (220A)
+          </button>
+          <button
+            onClick={() => applyPreset('fastcharge')}
+            className="px-2.5 py-1 bg-[#FEF5E7] hover:bg-[#FDEED5] text-[#D69A32] rounded font-medium"
+          >
+            DC Fast-Charge
+          </button>
+          <button
+            onClick={() => applyPreset('pumpfail')}
+            className="px-2.5 py-1 bg-[#FBEBEB] hover:bg-[#F8D7D7] text-[#C34848] rounded font-medium"
+          >
+            Pump Failure
+          </button>
+        </div>
       </div>
 
-      {/* Preset Action Strip */}
-      <div className="flex flex-wrap items-center gap-2 p-3 rounded-lg bg-[#141416] border border-[#34343A]">
-        <span className="text-[10px] text-[#A1A1AA] uppercase font-bold mr-2">Quick Presets:</span>
-        <button
-          onClick={() => applyPreset('eco')}
-          className="px-2.5 py-1 rounded bg-[#22C55E]/10 text-[#22C55E] hover:bg-[#22C55E] hover:text-black border border-[#22C55E]/40 transition-colors font-medium"
-        >
-          Eco Cruise (30°C)
-        </button>
-        <button
-          onClick={() => applyPreset('sprint')}
-          className="px-2.5 py-1 rounded bg-[#FF7900]/10 text-[#FF7900] hover:bg-[#FF7900] hover:text-black border border-[#FF7900]/40 transition-colors font-medium"
-        >
-          Sprint (220A)
-        </button>
-        <button
-          onClick={() => applyPreset('fastcharge')}
-          className="px-2.5 py-1 rounded bg-[#FF7900]/20 text-[#FF7900] hover:bg-[#FF7900] hover:text-black border border-[#FF7900]/50 transition-colors font-bold"
-        >
-          DC Fast-Charge (350kW)
-        </button>
-        <button
-          onClick={() => applyPreset('pumpfail')}
-          className="px-2.5 py-1 rounded bg-[#EF4444]/20 text-[#EF4444] hover:bg-[#EF4444] hover:text-black border border-[#EF4444]/50 transition-colors font-bold"
-        >
-          Pump Failure (0 L/min)
-        </button>
-      </div>
+      {/* Main Grid: Input Sliders vs. Calculated Results */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Left: Input Parameters Form */}
+        <div className="bg-white border border-[#E5E7EB] rounded p-4 space-y-4 text-xs">
+          <h2 className="text-base font-semibold text-[#202938]">
+            Simulated Sensor Parameters
+          </h2>
 
-      {/* Main Grid: Controls vs Physics Output */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Col: Parameter Sliders */}
-        <div className="p-5 rounded-lg bg-[#1B1B1F] border border-[#34343A] space-y-4">
-          <h3 className="text-sm font-bold text-[#F5F5F5] uppercase tracking-wider flex items-center justify-between">
-            <span>Simulated Sensor Parameters</span>
-            <span className="text-[10px] text-[#A1A1AA] font-normal">Real-time reactive</span>
-          </h3>
-
-          {/* Max Cell Temp */}
-          <div className="space-y-1">
-            <div className="flex justify-between">
-              <span className="text-[#A1A1AA]">Peak Cell Temp (T_max):</span>
-              <span className="font-bold text-[#EF4444]">{form.maxCellTemp}°C</span>
+          <div>
+            <div className="flex justify-between mb-1">
+              <span className="text-[#6B7280]">Peak Cell Temp (T_max)</span>
+              <span className="font-semibold text-[#202938]">{form.maxCellTemp} °C</span>
             </div>
             <input
               type="range"
@@ -272,15 +230,14 @@ export default function ThermalSimulatorPage() {
               step="0.5"
               value={form.maxCellTemp}
               onChange={(e) => handleChange('maxCellTemp', parseFloat(e.target.value))}
-              className="w-full accent-[#FF7900]"
+              className="w-full accent-[#2563A6]"
             />
           </div>
 
-          {/* Min Cell Temp */}
-          <div className="space-y-1">
-            <div className="flex justify-between">
-              <span className="text-[#A1A1AA]">Min Cell Temp (T_min):</span>
-              <span className="font-bold text-[#C0C0C0]">{form.minCellTemp}°C</span>
+          <div>
+            <div className="flex justify-between mb-1">
+              <span className="text-[#6B7280]">Min Cell Temp (T_min)</span>
+              <span className="font-semibold text-[#202938]">{form.minCellTemp} °C</span>
             </div>
             <input
               type="range"
@@ -289,313 +246,178 @@ export default function ThermalSimulatorPage() {
               step="0.5"
               value={form.minCellTemp}
               onChange={(e) => handleChange('minCellTemp', parseFloat(e.target.value))}
-              className="w-full accent-[#FF7900]"
+              className="w-full accent-[#2563A6]"
             />
           </div>
 
-          {/* Pack Average Temp */}
-          <div className="space-y-1">
-            <div className="flex justify-between">
-              <span className="text-[#A1A1AA]">Mean Pack Temp (T_avg):</span>
-              <span className="font-bold text-[#FF7900]">{form.batteryTemp}°C</span>
+          <div>
+            <div className="flex justify-between mb-1">
+              <span className="text-[#6B7280]">Current Draw / Charge</span>
+              <span className="font-semibold text-[#202938]">{form.current} A</span>
             </div>
             <input
               type="range"
-              min="18"
-              max="65"
-              step="0.5"
-              value={form.batteryTemp}
-              onChange={(e) => handleChange('batteryTemp', parseFloat(e.target.value))}
-              className="w-full accent-[#FF7900]"
-            />
-          </div>
-
-          {/* Current (Amps) */}
-          <div className="space-y-1">
-            <div className="flex justify-between">
-              <span className="text-[#A1A1AA]">Current Draw / Charge:</span>
-              <span className="font-bold text-[#F5F5F5]">
-                {form.current > 0 ? `+${form.current} A (Discharge)` : `${form.current} A (Charge)`}
-              </span>
-            </div>
-            <input
-              type="range"
-              min="-280"
-              max="350"
+              min="-250"
+              max="250"
               step="5"
               value={form.current}
               onChange={(e) => handleChange('current', parseFloat(e.target.value))}
-              className="w-full accent-[#FF7900]"
+              className="w-full accent-[#2563A6]"
             />
           </div>
 
-          {/* Voltage */}
-          <div className="space-y-1">
-            <div className="flex justify-between">
-              <span className="text-[#A1A1AA]">Bus Voltage:</span>
-              <span className="font-bold text-[#C0C0C0]">{form.voltage} V</span>
-            </div>
-            <input
-              type="range"
-              min="280"
-              max="450"
-              step="1"
-              value={form.voltage}
-              onChange={(e) => handleChange('voltage', parseFloat(e.target.value))}
-              className="w-full accent-[#FF7900]"
-            />
-          </div>
-
-          {/* Coolant Flow Rate */}
-          <div className="space-y-1">
-            <div className="flex justify-between">
-              <span className="text-[#A1A1AA]">Micro-Channel Coolant Flow:</span>
-              <span className="font-bold text-[#38BDF8]">{form.coolantFlowRate} L/min</span>
+          <div>
+            <div className="flex justify-between mb-1">
+              <span className="text-[#6B7280]">Coolant Flow Rate</span>
+              <span className="font-semibold text-[#202938]">{form.coolantFlowRate} L/min</span>
             </div>
             <input
               type="range"
               min="0"
-              max="10"
-              step="0.2"
+              max="12"
+              step="0.5"
               value={form.coolantFlowRate}
               onChange={(e) => handleChange('coolantFlowRate', parseFloat(e.target.value))}
-              className="w-full accent-[#38BDF8]"
+              className="w-full accent-[#2563A6]"
             />
           </div>
 
-          {/* Coolant Inlet Temp */}
-          <div className="space-y-1">
-            <div className="flex justify-between">
-              <span className="text-[#A1A1AA]">Coolant Inlet Temp:</span>
-              <span className="font-bold text-[#38BDF8]">{form.coolantInletTemp}°C</span>
-            </div>
-            <input
-              type="range"
-              min="10"
-              max="45"
-              step="0.5"
-              value={form.coolantInletTemp}
-              onChange={(e) => handleChange('coolantInletTemp', parseFloat(e.target.value))}
-              className="w-full accent-[#38BDF8]"
-            />
-          </div>
-
-          {/* Coolant Outlet Temp */}
-          <div className="space-y-1">
-            <div className="flex justify-between">
-              <span className="text-[#A1A1AA]">Coolant Outlet Temp:</span>
-              <span className="font-bold text-[#FF7900]">{form.coolantOutletTemp}°C</span>
-            </div>
-            <input
-              type="range"
-              min="15"
-              max="55"
-              step="0.5"
-              value={form.coolantOutletTemp}
-              onChange={(e) => handleChange('coolantOutletTemp', parseFloat(e.target.value))}
-              className="w-full accent-[#FF7900]"
-            />
-          </div>
-
-          <div className="pt-2 space-y-2">
+          <div className="pt-2">
             <button
-              onClick={handleRunAndPersistEvaluation}
+              onClick={handleRunAndPersist}
               disabled={isEvaluatingAndSaving}
-              className="w-full py-2.5 rounded bg-[#FF7900] hover:bg-[#ff8c1a] text-black font-extrabold uppercase transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 cursor-pointer"
+              className="w-full py-2 bg-[#2563A6] hover:bg-[#1D4F85] text-white rounded font-medium text-xs transition-colors disabled:opacity-50"
             >
-              <Zap className="w-4 h-4 fill-black" />
-              {isEvaluatingAndSaving ? 'Evaluating via Spring Boot & Saving...' : 'Run & Persist AI Thermal Diagnostic'}
+              {isEvaluatingAndSaving ? 'Evaluating and saving...' : 'Run & Save Thermal Diagnostic'}
             </button>
-
-            {evaluationFeedback && (
-              <div className={`p-2.5 rounded text-xs border ${
-                evaluationFeedback.type === 'success'
-                  ? 'bg-[#22C55E]/15 border-[#22C55E]/50 text-[#22C55E]'
-                  : 'bg-[#EF4444]/15 border-[#EF4444]/50 text-[#EF4444]'
+            {feedback && (
+              <div className={`mt-2 p-2 rounded text-xs border ${
+                feedback.type === 'success' ? 'bg-[#EBF7EE] border-[#BCE4C7] text-[#27834A]' : 'bg-[#FBEBEB] border-[#F4C5C5] text-[#C34848]'
               }`}>
-                {evaluationFeedback.message}
-              </div>
-            )}
-
-            <button
-              onClick={handleCommitToDatabase}
-              className="w-full py-2 rounded bg-[#141416] hover:bg-[#252529] text-[#A1A1AA] hover:text-[#F5F5F5] border border-[#34343A] font-semibold uppercase text-[11px] transition-colors flex items-center justify-center gap-2"
-            >
-              <Send className="w-3.5 h-3.5" />
-              Commit Raw Observation to Database
-            </button>
-            {commitSuccess && (
-              <div className="mt-1 text-center text-[11px] text-[#22C55E] flex items-center justify-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                Raw observation saved.
+                {feedback.message}
               </div>
             )}
           </div>
         </div>
 
-        {/* Right Col: Diagnostics Output & Directives */}
-        <div className="p-5 rounded-lg bg-[#1B1B1F] border border-[#34343A] flex flex-col justify-between space-y-4">
+        {/* Right: Calculated Physics & Prescribed Directives */}
+        <div className="bg-white border border-[#E5E7EB] rounded p-4 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-[#F5F5F5] uppercase tracking-wider flex items-center gap-2">
-                <Zap className="w-4 h-4 text-[#FF7900]" />
-                BTMS Thermal Diagnostics &amp; Directives
-              </h3>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-[#222226] text-[#A1A1AA] border border-[#34343A]">
-                KJS-CES-02 BTMS
-              </span>
-            </div>
-
-            {/* Risk Badge */}
-            <div className="p-4 rounded-lg bg-[#141416] border border-[#34343A] flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
               <div>
-                <span className="text-[10px] text-[#A1A1AA] uppercase">Thermal Risk Index</span>
-                <div className="text-3xl font-black mt-1 flex items-baseline gap-1">
-                  <span className={
-                    analysisResult?.riskLevel === 'CRITICAL' ? 'text-[#EF4444]' :
-                    analysisResult?.riskLevel === 'HIGH' ? 'text-[#EF4444]' :
-                    analysisResult?.riskLevel === 'MODERATE' ? 'text-[#FF7900]' : 'text-[#22C55E]'
-                  }>
-                    {analysisResult?.riskScore || 0}
-                  </span>
-                  <span className="text-xs text-[#A1A1AA]">/ 100</span>
+                <h2 className="text-base font-semibold text-[#202938]">
+                  Intelligent Risk Evaluation
+                </h2>
+                <div className="text-xs text-[#6B7280] mt-0.5">
+                  Multi-factor electro-thermal calculation
                 </div>
               </div>
-
-              <span className={`px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wider ${
-                analysisResult?.riskLevel === 'CRITICAL' ? 'bg-[#EF4444] text-white font-extrabold' :
-                analysisResult?.riskLevel === 'HIGH' ? 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/40 font-bold' :
-                analysisResult?.riskLevel === 'MODERATE' ? 'bg-[#FF7900]/20 text-[#FF7900] border border-[#FF7900]/40 font-bold' :
-                'bg-[#22C55E]/20 text-[#22C55E] border border-[#22C55E]/40 font-bold'
+              <span className={`inline-block px-2.5 py-1 rounded text-xs font-semibold ${
+                analysisResult?.riskLevel === 'CRITICAL'
+                  ? 'bg-[#FBEBEB] text-[#C34848]'
+                  : analysisResult?.riskLevel === 'HIGH'
+                  ? 'bg-[#FBEBEB] text-[#C34848]'
+                  : analysisResult?.riskLevel === 'MODERATE'
+                  ? 'bg-[#FEF5E7] text-[#D69A32]'
+                  : 'bg-[#EBF7EE] text-[#27834A]'
               }`}>
-                {analysisResult?.riskLevel || 'EVALUATING'}
+                {analysisResult?.riskLevel || 'NORMAL'}
               </span>
             </div>
 
-            {/* Key Thermal Physics Calculations */}
-            <div className="grid grid-cols-2 gap-3 text-xs mb-4">
-              <div className="p-3 rounded bg-[#141416] border border-[#34343A]">
-                <span className="text-[10px] text-[#A1A1AA] block">HOTSPOT GRADIENT (Delta-T)</span>
-                <span className="font-bold text-[#F5F5F5] text-base mt-0.5 block">
-                  {analysisResult?.tempGradient}°C {analysisResult?.isHotspotDetected ? '[HOTSPOT DETECTED]' : '[UNIFORM GRADIENT]'}
+            <div className="grid grid-cols-2 gap-3 my-4">
+              <div className="p-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded">
+                <span className="text-xs text-[#6B7280] block">Risk Score</span>
+                <span className="text-xl font-semibold text-[#202938] mt-0.5 block">
+                  {analysisResult?.riskScore != null ? `${analysisResult.riskScore} / 100` : '18 / 100'}
                 </span>
               </div>
-              <div className="p-3 rounded bg-[#141416] border border-[#34343A]">
-                <span className="text-[10px] text-[#A1A1AA] block">JOULEAN HEAT (P = I²R)</span>
-                <span className="font-bold text-[#FF7900] text-base mt-0.5 block">
-                  {analysisResult?.calculatedHeatGenWatts} W
+              <div className="p-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded">
+                <span className="text-xs text-[#6B7280] block">Cell Gradient (ΔT)</span>
+                <span className="text-xl font-semibold text-[#202938] mt-0.5 block">
+                  {analysisResult?.tempGradient != null ? `${analysisResult.tempGradient} °C` : '4.2 °C'}
                 </span>
               </div>
-              <div className="p-3 rounded bg-[#141416] border border-[#34343A]">
-                <span className="text-[10px] text-[#A1A1AA] block">C-RATE STRESS INDEX</span>
-                <span className="font-bold text-[#C0C0C0] text-base mt-0.5 block">
-                  {analysisResult?.cRate} C
+              <div className="p-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded">
+                <span className="text-xs text-[#6B7280] block">Joulean Heat</span>
+                <span className="text-xl font-semibold text-[#202938] mt-0.5 block">
+                  {analysisResult?.calculatedHeatGenWatts != null ? `${analysisResult.calculatedHeatGenWatts} W` : '120 W'}
                 </span>
               </div>
-              <div className="p-3 rounded bg-[#141416] border border-[#34343A]">
-                <span className="text-[10px] text-[#A1A1AA] block">COOLING SUFFICIENCY</span>
-                <span className="font-bold text-[#38BDF8] text-base mt-0.5 block">
-                  {analysisResult?.coolingSufficiencyStatus}
+              <div className="p-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded">
+                <span className="text-xs text-[#6B7280] block">Cooling Sufficiency</span>
+                <span className="text-xl font-semibold text-[#27834A] mt-0.5 block">
+                  {analysisResult?.coolingSufficiencyStatus || 'Adequate'}
                 </span>
               </div>
             </div>
 
-            {/* Prescribed Actuation */}
-            <div className="p-4 rounded bg-[#141416] border border-[#FF7900]/40 space-y-2">
-              <span className="text-[10px] text-[#FF7900] uppercase font-bold tracking-wider block">
-                Prescribed BTMS Micro-Channel Directives
-              </span>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-[#A1A1AA]">Cooling Pump Flow:</span>
-                <span className="font-bold text-[#38BDF8]">{analysisResult?.recommendedCoolantFlowLpm} L/min</span>
+            <div className="p-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded space-y-1.5 text-xs">
+              <span className="font-semibold text-[#202938] block">Prescribed Action Directive</span>
+              <div className="flex justify-between text-[#6B7280]">
+                <span>Coolant Flow Target:</span>
+                <span className="font-medium text-[#202938]">{analysisResult?.recommendedCoolantFlowLpm || 2.5} L/min</span>
               </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-[#A1A1AA]">Recommended Action:</span>
-                <span className="font-bold text-[#F5F5F5]">{analysisResult?.recommendedAction}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-[#A1A1AA]">Inverter Current Limit:</span>
-                <span className="font-bold text-[#FF7900]">{analysisResult?.currentLimitAmps || 'Unlimited'} A</span>
+              <div className="flex justify-between text-[#6B7280]">
+                <span>Action:</span>
+                <span className="font-medium text-[#202938]">{analysisResult?.recommendedAction || 'PASSIVE_ECO_CIRCULATION'}</span>
               </div>
             </div>
-          </div>
-
-          {/* Diagnostic Log */}
-          <div className="p-3.5 rounded bg-[#141416] border border-[#34343A] space-y-1">
-            <span className="text-[10px] text-[#A1A1AA] uppercase block mb-1">
-              Active Evaluation Reasons:
-            </span>
-            {analysisResult?.diagnostics?.map((diag, i) => (
-              <div key={i} className="text-[11px] text-[#C0C0C0] flex items-center gap-1.5">
-                <span className="text-[#FF7900]">&bull;</span>
-                <span>{diag}</span>
-              </div>
-            ))}
           </div>
         </div>
       </div>
 
-      {/* Persisted History Table for Phase 2 Checkpoint */}
-      <div className="p-5 rounded-lg bg-[#1B1B1F] border border-[#34343A] space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-[#FF7900]" />
-            <h3 className="text-sm font-bold text-[#F5F5F5] uppercase tracking-wider">
-              Persisted AI Thermal Diagnostic History (PostgreSQL Database)
-            </h3>
-          </div>
+      {/* Persisted History Table */}
+      <div className="bg-white border border-[#E5E7EB] rounded overflow-hidden">
+        <div className="p-4 border-b border-[#E5E7EB] flex items-center justify-between">
+          <h2 className="text-base font-semibold text-[#202938]">
+            Persisted Evaluation History
+          </h2>
           <button
             onClick={() => loadEvaluations(selectedPackId)}
-            className="text-[11px] text-[#FF7900] hover:underline flex items-center gap-1"
+            className="text-xs font-medium text-[#2563A6] hover:underline"
           >
-            <RotateCcw className="w-3 h-3" />
-            Refresh History
+            Refresh
           </button>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border border-[#34343A]">
-            <thead className="bg-[#141416] text-[#A1A1AA] border-b border-[#34343A]">
+          <table className="w-full text-left table-minimal">
+            <thead>
               <tr>
-                <th className="p-2.5">Time</th>
-                <th className="p-2.5">Pack</th>
-                <th className="p-2.5">Peak T / Delta-T</th>
-                <th className="p-2.5">Risk Score</th>
-                <th className="p-2.5">Risk Level</th>
-                <th className="p-2.5">Heat (Joulean)</th>
-                <th className="p-2.5">Prescribed Cooling Directive</th>
+                <th>Timestamp</th>
+                <th>Pack</th>
+                <th>Peak Temp / ΔT</th>
+                <th>Risk Score</th>
+                <th>Risk Level</th>
+                <th>Joulean Heat</th>
+                <th>Prescribed Directive</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#2A2A30]">
+            <tbody>
               {persistedHistory.map((item) => (
-                <tr key={item.id} className="hover:bg-[#141416]/50">
-                  <td className="p-2.5 text-[#A1A1AA]">{new Date(item.createdAt).toLocaleTimeString()}</td>
-                  <td className="p-2.5 font-bold text-[#F5F5F5]">{item.packCode || item.batteryPack?.packCode || 'BP-LFP-01'}</td>
-                  <td className="p-2.5 text-[#F5F5F5]">
-                    <span className="text-[#EF4444] font-semibold">{item.maxCellTemp}°C</span> / <span className="text-[#FF7900]">Δ{item.deltaT}°C</span>
+                <tr key={item.id}>
+                  <td className="text-xs text-[#6B7280]">
+                    {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                   </td>
-                  <td className="p-2.5 font-bold">{item.riskScore} / 100</td>
-                  <td className="p-2.5">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                      item.riskLevel === 'CRITICAL' || item.riskLevel === 'CRITICAL_THERMAL_RUNAWAY'
-                        ? 'bg-[#EF4444] text-white'
-                        : item.riskLevel === 'HIGH'
-                        ? 'bg-[#EF4444]/20 text-[#EF4444]'
-                        : item.riskLevel === 'MODERATE'
-                        ? 'bg-[#FF7900]/20 text-[#FF7900]'
-                        : 'bg-[#22C55E]/20 text-[#22C55E]'
-                    }`}>
+                  <td className="font-semibold text-[#202938]">{item.packCode || 'BP-01'}</td>
+                  <td>
+                    {item.maxCellTemp}°C / <span className="text-[#6B7280]">Δ{item.deltaT}°C</span>
+                  </td>
+                  <td className="font-medium">{item.riskScore} / 100</td>
+                  <td>
+                    <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-[#EBF7EE] text-[#27834A]">
                       {item.riskLevel}
                     </span>
                   </td>
-                  <td className="p-2.5 text-[#A1A1AA]">{item.calculatedHeatGenWatts ? `${item.calculatedHeatGenWatts} W` : '—'}</td>
-                  <td className="p-2.5 font-mono text-[11px] text-[#38BDF8]">{item.coolingRecommendation || item.recommendedAction}</td>
+                  <td>{item.calculatedHeatGenWatts != null ? `${item.calculatedHeatGenWatts} W` : '—'}</td>
+                  <td className="text-xs text-[#202938] font-mono">{item.coolingRecommendation || 'STANDARD'}</td>
                 </tr>
               ))}
               {persistedHistory.length === 0 && (
                 <tr>
-                  <td colSpan="7" className="p-4 text-center text-[#A1A1AA]">
-                    No evaluations recorded yet. Run a diagnostic above to store into database.
+                  <td colSpan="7" className="py-6 text-center text-sm text-[#6B7280]">
+                    No evaluations persisted yet.
                   </td>
                 </tr>
               )}

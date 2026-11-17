@@ -6,54 +6,36 @@ import {
   Activity,
   LineChart,
   Flame,
-  BellRing,
+  Bell,
   History,
   Sliders,
-  Settings,
-  Zap,
-  Radio,
-  Server,
-  Lock
+  Settings
 } from 'lucide-react';
 
 const navItems = [
-  { name: 'Dashboard', path: '/', icon: LayoutDashboard },
+  { name: 'Overview', path: '/', icon: LayoutDashboard },
   { name: 'Battery Packs', path: '/batteries', icon: Layers },
   { name: 'Live Monitoring', path: '/live', icon: Activity },
   { name: 'Thermal Analytics', path: '/analytics', icon: LineChart },
   { name: 'Hotspot Detection', path: '/hotspots', icon: Flame },
-  { name: 'Alerts & Actions', path: '/alerts', icon: BellRing },
+  { name: 'Alerts', path: '/alerts', icon: Bell },
   { name: 'Historical Records', path: '/history', icon: History },
   { name: 'Thermal Simulator', path: '/simulator', icon: Sliders },
   { name: 'Settings', path: '/settings', icon: Settings },
-  { name: 'Operator Login', path: '/login', icon: Lock },
 ];
 
-export default function Sidebar({ systemOnline = true, activeSimulation = true }) {
+export default function Sidebar({ systemOnline = true }) {
   return (
-    <aside className="w-64 bg-[#0B0B0D] border-r border-[#34343A] flex flex-col h-screen fixed left-0 top-0 z-30 select-none">
+    <aside className="w-56 bg-[#172235] text-white flex flex-col h-screen fixed left-0 top-0 z-30 select-none">
       {/* Brand Header */}
-      <div className="h-16 px-5 border-b border-[#34343A] flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded bg-[#1B1B1F] border border-[#FF7900] flex items-center justify-center text-[#FF7900]">
-            <Zap className="w-5 h-5 fill-[#FF7900]" />
-          </div>
-          <div>
-            <div className="text-base font-extrabold tracking-wider text-[#F5F5F5] font-mono flex items-center gap-1.5">
-              THERMO<span className="text-[#FF7900]">CORE</span>
-            </div>
-            <div className="text-[9px] font-semibold tracking-widest text-[#A1A1AA] uppercase">
-              EV Thermal Management
-            </div>
-          </div>
-        </div>
+      <div className="h-14 px-5 flex items-center border-b border-[#223147]">
+        <span className="text-[15px] font-semibold tracking-wider text-white">
+          THERMOCORE
+        </span>
       </div>
 
       {/* Navigation List */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        <div className="text-[10px] font-bold text-[#A1A1AA] uppercase px-3 mb-2 tracking-wider font-mono">
-          Navigation
-        </div>
+      <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -62,49 +44,27 @@ export default function Sidebar({ systemOnline = true, activeSimulation = true }
               to={item.path}
               end={item.path === '/'}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3.5 py-2.5 rounded text-xs font-medium transition-colors ${
+                `flex items-center gap-2.5 px-3 py-2 rounded text-[13px] font-medium transition-colors ${
                   isActive
-                    ? 'bg-[#1B1B1F] text-[#F5F5F5] border-l-2 border-[#FF7900] font-semibold'
-                    : 'text-[#A1A1AA] hover:bg-[#141416] hover:text-[#C0C0C0]'
+                    ? 'bg-[#2563A6] text-white'
+                    : 'text-[#94A3B8] hover:text-white hover:bg-[#1E2C42]'
                 }`
               }
             >
-              {({ isActive }) => (
-                <>
-                  <Icon
-                    className={`w-4 h-4 transition-colors ${
-                      isActive ? 'text-[#FF7900]' : 'text-[#A1A1AA]'
-                    }`}
-                  />
-                  <span>{item.name}</span>
-                </>
-              )}
+              <Icon className="w-4 h-4 shrink-0 stroke-[1.75]" />
+              <span className="truncate">{item.name}</span>
             </NavLink>
           );
         })}
       </nav>
 
-      {/* System Status Footer */}
-      <div className="p-3.5 border-t border-[#34343A] bg-[#141416]/60">
-        <div className="bg-[#1B1B1F] rounded border border-[#34343A] p-2.5 space-y-1.5">
-          <div className="flex items-center justify-between text-[10px] font-mono">
-            <span className="text-[#A1A1AA] flex items-center gap-1.5">
-              <Server className="w-3 h-3 text-[#C0C0C0]" /> Spring Boot 3
-            </span>
-            <span className={`inline-flex items-center gap-1 font-bold ${systemOnline ? 'text-[#22C55E]' : 'text-[#EF4444]'}`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${systemOnline ? 'bg-[#22C55E]' : 'bg-[#EF4444]'}`}></span>
-              {systemOnline ? 'ONLINE' : 'OFFLINE'}
-            </span>
-          </div>
-          <div className="flex items-center justify-between text-[10px] font-mono">
-            <span className="text-[#A1A1AA] flex items-center gap-1.5">
-              <Radio className="w-3 h-3 text-[#FF7900]" /> Telemetry Stream
-            </span>
-            <span className="text-[#FF7900] font-semibold text-[9px] uppercase">
-              {activeSimulation ? 'Real-time' : 'Paused'}
-            </span>
-          </div>
-        </div>
+      {/* Footer Status */}
+      <div className="p-3 border-t border-[#223147] text-[11px] text-[#94A3B8] flex items-center justify-between">
+        <span>System Status</span>
+        <span className={`inline-flex items-center gap-1.5 font-medium ${systemOnline ? 'text-[#34D399]' : 'text-[#F87171]'}`}>
+          <span className={`w-1.5 h-1.5 rounded-full ${systemOnline ? 'bg-[#34D399]' : 'bg-[#F87171]'}`}></span>
+          {systemOnline ? 'Online' : 'Offline'}
+        </span>
       </div>
     </aside>
   );

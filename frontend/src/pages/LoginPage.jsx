@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap, Lock, Mail, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { authApi } from '../api/client';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('operator@somaiya.edu');
   const [password, setPassword] = useState('operator123');
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -29,7 +27,7 @@ export default function LoginPage() {
       setError(
         err.response?.data?.message ||
         err.response?.data?.error ||
-        (isLogin ? 'Invalid email or password.' : 'Registration failed. Please check your email format.')
+        (isLogin ? 'Invalid email or password.' : 'Registration failed.')
       );
     } finally {
       setLoading(false);
@@ -37,33 +35,25 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0B0D] flex flex-col justify-center items-center p-4 font-sans select-none">
-      {/* Ambient background glow */}
-      <div className="absolute w-96 h-96 bg-[#FF7900]/10 rounded-full blur-3xl pointer-events-none"></div>
-
-      <div className="max-w-md w-full bg-[#141416] border border-[#34343A] rounded-3xl p-8 shadow-2xl relative z-10 space-y-6">
-        {/* Brand Header */}
-        <div className="flex flex-col items-center text-center space-y-2">
-          <div className="w-14 h-14 rounded-2xl bg-[#1B1B1F] border border-[#FF7900] flex items-center justify-center text-[#FF7900] shadow-lg shadow-[#FF7900]/20">
-            <Zap className="w-8 h-8 fill-[#FF7900]" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-extrabold text-[#F5F5F5] tracking-wide flex items-center justify-center gap-1.5">
-              THERMO<span className="text-[#FF7900]">CORE</span>
-            </h1>
-            <p className="text-xs text-[#A1A1AA] font-medium tracking-wide mt-1">
-              EV Battery Thermal Management
-            </p>
-          </div>
+    <div className="min-h-screen bg-[#F7F8FA] flex flex-col justify-center items-center p-4">
+      <div className="max-w-sm w-full bg-white border border-[#E5E7EB] rounded-lg p-6 shadow-sm space-y-5">
+        {/* Simple Brand */}
+        <div className="border-b border-[#E5E7EB] pb-4">
+          <span className="text-lg font-semibold tracking-wider text-[#172235]">
+            THERMOCORE
+          </span>
+          <p className="text-xs text-[#6B7280] mt-0.5">
+            EV Battery Thermal Management System
+          </p>
         </div>
 
-        {/* Auth Mode Toggle */}
-        <div className="flex bg-[#1B1B1F] p-1.5 rounded-2xl border border-[#34343A] text-xs">
+        {/* Tab Switcher */}
+        <div className="flex border-b border-[#E5E7EB] text-xs">
           <button
             type="button"
             onClick={() => { setIsLogin(true); setError(''); }}
-            className={`w-1/2 py-2.5 rounded-xl font-bold transition-all ${
-              isLogin ? 'bg-[#FF7900] text-black shadow-md' : 'text-[#A1A1AA] hover:text-[#F5F5F5]'
+            className={`pb-2 px-1 mr-4 font-medium transition-colors border-b-2 ${
+              isLogin ? 'border-[#2563A6] text-[#2563A6]' : 'border-transparent text-[#6B7280] hover:text-[#202938]'
             }`}
           >
             Sign In
@@ -71,73 +61,63 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => { setIsLogin(false); setError(''); }}
-            className={`w-1/2 py-2.5 rounded-xl font-bold transition-all ${
-              !isLogin ? 'bg-[#FF7900] text-black shadow-md' : 'text-[#A1A1AA] hover:text-[#F5F5F5]'
+            className={`pb-2 px-1 font-medium transition-colors border-b-2 ${
+              !isLogin ? 'border-[#2563A6] text-[#2563A6]' : 'border-transparent text-[#6B7280] hover:text-[#202938]'
             }`}
           >
-            Sign Up
+            Register Account
           </button>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <div className="p-3.5 bg-[#EF4444]/15 border border-[#EF4444]/40 text-[#EF4444] rounded-2xl text-xs flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{error}</span>
+          <div className="p-2.5 bg-[#FBEBEB] border border-[#F4C5C5] text-[#C34848] rounded text-xs">
+            {error}
           </div>
         )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+        <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
           <div>
-            <label className="text-[#A1A1AA] block mb-1.5 font-semibold text-xs flex items-center gap-1.5">
-              <Mail className="w-4 h-4 text-[#FF7900]" />
+            <label className="block mb-1 font-medium text-[#202938]">
               Email Address
             </label>
             <input
               type="email"
               required
-              placeholder="operator@somaiya.edu"
+              placeholder="e.g. operator@somaiya.edu"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-[#1B1B1F] border border-[#34343A] rounded-2xl px-4 py-3 text-sm text-[#F5F5F5] placeholder-[#666] focus:border-[#FF7900] focus:outline-none transition-all"
+              className="w-full bg-white border border-[#E5E7EB] rounded px-3 py-2 text-xs text-[#202938] focus:border-[#2563A6] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="text-[#A1A1AA] block mb-1.5 font-semibold text-xs flex items-center justify-between">
-              <span className="flex items-center gap-1.5">
-                <Lock className="w-4 h-4 text-[#FF7900]" />
-                Password
-              </span>
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-[#A1A1AA] hover:text-[#F5F5F5] text-[11px] flex items-center gap-1"
-              >
-                {showPassword ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                {showPassword ? 'Hide' : 'Show'}
-              </button>
+            <label className="block mb-1 font-medium text-[#202938]">
+              Password
             </label>
             <input
-              type={showPassword ? 'text' : 'password'}
+              type="password"
               required
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-[#1B1B1F] border border-[#34343A] rounded-2xl px-4 py-3 text-sm text-[#F5F5F5] placeholder-[#666] focus:border-[#FF7900] focus:outline-none transition-all"
+              className="w-full bg-white border border-[#E5E7EB] rounded px-3 py-2 text-xs text-[#202938] focus:border-[#2563A6] focus:outline-none"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 rounded-2xl bg-[#FF7900] hover:bg-[#ff8c1a] text-black font-extrabold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#FF7900]/25 disabled:opacity-50 cursor-pointer mt-2"
+            className="w-full py-2 bg-[#2563A6] hover:bg-[#1D4F85] text-white rounded font-medium text-xs transition-colors disabled:opacity-50 mt-2"
           >
-            <span>{loading ? 'Authenticating with Spring Security...' : (isLogin ? 'Sign In' : 'Create Account')}</span>
-            <ArrowRight className="w-4 h-4" />
+            {loading ? 'Authenticating...' : (isLogin ? 'Sign In' : 'Create Account')}
           </button>
         </form>
+
+        <div className="text-[11px] text-[#6B7280] pt-2 border-t border-[#E5E7EB]">
+          Default evaluation credentials: <code className="text-[#202938]">operator@somaiya.edu</code> / <code className="text-[#202938]">operator123</code>
+        </div>
       </div>
     </div>
   );
