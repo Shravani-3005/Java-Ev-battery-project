@@ -15,7 +15,7 @@ export default function SettingsPage() {
   const [savedMessage, setSavedMessage] = useState(false);
 
   useEffect(() => {
-    settingsApi.get().then((data) => {
+    settingsApi.getSettings().then((data) => {
       if (data) setConfig((prev) => ({ ...prev, ...data }));
     });
   }, []);
@@ -23,11 +23,11 @@ export default function SettingsPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await settingsApi.update(config);
+      await settingsApi.updateSettings(config);
       setSavedMessage(true);
       setTimeout(() => setSavedMessage(false), 3000);
     } catch (err) {
-      alert('Error updating settings');
+      alert('Error updating settings: ' + (err.response?.data?.message || err.message));
     }
   };
 

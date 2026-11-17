@@ -82,13 +82,13 @@ public class DataInitializer implements CommandLineRunner {
             log.info("[THERMOCORE] Seeding initial EV battery pack profiles...");
 
             BatteryPack p1 = new BatteryPack();
-            p1.setPackCode("BP-LFP-01");
-            p1.setPackName("Cruiser");
-            p1.setVehicleModel("Tata Ultra");
-            p1.setChemistry("LFP (Lithium Iron Phosphate)");
-            p1.setCapacityKWh(65.0);
-            p1.setNominalVoltage(384.0);
-            p1.setCellCount(120);
+            p1.setPackCode("BP-01");
+            p1.setPackName("Lithium-Ion Pack 1");
+            p1.setVehicleModel("Standard EV");
+            p1.setChemistry("Lithium-Ion (NMC)");
+            p1.setCapacityKWh(60.0);
+            p1.setNominalVoltage(400.0);
+            p1.setCellCount(96);
             p1.setCoolingType("Micro-channel Cold Plate");
             p1.setMaxSafeTemp(45.0);
             p1.setCriticalTemp(55.0);
@@ -97,49 +97,34 @@ public class DataInitializer implements CommandLineRunner {
             packRepository.save(p1);
 
             BatteryPack p2 = new BatteryPack();
-            p2.setPackCode("BP-NMC-02");
-            p2.setPackName("Sprint");
-            p2.setVehicleModel("Formula EV");
-            p2.setChemistry("NMC 811 (Nickel Manganese Cobalt)");
-            p2.setCapacityKWh(18.5);
-            p2.setNominalVoltage(400.0);
+            p2.setPackCode("BP-02");
+            p2.setPackName("Lithium Iron Phosphate Pack");
+            p2.setVehicleModel("Standard EV");
+            p2.setChemistry("Lithium Iron Phosphate (LFP)");
+            p2.setCapacityKWh(50.0);
+            p2.setNominalVoltage(380.0);
             p2.setCellCount(96);
-            p2.setCoolingType("Dual-Sided Micro-channel Cooling");
+            p2.setCoolingType("Micro-channel Cold Plate");
             p2.setMaxSafeTemp(48.0);
             p2.setCriticalTemp(58.0);
-            p2.setStatus(BatteryStatus.MODERATE_WARMING);
+            p2.setStatus(BatteryStatus.NORMAL);
             p2.setInstallationDate(LocalDateTime.now().minusMonths(2));
             packRepository.save(p2);
 
             BatteryPack p3 = new BatteryPack();
-            p3.setPackCode("BP-NMC-03");
-            p3.setPackName("Cargo");
-            p3.setVehicleModel("Mahindra Zor");
-            p3.setChemistry("NMC 622");
-            p3.setCapacityKWh(42.0);
-            p3.setNominalVoltage(350.0);
+            p3.setPackCode("BP-03");
+            p3.setPackName("Solid-State Battery Pack");
+            p3.setVehicleModel("Standard EV");
+            p3.setChemistry("Solid-State Battery");
+            p3.setCapacityKWh(80.0);
+            p3.setNominalVoltage(450.0);
             p3.setCellCount(96);
-            p3.setCoolingType("Serpentine Micro-channel Plate");
-            p3.setMaxSafeTemp(45.0);
-            p3.setCriticalTemp(54.0);
+            p3.setCoolingType("Micro-channel Cold Plate");
+            p3.setMaxSafeTemp(55.0);
+            p3.setCriticalTemp(70.0);
             p3.setStatus(BatteryStatus.NORMAL);
             p3.setInstallationDate(LocalDateTime.now().minusMonths(4));
             packRepository.save(p3);
-
-            BatteryPack p4 = new BatteryPack();
-            p4.setPackCode("BP-SS-04");
-            p4.setPackName("Aero");
-            p4.setVehicleModel("AERIS GT");
-            p4.setChemistry("Solid-State Li-Metal");
-            p4.setCapacityKWh(85.0);
-            p4.setNominalVoltage(800.0);
-            p4.setCellCount(144);
-            p4.setCoolingType("Ceramic Substrate Micro-channel Sink");
-            p4.setMaxSafeTemp(60.0);
-            p4.setCriticalTemp(75.0);
-            p4.setStatus(BatteryStatus.NORMAL);
-            p4.setInstallationDate(LocalDateTime.now().minusWeeks(3));
-            packRepository.save(p4);
 
             log.info("[THERMOCORE] Generating initial sensor telemetry points...");
             // Generate initial baseline readings
