@@ -12,7 +12,7 @@ import HistoricalRecordsPage from './pages/HistoricalRecordsPage';
 import ThermalSimulatorPage from './pages/ThermalSimulatorPage';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
-import { alertsApi, simulationApi } from './api/client';
+import { alertsApi, simulationApi, authApi } from './api/client';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 
 function AppContent() {
@@ -20,9 +20,10 @@ function AppContent() {
   const { isDark } = useTheme();
   const [systemOnline, setSystemOnline] = useState(true);
   const [unreadAlerts, setUnreadAlerts] = useState(0);
+  const currentUser = authApi.getCurrentUser();
 
-  // If viewing standalone login/signup page, don't show full dashboard chrome
-  if (location.pathname === '/login') {
+  // Authentication Gate: if user is not logged in, force Login / Sign-up page first
+  if (!currentUser) {
     return <LoginPage />;
   }
 

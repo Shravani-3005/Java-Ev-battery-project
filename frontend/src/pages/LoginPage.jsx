@@ -136,20 +136,10 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full py-3 rounded-lg bg-[#FF7900] hover:bg-[#ff8c1a] text-black font-extrabold uppercase tracking-wider text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#FF7900]/20 disabled:opacity-50 cursor-pointer"
           >
-            <span>{loading ? 'Authenticating with Spring Security...' : (isLogin ? 'Authorize & Enter Platform' : 'Create Operator Account')}</span>
+            <span>{loading ? 'Authenticating with Spring Security...' : (isLogin ? 'Sign In & Enter Dashboard' : 'Register & Enter Dashboard')}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
-
-        {/* Guest Skip Option */}
-        <div className="pt-2 text-center border-t border-[#2A2A30]">
-          <Link
-            to="/"
-            className="text-[11px] text-[#A1A1AA] hover:text-[#FF7900] transition-colors"
-          >
-            Continue as Guest (Read-Only Mode) &rarr;
-          </Link>
-        </div>
       </div>
     </div>
   );
