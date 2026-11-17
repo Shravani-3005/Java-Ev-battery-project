@@ -41,16 +41,16 @@ export default function HotspotDetectionPage() {
   return (
     <div className="space-y-5">
       {/* Pack Selector */}
-      <div className="bg-white border border-[#E5E7EB] rounded p-4 flex items-center justify-between">
+      <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <label className="text-xs font-semibold text-[#6B7280] uppercase tracking-wide">
+          <label className="text-xs font-semibold text-[#6B7280] dark:text-[#94A3B8] uppercase tracking-wide">
             Battery Pack
           </label>
           <select
             value={selectedPackId}
             onChange={(e) => setSelectedPackId(e.target.value)}
             disabled={packs.length === 0}
-            className="text-xs bg-white border border-[#E5E7EB] text-[#202938] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6] disabled:opacity-60"
+            className="text-xs bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6] disabled:opacity-60"
           >
             {packs.length === 0 ? (
               <option value="">No battery packs registered</option>
@@ -65,7 +65,11 @@ export default function HotspotDetectionPage() {
         </div>
 
         <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded ${
-          packs.length === 0 ? 'bg-[#F3F4F6] text-[#6B7280]' : (isHotspot ? 'bg-[#FEF5E7] text-[#D69A32]' : 'bg-[#EBF7EE] text-[#27834A]')
+          packs.length === 0
+            ? 'bg-[#F3F4F6] text-[#6B7280] dark:bg-[#1F2937] dark:text-[#94A3B8] dark:border dark:border-[#374151]'
+            : isHotspot
+            ? 'bg-[#FEF5E7] text-[#D69A32] dark:bg-[#1F2937] dark:text-[#FBBF24] dark:border dark:border-[#374151]'
+            : 'bg-[#EBF7EE] text-[#27834A] dark:bg-[#1F2937] dark:text-[#4ADE80] dark:border dark:border-[#374151]'
         }`}>
           {packs.length === 0 ? 'Standby — No Packs' : (isHotspot ? 'Hotspot Condition Active' : 'Thermal Distribution Uniform')}
         </span>
@@ -80,9 +84,9 @@ export default function HotspotDetectionPage() {
       </div>
 
       {/* Hotspot Cells Analysis Table */}
-      <div className="bg-white border border-[#E5E7EB] rounded overflow-hidden">
-        <div className="p-4 border-b border-[#E5E7EB]">
-          <h2 className="text-base font-semibold text-[#202938]">
+      <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded overflow-hidden">
+        <div className="p-4 border-b border-[#E5E7EB] dark:border-[#334155]">
+          <h2 className="text-base font-semibold text-[#202938] dark:text-[#CBD5E1]">
             Cell Array Differential Analysis
           </h2>
         </div>
@@ -107,19 +111,21 @@ export default function HotspotDetectionPage() {
 
                 return (
                   <tr key={cellIdx}>
-                    <td className="font-semibold text-[#202938]">Cell {String(cellIdx).padStart(2, '0')}</td>
+                    <td className="font-semibold text-[#202938] dark:text-[#CBD5E1]">Cell {String(cellIdx).padStart(2, '0')}</td>
                     <td>{temp} °C</td>
-                    <td className={dev > 0 ? 'text-[#D69A32]' : 'text-[#6B7280]'}>
+                    <td className={dev > 0 ? 'text-[#D69A32] dark:text-[#FBBF24]' : 'text-[#6B7280] dark:text-[#94A3B8]'}>
                       {dev > 0 ? `+${dev}` : dev} °C
                     </td>
                     <td>
                       <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                        isCellHot ? 'bg-[#FEF5E7] text-[#D69A32]' : 'bg-[#EBF7EE] text-[#27834A]'
+                        isCellHot
+                          ? 'bg-[#FEF5E7] text-[#D69A32] dark:bg-[#1F2937] dark:text-[#FBBF24] dark:border dark:border-[#374151]'
+                          : 'bg-[#EBF7EE] text-[#27834A] dark:bg-[#1F2937] dark:text-[#4ADE80] dark:border dark:border-[#374151]'
                       }`}>
                         {isCellHot ? 'Localized Hotspot' : 'Normal'}
                       </span>
                     </td>
-                    <td className="text-xs text-[#6B7280]">
+                    <td className="text-xs text-[#6B7280] dark:text-[#94A3B8]">
                       {isCellHot ? 'Increase localized micro-channel coolant flow' : 'Maintain balanced circulation'}
                     </td>
                   </tr>

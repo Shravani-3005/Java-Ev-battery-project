@@ -32,12 +32,12 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="max-w-2xl bg-white border border-[#E5E7EB] rounded p-5 space-y-4 text-xs">
+    <div className="max-w-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded p-5 space-y-4 text-xs">
       <div>
-        <h2 className="text-base font-semibold text-[#202938]">
+        <h2 className="text-base font-semibold text-[#202938] dark:text-[#CBD5E1]">
           System Safety Thresholds & Configuration
         </h2>
-        <p className="text-xs text-[#6B7280] mt-0.5">
+        <p className="text-xs text-[#6B7280] dark:text-[#94A3B8] mt-0.5">
           Configure temperature setpoints and closed-loop micro-channel actuation parameters.
         </p>
       </div>
@@ -45,67 +45,67 @@ export default function SettingsPage() {
       <form onSubmit={handleSubmit} className="space-y-4 pt-2">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block mb-1 font-medium text-[#202938]">Normal Upper Threshold (°C)</label>
+            <label className="block mb-1 font-medium text-[#202938] dark:text-[#CBD5E1]">Normal Upper Threshold (°C)</label>
             <input
               type="number"
               step="0.5"
               value={config.normalUpperTemp || 35.0}
               onChange={(e) => setConfig({ ...config, normalUpperTemp: parseFloat(e.target.value) })}
-              className="w-full border border-[#E5E7EB] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
+              className="w-full bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
             />
           </div>
 
           <div>
-            <label className="block mb-1 font-medium text-[#202938]">Warning Threshold (°C)</label>
+            <label className="block mb-1 font-medium text-[#202938] dark:text-[#CBD5E1]">Warning Threshold (°C)</label>
             <input
               type="number"
               step="0.5"
               value={config.warningTemp || 40.0}
               onChange={(e) => setConfig({ ...config, warningTemp: parseFloat(e.target.value) })}
-              className="w-full border border-[#E5E7EB] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
+              className="w-full bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
             />
           </div>
 
           <div>
-            <label className="block mb-1 font-medium text-[#202938]">Danger Threshold (°C)</label>
+            <label className="block mb-1 font-medium text-[#202938] dark:text-[#CBD5E1]">Danger Threshold (°C)</label>
             <input
               type="number"
               step="0.5"
               value={config.dangerTemp || 45.0}
               onChange={(e) => setConfig({ ...config, dangerTemp: parseFloat(e.target.value) })}
-              className="w-full border border-[#E5E7EB] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
+              className="w-full bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
             />
           </div>
 
           <div>
-            <label className="block mb-1 font-medium text-[#202938]">Thermal Runaway Trigger (°C)</label>
+            <label className="block mb-1 font-medium text-[#202938] dark:text-[#CBD5E1]">Thermal Runaway Trigger (°C)</label>
             <input
               type="number"
               step="0.5"
               value={config.runawayTemp || 55.0}
               onChange={(e) => setConfig({ ...config, runawayTemp: parseFloat(e.target.value) })}
-              className="w-full border border-[#E5E7EB] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
+              className="w-full bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
             />
           </div>
         </div>
 
         <div>
-          <label className="block mb-1 font-medium text-[#202938]">Max Inter-Cell Gradient (ΔT Threshold)</label>
+          <label className="block mb-1 font-medium text-[#202938] dark:text-[#CBD5E1]">Max Inter-Cell Gradient (ΔT Threshold)</label>
           <input
             type="number"
             step="0.5"
             value={config.hotspotDeltaT || 5.0}
             onChange={(e) => setConfig({ ...config, hotspotDeltaT: parseFloat(e.target.value) })}
-            className="w-full border border-[#E5E7EB] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
+            className="w-full bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
           />
         </div>
 
         <div>
-          <label className="block mb-1 font-medium text-[#202938]">Coolant Fluid Type</label>
+          <label className="block mb-1 font-medium text-[#202938] dark:text-[#CBD5E1]">Coolant Fluid Type</label>
           <select
             value={config.coolantFluidType || '50/50 Water-Ethylene Glycol'}
             onChange={(e) => setConfig({ ...config, coolantFluidType: e.target.value })}
-            className="w-full border border-[#E5E7EB] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
+            className="w-full bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
           >
             <option value="50/50 Water-Ethylene Glycol">50/50 Water-Ethylene Glycol</option>
             <option value="Dielectric Immersion Fluid">Dielectric Immersion Fluid</option>

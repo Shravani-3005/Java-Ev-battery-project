@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '../api/client';
+import { useTheme } from '../context/ThemeContext';
+import { Sun, Moon } from 'lucide-react';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,6 +11,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { isDark, toggleTheme } = useTheme();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,11 +38,23 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="fixed inset-0 bg-[#F7F8FA] dark:bg-[#0E131F] flex items-center justify-center p-4 overflow-y-auto">
-      <div className="max-w-sm w-full bg-white dark:bg-[#172235] border border-[#E5E7EB] dark:border-[#223147] rounded-lg p-6 shadow-sm space-y-5 my-auto">
+    <div className="fixed inset-0 bg-[#F7F8FA] dark:bg-[#0F172A] flex items-center justify-center p-4 overflow-y-auto transition-colors">
+      {/* Top right theme toggle */}
+      <div className="absolute top-4 right-4">
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="p-2 text-[#6B7280] dark:text-[#94A3B8] hover:text-[#202938] dark:hover:text-[#CBD5E1] rounded border border-[#E5E7EB] dark:border-[#334155] bg-white dark:bg-[#1E293B] shadow-sm transition-colors"
+          title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        >
+          {isDark ? <Sun className="w-4 h-4 text-[#D69A32]" /> : <Moon className="w-4 h-4" />}
+        </button>
+      </div>
+
+      <div className="max-w-sm w-full bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded-lg p-6 shadow-sm space-y-5 my-auto transition-colors">
         {/* Simple Brand - Centered */}
-        <div className="border-b border-[#E5E7EB] dark:border-[#223147] pb-4 text-center">
-          <span className="text-xl font-semibold tracking-wider text-[#172235] dark:text-[#F1F5F9] block">
+        <div className="border-b border-[#E5E7EB] dark:border-[#334155] pb-4 text-center">
+          <span className="text-xl font-semibold tracking-wider text-[#172235] dark:text-[#CBD5E1] block">
             THERMOCORE
           </span>
           <p className="text-xs text-[#6B7280] dark:text-[#94A3B8] mt-1">
@@ -48,14 +63,14 @@ export default function LoginPage() {
         </div>
 
         {/* Tab Switcher - Centered 50/50 */}
-        <div className="flex border-b border-[#E5E7EB] dark:border-[#223147] text-xs">
+        <div className="flex border-b border-[#E5E7EB] dark:border-[#334155] text-xs">
           <button
             type="button"
             onClick={() => { setIsLogin(true); setError(''); }}
             className={`w-1/2 pb-2.5 text-center font-medium transition-colors border-b-2 ${
               isLogin
                 ? 'border-[#2563A6] text-[#2563A6] dark:text-[#60A5FA] dark:border-[#60A5FA]'
-                : 'border-transparent text-[#6B7280] dark:text-[#94A3B8] hover:text-[#202938] dark:hover:text-[#F1F5F9]'
+                : 'border-transparent text-[#6B7280] dark:text-[#94A3B8] hover:text-[#202938] dark:hover:text-[#CBD5E1]'
             }`}
           >
             Sign In
@@ -66,7 +81,7 @@ export default function LoginPage() {
             className={`w-1/2 pb-2.5 text-center font-medium transition-colors border-b-2 ${
               !isLogin
                 ? 'border-[#2563A6] text-[#2563A6] dark:text-[#60A5FA] dark:border-[#60A5FA]'
-                : 'border-transparent text-[#6B7280] dark:text-[#94A3B8] hover:text-[#202938] dark:hover:text-[#F1F5F9]'
+                : 'border-transparent text-[#6B7280] dark:text-[#94A3B8] hover:text-[#202938] dark:hover:text-[#CBD5E1]'
             }`}
           >
             Register Account
@@ -75,7 +90,7 @@ export default function LoginPage() {
 
         {/* Error Alert */}
         {error && (
-          <div className="p-2.5 bg-[#FBEBEB] dark:bg-[#321B1B] border border-[#F4C5C5] dark:border-[#5C2B2B] text-[#C34848] dark:text-[#F87171] rounded text-xs text-center">
+          <div className="p-2.5 bg-[#FBEBEB] dark:bg-[#1F2937] border border-[#F4C5C5] dark:border-[#374151] text-[#C34848] dark:text-[#F87171] rounded text-xs text-center">
             {error}
           </div>
         )}
@@ -83,7 +98,7 @@ export default function LoginPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
           <div>
-            <label className="block mb-1 font-medium text-[#202938] dark:text-[#F1F5F9]">
+            <label className="block mb-1 font-medium text-[#202938] dark:text-[#CBD5E1]">
               Email Address
             </label>
             <input
@@ -92,12 +107,12 @@ export default function LoginPage() {
               placeholder="e.g. operator@somaiya.edu"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-white dark:bg-[#1B293E] border border-[#E5E7EB] dark:border-[#223147] rounded px-3 py-2 text-xs text-[#202938] dark:text-[#F1F5F9] focus:border-[#2563A6] focus:outline-none"
+              className="w-full bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] rounded px-3 py-2 text-xs text-[#202938] dark:text-[#CBD5E1] focus:border-[#2563A6] focus:outline-none placeholder-[#9CA3AF] dark:placeholder-[#64748B]"
             />
           </div>
 
           <div>
-            <label className="block mb-1 font-medium text-[#202938] dark:text-[#F1F5F9]">
+            <label className="block mb-1 font-medium text-[#202938] dark:text-[#CBD5E1]">
               Password
             </label>
             <input
@@ -106,7 +121,7 @@ export default function LoginPage() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white dark:bg-[#1B293E] border border-[#E5E7EB] dark:border-[#223147] rounded px-3 py-2 text-xs text-[#202938] dark:text-[#F1F5F9] focus:border-[#2563A6] focus:outline-none"
+              className="w-full bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] rounded px-3 py-2 text-xs text-[#202938] dark:text-[#CBD5E1] focus:border-[#2563A6] focus:outline-none placeholder-[#9CA3AF] dark:placeholder-[#64748B]"
             />
           </div>
 

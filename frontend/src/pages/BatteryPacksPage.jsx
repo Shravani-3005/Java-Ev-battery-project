@@ -109,7 +109,7 @@ export default function BatteryPacksPage() {
             placeholder="Search packs..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-white border border-[#E5E7EB] rounded pl-9 pr-3 py-1.5 text-xs text-[#202938] focus:outline-none focus:border-[#2563A6]"
+            className="w-full bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded pl-9 pr-3 py-1.5 text-xs text-[#202938] dark:text-[#CBD5E1] focus:outline-none focus:border-[#2563A6]"
           />
         </div>
 
@@ -123,7 +123,7 @@ export default function BatteryPacksPage() {
       </div>
 
       {/* Clean Table View */}
-      <div className="bg-white border border-[#E5E7EB] rounded overflow-hidden">
+      <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left table-minimal">
             <thead>
@@ -141,28 +141,28 @@ export default function BatteryPacksPage() {
             <tbody>
               {packs.map((pack) => (
                 <tr key={pack.id}>
-                  <td className="font-semibold text-[#202938]">{pack.packCode}</td>
-                  <td className="text-[#202938]">{pack.packName}</td>
-                  <td className="text-[#6B7280]">{pack.chemistry}</td>
+                  <td className="font-semibold text-[#202938] dark:text-[#CBD5E1]">{pack.packCode}</td>
+                  <td className="text-[#202938] dark:text-[#CBD5E1]">{pack.packName}</td>
+                  <td className="text-[#6B7280] dark:text-[#94A3B8]">{pack.chemistry}</td>
                   <td>{pack.capacityKWh} kWh</td>
                   <td>{pack.nominalVoltage} V</td>
-                  <td className="text-[#6B7280]">{pack.coolingType || 'Micro-channel Cold Plate'}</td>
+                  <td className="text-[#6B7280] dark:text-[#94A3B8]">{pack.coolingType || 'Micro-channel Cold Plate'}</td>
                   <td>
-                    <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-[#EBF7EE] text-[#27834A]">
+                    <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-[#EBF7EE] text-[#27834A] dark:bg-[#1F2937] dark:text-[#4ADE80] dark:border dark:border-[#374151]">
                       Operational
                     </span>
                   </td>
                   <td className="text-right space-x-2">
                     <button
                       onClick={() => handleOpenEdit(pack)}
-                      className="p-1 text-[#6B7280] hover:text-[#2563A6] rounded hover:bg-[#F3F4F6]"
+                      className="p-1 text-[#6B7280] dark:text-[#94A3B8] hover:text-[#2563A6] dark:hover:text-[#60A5FA] rounded hover:bg-[#F3F4F6] dark:hover:bg-[#334155]"
                       title="Edit"
                     >
                       <Edit2 className="w-3.5 h-3.5 inline" />
                     </button>
                     <button
                       onClick={() => handleDelete(pack.id)}
-                      className="p-1 text-[#6B7280] hover:text-[#C34848] rounded hover:bg-[#F3F4F6]"
+                      className="p-1 text-[#6B7280] dark:text-[#94A3B8] hover:text-[#C34848] rounded hover:bg-[#F3F4F6] dark:hover:bg-[#334155]"
                       title="Delete"
                     >
                       <Trash2 className="w-3.5 h-3.5 inline" />

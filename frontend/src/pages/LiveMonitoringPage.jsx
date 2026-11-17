@@ -53,16 +53,16 @@ export default function LiveMonitoringPage() {
   return (
     <div className="space-y-5">
       {/* Pack Selection & Live Status Banner */}
-      <div className="bg-white border border-[#E5E7EB] rounded p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <label className="text-xs font-semibold text-[#6B7280] uppercase tracking-wide">
+          <label className="text-xs font-semibold text-[#6B7280] dark:text-[#94A3B8] uppercase tracking-wide">
             Select Active Pack
           </label>
           <select
             value={selectedPackId}
             onChange={(e) => setSelectedPackId(e.target.value)}
             disabled={packs.length === 0}
-            className="text-xs bg-white border border-[#E5E7EB] text-[#202938] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6] disabled:opacity-60"
+            className="text-xs bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6] disabled:opacity-60"
           >
             {packs.length === 0 ? (
               <option value="">No battery packs registered</option>
@@ -78,15 +78,15 @@ export default function LiveMonitoringPage() {
 
         <div className="flex items-center gap-2 text-xs">
           <span className={`w-2 h-2 rounded-full ${packs.length > 0 ? 'bg-[#27834A]' : 'bg-[#9CA3AF]'}`}></span>
-          <span className="text-[#6B7280]">
+          <span className="text-[#6B7280] dark:text-[#94A3B8]">
             {packs.length > 0 ? 'Telemetry Stream Active (1 Hz)' : 'Awaiting Battery Pack Registration'}
           </span>
         </div>
       </div>
 
       {packs.length === 0 && (
-        <div className="bg-white border border-[#E5E7EB] rounded p-6 text-center text-xs text-[#6B7280]">
-          <p className="font-semibold text-sm text-[#202938] mb-1">No battery pack registered yet.</p>
+        <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded p-6 text-center text-xs text-[#6B7280] dark:text-[#94A3B8]">
+          <p className="font-semibold text-sm text-[#202938] dark:text-[#CBD5E1] mb-1">No battery pack registered yet.</p>
           <p className="mb-3">Add your first battery pack manually to begin live telemetry streaming and cell array monitoring.</p>
           <Link
             to="/batteries"
@@ -108,14 +108,14 @@ export default function LiveMonitoringPage() {
       </div>
 
       {/* Real-time Telemetry Trend Chart */}
-      <div className="bg-white border border-[#E5E7EB] rounded p-4">
-        <h2 className="text-base font-semibold text-[#202938] mb-3">
+      <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded p-4">
+        <h2 className="text-base font-semibold text-[#202938] dark:text-[#CBD5E1] mb-3">
           Live Electrical & Thermal Profile
         </h2>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={readings} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid stroke="#F3F4F6" vertical={false} />
+              <CartesianGrid stroke="#334155" opacity={0.3} vertical={false} />
               <XAxis
                 dataKey="timestamp"
                 stroke="#9CA3AF"
@@ -129,10 +129,11 @@ export default function LiveMonitoringPage() {
               <YAxis stroke="#9CA3AF" fontSize={11} tickLine={false} domain={['auto', 'auto']} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#FFFFFF',
-                  border: '1px solid #E5E7EB',
+                  backgroundColor: '#1E293B',
+                  border: '1px solid #334155',
                   borderRadius: '4px',
                   fontSize: '12px',
+                  color: '#CBD5E1',
                 }}
               />
               <Line type="monotone" dataKey="batteryTemp" name="Avg Temp (°C)" stroke="#2563A6" strokeWidth={2} dot={false} />
@@ -144,12 +145,12 @@ export default function LiveMonitoringPage() {
       </div>
 
       {/* 24-Cell Matrix Heat Grid */}
-      <div className="bg-white border border-[#E5E7EB] rounded p-4">
+      <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded p-4">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-semibold text-[#202938]">
+          <h2 className="text-base font-semibold text-[#202938] dark:text-[#CBD5E1]">
             Cell Array Temperature Matrix (24 Cells)
           </h2>
-          <span className="text-xs text-[#6B7280]">
+          <span className="text-xs text-[#6B7280] dark:text-[#94A3B8]">
             Safe limit: {activePack?.maxSafeTemp || 45}°C
           </span>
         </div>
@@ -170,13 +171,13 @@ export default function LiveMonitoringPage() {
                 key={cellId}
                 className={`p-2.5 rounded border text-center transition-colors ${
                   isCritical
-                    ? 'bg-[#FBEBEB] border-[#C34848] text-[#C34848]'
+                    ? 'bg-[#FBEBEB] border-[#C34848] text-[#C34848] dark:bg-[#1F2937] dark:border-[#5C2B2B] dark:text-[#F87171]'
                     : isHigh
-                    ? 'bg-[#FEF5E7] border-[#D69A32] text-[#D69A32]'
-                    : 'bg-[#F9FAFB] border-[#E5E7EB] text-[#202938]'
+                    ? 'bg-[#FEF5E7] border-[#D69A32] text-[#D69A32] dark:bg-[#1F2937] dark:border-[#4B3818] dark:text-[#FBBF24]'
+                    : 'bg-[#F9FAFB] border-[#E5E7EB] text-[#202938] dark:bg-[#0F172A] dark:border-[#334155] dark:text-[#CBD5E1]'
                 }`}
               >
-                <div className="text-[10px] text-[#6B7280] font-medium">C-{String(cellId).padStart(2, '0')}</div>
+                <div className="text-[10px] text-[#6B7280] dark:text-[#94A3B8] font-medium">C-{String(cellId).padStart(2, '0')}</div>
                 <div className="text-xs font-semibold mt-0.5">{temp.toFixed(1)}°</div>
               </div>
             );

@@ -29,7 +29,12 @@ html.dark body {
    ======================================================== */
 
 /* App background: soft deep charcoal grey */
-html.dark .bg-\[\#F7F8FA\] {
+html.dark,
+html.dark body,
+html.dark #root,
+html.dark main,
+html.dark .bg-\[\#F7F8FA\],
+html.dark .bg-\[\#0E131F\] {
   background-color: #0F172A !important;
 }
 

@@ -3,10 +3,10 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-  // Check stored theme or default to 'light' as requested by the user
+  // Default to 'dark' mode so the entire app immediately renders in sleek dark grey without white backgrounds
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('thermocore_theme');
-    return saved ? saved : 'light';
+    return saved ? saved : 'dark';
   });
 
   useEffect(() => {

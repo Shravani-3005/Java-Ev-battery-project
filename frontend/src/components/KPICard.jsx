@@ -9,7 +9,7 @@ export default function KPICard({ label, value, unit, status = 'default' }) {
   };
 
   return (
-    <div className="bg-white dark:bg-[#172235] border border-[#E5E7EB] dark:border-[#223147] rounded p-4 flex flex-col justify-between">
+    <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded p-4 flex flex-col justify-between transition-colors">
       <span className="text-xs font-medium text-[#6B7280] dark:text-[#94A3B8] uppercase tracking-wide">
         {label}
       </span>

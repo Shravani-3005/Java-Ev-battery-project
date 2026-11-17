@@ -78,17 +78,17 @@ export default function DashboardPage() {
       {/* 2. Middle Row: Temperature Trend Chart + Thermal Performance */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Battery Temperature Trend */}
-        <div className="lg:col-span-2 bg-white border border-[#E5E7EB] rounded p-4">
+        <div className="lg:col-span-2 bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded p-4">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-semibold text-[#202938]">
+            <h2 className="text-base font-semibold text-[#202938] dark:text-[#CBD5E1]">
               Battery Temperature Trend
             </h2>
             <div className="flex items-center gap-2 text-xs">
-              <span className="text-[#6B7280]">Range</span>
+              <span className="text-[#6B7280] dark:text-[#94A3B8]">Range</span>
               <select
                 value={timeFilter}
                 onChange={(e) => setTimeFilter(e.target.value)}
-                className="bg-white border border-[#E5E7EB] text-[#202938] rounded px-2 py-1 focus:outline-none focus:border-[#2563A6]"
+                className="bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-2 py-1 focus:outline-none focus:border-[#2563A6]"
               >
                 <option value="15">Last 15 readings</option>
                 <option value="25">Last 25 readings</option>
@@ -100,7 +100,7 @@ export default function DashboardPage() {
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={overviewChart} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid stroke="#F3F4F6" vertical={false} />
+                <CartesianGrid stroke="#334155" opacity={0.3} vertical={false} />
                 <XAxis
                   dataKey="timestamp"
                   stroke="#9CA3AF"
@@ -121,11 +121,11 @@ export default function DashboardPage() {
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #E5E7EB',
+                    backgroundColor: '#1E293B',
+                    border: '1px solid #334155',
                     borderRadius: '4px',
                     fontSize: '12px',
-                    color: '#202938',
+                    color: '#CBD5E1',
                   }}
                 />
                 <Line
@@ -160,38 +160,38 @@ export default function DashboardPage() {
         </div>
 
         {/* Thermal Performance Panel */}
-        <div className="bg-white border border-[#E5E7EB] rounded p-4 flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded p-4 flex flex-col justify-between">
           <div>
-            <h2 className="text-base font-semibold text-[#202938] mb-3">
+            <h2 className="text-base font-semibold text-[#202938] dark:text-[#CBD5E1] mb-3">
               Thermal Performance
             </h2>
-            <div className="divide-y divide-[#E5E7EB] text-sm">
+            <div className="divide-y divide-[#E5E7EB] dark:divide-[#334155] text-sm">
               <div className="py-2.5 flex items-center justify-between">
-                <span className="text-[#6B7280]">Cooling System</span>
-                <span className="font-medium text-[#27834A]">Active (Micro-channel)</span>
+                <span className="text-[#6B7280] dark:text-[#94A3B8]">Cooling System</span>
+                <span className="font-medium text-[#27834A] dark:text-[#4ADE80]">Active (Micro-channel)</span>
               </div>
               <div className="py-2.5 flex items-center justify-between">
-                <span className="text-[#6B7280]">Inlet Temperature</span>
-                <span className="font-medium text-[#202938]">{inletT} °C</span>
+                <span className="text-[#6B7280] dark:text-[#94A3B8]">Inlet Temperature</span>
+                <span className="font-medium text-[#202938] dark:text-[#CBD5E1]">{inletT} °C</span>
               </div>
               <div className="py-2.5 flex items-center justify-between">
-                <span className="text-[#6B7280]">Outlet Temperature</span>
-                <span className="font-medium text-[#202938]">{outletT} °C</span>
+                <span className="text-[#6B7280] dark:text-[#94A3B8]">Outlet Temperature</span>
+                <span className="font-medium text-[#202938] dark:text-[#CBD5E1]">{outletT} °C</span>
               </div>
               <div className="py-2.5 flex items-center justify-between">
-                <span className="text-[#6B7280]">Temperature Difference (ΔT)</span>
-                <span className="font-medium text-[#202938]">{deltaT} °C</span>
+                <span className="text-[#6B7280] dark:text-[#94A3B8]">Temperature Difference (ΔT)</span>
+                <span className="font-medium text-[#202938] dark:text-[#CBD5E1]">{deltaT} °C</span>
               </div>
               <div className="py-2.5 flex items-center justify-between">
-                <span className="text-[#6B7280]">Flow Rate</span>
-                <span className="font-medium text-[#2563A6]">{flowRate} L/min</span>
+                <span className="text-[#6B7280] dark:text-[#94A3B8]">Flow Rate</span>
+                <span className="font-medium text-[#2563A6] dark:text-[#60A5FA]">{flowRate} L/min</span>
               </div>
             </div>
           </div>
 
-          <div className="pt-3 border-t border-[#E5E7EB] text-xs text-[#6B7280] flex items-center justify-between">
+          <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#334155] text-xs text-[#6B7280] dark:text-[#94A3B8] flex items-center justify-between">
             <span>Heat Transfer Ratio</span>
-            <span className="font-medium text-[#202938]">0.88 kW/K</span>
+            <span className="font-medium text-[#202938] dark:text-[#CBD5E1]">0.88 kW/K</span>
           </div>
         </div>
       </div>
@@ -199,12 +199,12 @@ export default function DashboardPage() {
       {/* 3. Bottom Row: Battery Packs Table & Recent Alerts Table */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Battery Packs Table */}
-        <div className="bg-white border border-[#E5E7EB] rounded">
-          <div className="p-4 border-b border-[#E5E7EB] flex items-center justify-between">
-            <h2 className="text-base font-semibold text-[#202938]">
+        <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded">
+          <div className="p-4 border-b border-[#E5E7EB] dark:border-[#334155] flex items-center justify-between">
+            <h2 className="text-base font-semibold text-[#202938] dark:text-[#CBD5E1]">
               Battery Packs
             </h2>
-            <Link to="/batteries" className="text-xs font-medium text-[#2563A6] hover:underline">
+            <Link to="/batteries" className="text-xs font-medium text-[#2563A6] dark:text-[#60A5FA] hover:underline">
               View all
             </Link>
           </div>
@@ -228,17 +228,19 @@ export default function DashboardPage() {
 
                   return (
                     <tr key={pack.id}>
-                      <td className="font-medium text-[#202938] whitespace-nowrap">
-                        <Link to={`/batteries?selected=${pack.id}`} className="hover:text-[#2563A6]">
+                      <td className="font-medium text-[#202938] dark:text-[#CBD5E1] whitespace-nowrap">
+                        <Link to={`/batteries?selected=${pack.id}`} className="hover:text-[#2563A6] dark:hover:text-[#60A5FA]">
                           {pack.packCode}
                         </Link>
                       </td>
-                      <td className="text-[#6B7280] whitespace-nowrap">{pack.capacityKWh} kWh</td>
+                      <td className="text-[#6B7280] dark:text-[#94A3B8] whitespace-nowrap">{pack.capacityKWh} kWh</td>
                       <td className="whitespace-nowrap">{temp}</td>
                       <td className="whitespace-nowrap">{soc}</td>
                       <td>
                         <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${
-                          isSafe ? 'bg-[#EBF7EE] text-[#27834A]' : 'bg-[#FEF5E7] text-[#D69A32]'
+                          isSafe
+                            ? 'bg-[#EBF7EE] text-[#27834A] dark:bg-[#1F2937] dark:text-[#4ADE80] dark:border dark:border-[#374151]'
+                            : 'bg-[#FEF5E7] text-[#D69A32] dark:bg-[#1F2937] dark:text-[#FBBF24] dark:border dark:border-[#374151]'
                         }`}>
                           {isSafe ? 'Normal' : 'Warning'}
                         </span>
@@ -248,8 +250,8 @@ export default function DashboardPage() {
                 })}
                 {packs.length === 0 && (
                   <tr>
-                    <td colSpan="5" className="text-center py-6 text-xs text-[#6B7280]">
-                      No battery packs registered. <Link to="/batteries" className="text-[#2563A6] font-medium hover:underline">Add your first battery pack &rarr;</Link>
+                    <td colSpan="5" className="text-center py-6 text-xs text-[#6B7280] dark:text-[#94A3B8]">
+                      No battery packs registered. <Link to="/batteries" className="text-[#2563A6] dark:text-[#60A5FA] font-medium hover:underline">Add your first battery pack &rarr;</Link>
                     </td>
                   </tr>
                 )}
@@ -259,12 +261,12 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Alerts Table */}
-        <div className="bg-white border border-[#E5E7EB] rounded">
-          <div className="p-4 border-b border-[#E5E7EB] flex items-center justify-between">
-            <h2 className="text-base font-semibold text-[#202938]">
+        <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded">
+          <div className="p-4 border-b border-[#E5E7EB] dark:border-[#334155] flex items-center justify-between">
+            <h2 className="text-base font-semibold text-[#202938] dark:text-[#CBD5E1]">
               Recent Alerts
             </h2>
-            <Link to="/alerts" className="text-xs font-medium text-[#2563A6] hover:underline">
+            <Link to="/alerts" className="text-xs font-medium text-[#2563A6] dark:text-[#60A5FA] hover:underline">
               View all
             </Link>
           </div>
@@ -281,20 +283,22 @@ export default function DashboardPage() {
               <tbody>
                 {recentAlerts.slice(0, 5).map((alert) => (
                   <tr key={alert.id}>
-                    <td className="text-xs text-[#6B7280] whitespace-nowrap">
+                    <td className="text-xs text-[#6B7280] dark:text-[#94A3B8] whitespace-nowrap">
                       {new Date(alert.timestamp || alert.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </td>
-                    <td className="font-medium text-[#202938] whitespace-nowrap">
+                    <td className="font-medium text-[#202938] dark:text-[#CBD5E1] whitespace-nowrap">
                       {alert.alertType?.replace(/_/g, ' ') || 'High Gradient'}
                     </td>
-                    <td className="text-[#6B7280] whitespace-nowrap">
+                    <td className="text-[#6B7280] dark:text-[#94A3B8] whitespace-nowrap">
                       {alert.batteryPack?.packCode || `BP-${alert.batteryId || 1}`}
                     </td>
                     <td className="whitespace-nowrap">
                       <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
                         alert.severity === 'CRITICAL' || alert.severity === 'DANGER'
-                          ? 'bg-[#FBEBEB] text-[#C34848]'
-                          : 'bg-[#FEF5E7] text-[#D69A32]'
+                          ? 'bg-[#FBEBEB] text-[#C34848] dark:bg-[#1F2937] dark:text-[#F87171] dark:border dark:border-[#374151]'
+                          : alert.status === 'ACKNOWLEDGED'
+                          ? 'bg-[#F3F4F6] text-[#6B7280] dark:bg-[#1F2937] dark:text-[#94A3B8] dark:border dark:border-[#374151]'
+                          : 'bg-[#FEF5E7] text-[#D69A32] dark:bg-[#1F2937] dark:text-[#FBBF24] dark:border dark:border-[#374151]'
                       }`}>
                         {alert.status || 'Active'}
                       </span>
@@ -303,7 +307,7 @@ export default function DashboardPage() {
                 ))}
                 {recentAlerts.length === 0 && (
                   <tr>
-                    <td colSpan="4" className="text-center py-6 text-sm text-[#6B7280]">
+                    <td colSpan="4" className="text-center py-6 text-sm text-[#6B7280] dark:text-[#94A3B8]">
                       No active alerts. All battery packs operational.
                     </td>
                   </tr>

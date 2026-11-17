@@ -66,9 +66,9 @@ export default function HistoricalRecordsPage() {
   return (
     <div className="space-y-4">
       {/* Search & Export Toolbar */}
-      <div className="bg-white border border-[#E5E7EB] rounded p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-3">
-          <label className="text-[#6B7280] font-medium">Battery Pack</label>
+          <label className="text-[#6B7280] dark:text-[#94A3B8] font-medium">Battery Pack</label>
           <select
             value={selectedPackId}
             onChange={(e) => {
@@ -76,7 +76,7 @@ export default function HistoricalRecordsPage() {
               setPage(0);
             }}
             disabled={packs.length === 0}
-            className="bg-white border border-[#E5E7EB] text-[#202938] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6] disabled:opacity-60"
+            className="bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6] disabled:opacity-60"
           >
             {packs.length === 0 ? (
               <option value="">No battery packs registered</option>
@@ -89,20 +89,20 @@ export default function HistoricalRecordsPage() {
             )}
           </select>
 
-          <span className="text-[#6B7280]">{totalElements} records logged</span>
+          <span className="text-[#6B7280] dark:text-[#94A3B8]">{totalElements} records logged</span>
         </div>
 
         <button
           onClick={handleExportCSV}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#E5E7EB] text-[#202938] hover:bg-[#F3F4F6] rounded font-medium transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] hover:bg-[#F3F4F6] dark:hover:bg-[#334155] rounded font-medium transition-colors"
         >
-          <Download className="w-3.5 h-3.5 text-[#6B7280]" />
+          <Download className="w-3.5 h-3.5 text-[#6B7280] dark:text-[#94A3B8]" />
           <span>Export CSV</span>
         </button>
       </div>
 
       {/* Historical Data Table */}
-      <div className="bg-white border border-[#E5E7EB] rounded overflow-hidden">
+      <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left table-minimal">
             <thead>
@@ -121,21 +121,21 @@ export default function HistoricalRecordsPage() {
             <tbody>
               {records.map((r, i) => (
                 <tr key={r.id || i}>
-                  <td className="text-[#6B7280] text-xs">
+                  <td className="text-[#6B7280] dark:text-[#94A3B8] text-xs">
                     {new Date(r.timestamp).toLocaleString([], { dateStyle: 'short', timeStyle: 'medium' })}
                   </td>
-                  <td className="font-semibold text-[#202938]">{r.batteryTemp != null ? Number(r.batteryTemp).toFixed(1) : '33.5'} °C</td>
+                  <td className="font-semibold text-[#202938] dark:text-[#CBD5E1]">{r.batteryTemp != null ? Number(r.batteryTemp).toFixed(1) : '33.5'} °C</td>
                   <td>
                     {r.minCellTemp != null ? Number(r.minCellTemp).toFixed(1) : '31.0'}° / {r.maxCellTemp != null ? Number(r.maxCellTemp).toFixed(1) : '35.2'}°
-                    <span className="text-xs text-[#6B7280] ml-1">(Δ{r.tempGradient != null ? Number(r.tempGradient).toFixed(1) : '4.2'}°)</span>
+                    <span className="text-xs text-[#6B7280] dark:text-[#94A3B8] ml-1">(Δ{r.tempGradient != null ? Number(r.tempGradient).toFixed(1) : '4.2'}°)</span>
                   </td>
                   <td>{r.voltage != null ? Number(r.voltage).toFixed(0) : '385'} V</td>
                   <td>{r.current != null ? Number(r.current).toFixed(1) : '45.0'} A</td>
-                  <td className="text-[#2563A6]">{r.coolantFlowRate != null ? Number(r.coolantFlowRate).toFixed(1) : '2.5'} L/min</td>
-                  <td className="text-[#6B7280]">{r.coolantInletTemp != null ? Number(r.coolantInletTemp).toFixed(1) : '24.0'}° / {r.coolantOutletTemp != null ? Number(r.coolantOutletTemp).toFixed(1) : '27.5'}°</td>
+                  <td className="text-[#2563A6] dark:text-[#60A5FA]">{r.coolantFlowRate != null ? Number(r.coolantFlowRate).toFixed(1) : '2.5'} L/min</td>
+                  <td className="text-[#6B7280] dark:text-[#94A3B8]">{r.coolantInletTemp != null ? Number(r.coolantInletTemp).toFixed(1) : '24.0'}° / {r.coolantOutletTemp != null ? Number(r.coolantOutletTemp).toFixed(1) : '27.5'}°</td>
                   <td>{r.stateOfCharge != null ? Math.round(r.stateOfCharge) : 80}%</td>
                   <td>
-                    <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-[#EBF7EE] text-[#27834A]">
+                    <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-[#EBF7EE] text-[#27834A] dark:bg-[#1F2937] dark:text-[#4ADE80] dark:border dark:border-[#374151]">
                       {r.thermalRiskLevel || 'NORMAL'}
                     </span>
                   </td>

@@ -44,14 +44,14 @@ export default function AlertsPage() {
   return (
     <div className="space-y-4">
       {/* Filter Toolbar */}
-      <div className="bg-white border border-[#E5E7EB] rounded p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <label className="text-[#6B7280] font-medium">Severity</label>
+            <label className="text-[#6B7280] dark:text-[#94A3B8] font-medium">Severity</label>
             <select
               value={severityFilter}
               onChange={(e) => setSeverityFilter(e.target.value)}
-              className="bg-white border border-[#E5E7EB] text-[#202938] rounded px-2.5 py-1 focus:outline-none focus:border-[#2563A6]"
+              className="bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-2.5 py-1 focus:outline-none focus:border-[#2563A6]"
             >
               <option value="">All Severities</option>
               <option value="CRITICAL">Critical</option>
@@ -62,11 +62,11 @@ export default function AlertsPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <label className="text-[#6B7280] font-medium">Status</label>
+            <label className="text-[#6B7280] dark:text-[#94A3B8] font-medium">Status</label>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-white border border-[#E5E7EB] text-[#202938] rounded px-2.5 py-1 focus:outline-none focus:border-[#2563A6]"
+              className="bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-2.5 py-1 focus:outline-none focus:border-[#2563A6]"
             >
               <option value="">All Statuses</option>
               <option value="ACTIVE">Active</option>
@@ -76,11 +76,11 @@ export default function AlertsPage() {
           </div>
         </div>
 
-        <span className="text-[#6B7280]">{alerts.length} total alerts</span>
+        <span className="text-[#6B7280] dark:text-[#94A3B8]">{alerts.length} total alerts</span>
       </div>
 
       {/* Clean Alert Table */}
-      <div className="bg-white border border-[#E5E7EB] rounded overflow-hidden">
+      <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left table-minimal">
             <thead>
@@ -99,7 +99,7 @@ export default function AlertsPage() {
                 const isCrit = alert.severity === 'CRITICAL' || alert.severity === 'DANGER';
                 return (
                   <tr key={alert.id}>
-                    <td className="text-[#6B7280] text-xs">
+                    <td className="text-[#6B7280] dark:text-[#94A3B8] text-xs">
                       {new Date(alert.timestamp || alert.createdAt || Date.now()).toLocaleString([], {
                         dateStyle: 'short',
                         timeStyle: 'medium',
@@ -107,20 +107,28 @@ export default function AlertsPage() {
                     </td>
                     <td>
                       <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                        isCrit ? 'bg-[#FBEBEB] text-[#C34848]' : 'bg-[#FEF5E7] text-[#D69A32]'
+                        isCrit
+                          ? 'bg-[#FBEBEB] text-[#C34848] dark:bg-[#1F2937] dark:text-[#F87171] dark:border dark:border-[#374151]'
+                          : 'bg-[#FEF5E7] text-[#D69A32] dark:bg-[#1F2937] dark:text-[#FBBF24] dark:border dark:border-[#374151]'
                       }`}>
                         {alert.severity}
                       </span>
                     </td>
-                    <td className="font-semibold text-[#202938]">
+                    <td className="font-semibold text-[#202938] dark:text-[#CBD5E1]">
                       {alert.alertType?.replace(/_/g, ' ') || 'High Thermal Stress'}
                     </td>
-                    <td className="text-[#6B7280]">
+                    <td className="text-[#6B7280] dark:text-[#94A3B8]">
                       {alert.batteryPack?.packCode || `BP-${alert.batteryId || 1}`}
                     </td>
                     <td>{alert.observedReading || '48.5°C'}</td>
                     <td>
-                      <span className="text-xs text-[#6B7280]">
+                      <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                        alert.status === 'RESOLVED'
+                          ? 'bg-[#EBF7EE] text-[#27834A] dark:bg-[#1F2937] dark:text-[#4ADE80] dark:border dark:border-[#374151]'
+                          : alert.status === 'ACKNOWLEDGED'
+                          ? 'bg-[#F3F4F6] text-[#6B7280] dark:bg-[#1F2937] dark:text-[#94A3B8] dark:border dark:border-[#374151]'
+                          : 'bg-[#FEF5E7] text-[#D69A32] dark:bg-[#1F2937] dark:text-[#FBBF24] dark:border dark:border-[#374151]'
+                      }`}>
                         {alert.status || 'ACTIVE'}
                       </span>
                     </td>

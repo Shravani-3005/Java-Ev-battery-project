@@ -163,16 +163,16 @@ export default function ThermalSimulatorPage() {
   return (
     <div className="space-y-5">
       {/* Top Controls: Pack Selector & Scenario Presets */}
-      <div className="bg-white border border-[#E5E7EB] rounded p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <label className="text-xs font-semibold text-[#6B7280] uppercase tracking-wide">
+          <label className="text-xs font-semibold text-[#6B7280] dark:text-[#94A3B8] uppercase tracking-wide">
             Battery Pack
           </label>
           <select
             value={selectedPackId}
             onChange={(e) => setSelectedPackId(e.target.value)}
             disabled={packs.length === 0}
-            className="text-xs bg-white border border-[#E5E7EB] text-[#202938] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6] disabled:opacity-60"
+            className="text-xs bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6] disabled:opacity-60"
           >
             {packs.length === 0 ? (
               <option value="">No battery packs registered</option>
@@ -187,28 +187,28 @@ export default function ThermalSimulatorPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5 text-xs">
-          <span className="text-[#6B7280] mr-1">Presets:</span>
+          <span className="text-[#6B7280] dark:text-[#94A3B8] mr-1">Presets:</span>
           <button
             onClick={() => applyPreset('eco')}
-            className="px-2.5 py-1 bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#202938] rounded font-medium"
+            className="px-2.5 py-1 bg-[#F3F4F6] dark:bg-[#0F172A] hover:bg-[#E5E7EB] dark:hover:bg-[#334155] text-[#202938] dark:text-[#CBD5E1] border border-transparent dark:border-[#334155] rounded font-medium transition-colors"
           >
             Eco Cruise
           </button>
           <button
             onClick={() => applyPreset('sprint')}
-            className="px-2.5 py-1 bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#202938] rounded font-medium"
+            className="px-2.5 py-1 bg-[#F3F4F6] dark:bg-[#0F172A] hover:bg-[#E5E7EB] dark:hover:bg-[#334155] text-[#202938] dark:text-[#CBD5E1] border border-transparent dark:border-[#334155] rounded font-medium transition-colors"
           >
             Sprint (220A)
           </button>
           <button
             onClick={() => applyPreset('fastcharge')}
-            className="px-2.5 py-1 bg-[#FEF5E7] hover:bg-[#FDEED5] text-[#D69A32] rounded font-medium"
+            className="px-2.5 py-1 bg-[#FEF5E7] dark:bg-[#1F2937] hover:bg-[#FDEED5] text-[#D69A32] dark:text-[#FBBF24] border border-transparent dark:border-[#374151] rounded font-medium transition-colors"
           >
             DC Fast-Charge
           </button>
           <button
             onClick={() => applyPreset('pumpfail')}
-            className="px-2.5 py-1 bg-[#FBEBEB] hover:bg-[#F8D7D7] text-[#C34848] rounded font-medium"
+            className="px-2.5 py-1 bg-[#FBEBEB] dark:bg-[#1F2937] hover:bg-[#F8D7D7] text-[#C34848] dark:text-[#F87171] border border-transparent dark:border-[#374151] rounded font-medium transition-colors"
           >
             Pump Failure
           </button>
@@ -218,8 +218,8 @@ export default function ThermalSimulatorPage() {
       {/* Main Grid: Input Sliders vs. Calculated Results */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Left: Input Parameters Form */}
-        <div className="bg-white border border-[#E5E7EB] rounded p-4 space-y-4 text-xs">
-          <h2 className="text-base font-semibold text-[#202938]">
+        <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded p-4 space-y-4 text-xs">
+          <h2 className="text-base font-semibold text-[#202938] dark:text-[#CBD5E1]">
             Simulated Sensor Parameters
           </h2>
 
@@ -306,66 +306,66 @@ export default function ThermalSimulatorPage() {
         </div>
 
         {/* Right: Calculated Physics & Prescribed Directives */}
-        <div className="bg-white border border-[#E5E7EB] rounded p-4 flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded p-4 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB] dark:border-[#334155]">
               <div>
-                <h2 className="text-base font-semibold text-[#202938]">
+                <h2 className="text-base font-semibold text-[#202938] dark:text-[#CBD5E1]">
                   Intelligent Risk Evaluation
                 </h2>
-                <div className="text-xs text-[#6B7280] mt-0.5">
+                <div className="text-xs text-[#6B7280] dark:text-[#94A3B8] mt-0.5">
                   Multi-factor electro-thermal calculation
                 </div>
               </div>
               <span className={`inline-block px-2.5 py-1 rounded text-xs font-semibold ${
                 analysisResult?.riskLevel === 'CRITICAL'
-                  ? 'bg-[#FBEBEB] text-[#C34848]'
+                  ? 'bg-[#FBEBEB] text-[#C34848] dark:bg-[#1F2937] dark:text-[#F87171] dark:border dark:border-[#374151]'
                   : analysisResult?.riskLevel === 'HIGH'
-                  ? 'bg-[#FBEBEB] text-[#C34848]'
+                  ? 'bg-[#FBEBEB] text-[#C34848] dark:bg-[#1F2937] dark:text-[#F87171] dark:border dark:border-[#374151]'
                   : analysisResult?.riskLevel === 'MODERATE'
-                  ? 'bg-[#FEF5E7] text-[#D69A32]'
-                  : 'bg-[#EBF7EE] text-[#27834A]'
+                  ? 'bg-[#FEF5E7] text-[#D69A32] dark:bg-[#1F2937] dark:text-[#FBBF24] dark:border dark:border-[#374151]'
+                  : 'bg-[#EBF7EE] text-[#27834A] dark:bg-[#1F2937] dark:text-[#4ADE80] dark:border dark:border-[#374151]'
               }`}>
                 {analysisResult?.riskLevel || 'NORMAL'}
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-3 my-4">
-              <div className="p-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded">
-                <span className="text-xs text-[#6B7280] block">Risk Score</span>
-                <span className="text-xl font-semibold text-[#202938] mt-0.5 block">
+              <div className="p-3 bg-[#F9FAFB] dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] rounded">
+                <span className="text-xs text-[#6B7280] dark:text-[#94A3B8] block">Risk Score</span>
+                <span className="text-xl font-semibold text-[#202938] dark:text-[#CBD5E1] mt-0.5 block">
                   {analysisResult?.riskScore != null ? `${analysisResult.riskScore} / 100` : '18 / 100'}
                 </span>
               </div>
-              <div className="p-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded">
-                <span className="text-xs text-[#6B7280] block">Cell Gradient (ΔT)</span>
-                <span className="text-xl font-semibold text-[#202938] mt-0.5 block">
+              <div className="p-3 bg-[#F9FAFB] dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] rounded">
+                <span className="text-xs text-[#6B7280] dark:text-[#94A3B8] block">Cell Gradient (ΔT)</span>
+                <span className="text-xl font-semibold text-[#202938] dark:text-[#CBD5E1] mt-0.5 block">
                   {analysisResult?.tempGradient != null ? `${analysisResult.tempGradient} °C` : '4.2 °C'}
                 </span>
               </div>
-              <div className="p-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded">
-                <span className="text-xs text-[#6B7280] block">Joulean Heat</span>
-                <span className="text-xl font-semibold text-[#202938] mt-0.5 block">
+              <div className="p-3 bg-[#F9FAFB] dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] rounded">
+                <span className="text-xs text-[#6B7280] dark:text-[#94A3B8] block">Joulean Heat</span>
+                <span className="text-xl font-semibold text-[#202938] dark:text-[#CBD5E1] mt-0.5 block">
                   {analysisResult?.calculatedHeatGenWatts != null ? `${analysisResult.calculatedHeatGenWatts} W` : '120 W'}
                 </span>
               </div>
-              <div className="p-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded">
-                <span className="text-xs text-[#6B7280] block">Cooling Sufficiency</span>
-                <span className="text-xl font-semibold text-[#27834A] mt-0.5 block">
+              <div className="p-3 bg-[#F9FAFB] dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] rounded">
+                <span className="text-xs text-[#6B7280] dark:text-[#94A3B8] block">Cooling Sufficiency</span>
+                <span className="text-xl font-semibold text-[#27834A] dark:text-[#4ADE80] mt-0.5 block">
                   {analysisResult?.coolingSufficiencyStatus || 'Adequate'}
                 </span>
               </div>
             </div>
 
-            <div className="p-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded space-y-1.5 text-xs">
-              <span className="font-semibold text-[#202938] block">Prescribed Action Directive</span>
-              <div className="flex justify-between text-[#6B7280]">
+            <div className="p-3 bg-[#F9FAFB] dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] rounded space-y-1.5 text-xs">
+              <span className="font-semibold text-[#202938] dark:text-[#CBD5E1] block">Prescribed Action Directive</span>
+              <div className="flex justify-between text-[#6B7280] dark:text-[#94A3B8]">
                 <span>Coolant Flow Target:</span>
-                <span className="font-medium text-[#202938]">{analysisResult?.recommendedCoolantFlowLpm || 2.5} L/min</span>
+                <span className="font-medium text-[#202938] dark:text-[#CBD5E1]">{analysisResult?.recommendedCoolantFlowLpm || 2.5} L/min</span>
               </div>
-              <div className="flex justify-between text-[#6B7280]">
+              <div className="flex justify-between text-[#6B7280] dark:text-[#94A3B8]">
                 <span>Action:</span>
-                <span className="font-medium text-[#202938]">{analysisResult?.recommendedAction || 'PASSIVE_ECO_CIRCULATION'}</span>
+                <span className="font-medium text-[#202938] dark:text-[#CBD5E1]">{analysisResult?.recommendedAction || 'PASSIVE_ECO_CIRCULATION'}</span>
               </div>
             </div>
           </div>
@@ -373,14 +373,14 @@ export default function ThermalSimulatorPage() {
       </div>
 
       {/* Persisted History Table */}
-      <div className="bg-white border border-[#E5E7EB] rounded overflow-hidden">
-        <div className="p-4 border-b border-[#E5E7EB] flex items-center justify-between">
-          <h2 className="text-base font-semibold text-[#202938]">
+      <div className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-[#334155] rounded overflow-hidden">
+        <div className="p-4 border-b border-[#E5E7EB] dark:border-[#334155] flex items-center justify-between">
+          <h2 className="text-base font-semibold text-[#202938] dark:text-[#CBD5E1]">
             Persisted Evaluation History
           </h2>
           <button
             onClick={() => loadEvaluations(selectedPackId)}
-            className="text-xs font-medium text-[#2563A6] hover:underline"
+            className="text-xs font-medium text-[#2563A6] dark:text-[#60A5FA] hover:underline"
           >
             Refresh
           </button>
@@ -411,7 +411,7 @@ export default function ThermalSimulatorPage() {
                   </td>
                   <td className="font-medium">{item.riskScore} / 100</td>
                   <td>
-                    <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-[#EBF7EE] text-[#27834A]">
+                    <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-[#EBF7EE] text-[#27834A] dark:bg-[#1F2937] dark:text-[#4ADE80] dark:border dark:border-[#374151]">
                       {item.riskLevel}
                     </span>
                   </td>
