@@ -227,16 +227,16 @@ export default function DashboardPage() {
 
                   return (
                     <tr key={pack.id}>
-                      <td className="font-medium text-[#202938]">
+                      <td className="font-medium text-[#202938] whitespace-nowrap">
                         <Link to={`/batteries?selected=${pack.id}`} className="hover:text-[#2563A6]">
                           {pack.packCode}
                         </Link>
                       </td>
-                      <td className="text-[#6B7280]">{pack.capacityKWh} kWh</td>
-                      <td>{temp}</td>
-                      <td>{soc}</td>
+                      <td className="text-[#6B7280] whitespace-nowrap">{pack.capacityKWh} kWh</td>
+                      <td className="whitespace-nowrap">{temp}</td>
+                      <td className="whitespace-nowrap">{soc}</td>
                       <td>
-                        <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                        <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${
                           isSafe ? 'bg-[#EBF7EE] text-[#27834A]' : 'bg-[#FEF5E7] text-[#D69A32]'
                         }`}>
                           {isSafe ? 'Normal' : 'Warning'}
@@ -273,16 +273,16 @@ export default function DashboardPage() {
               <tbody>
                 {recentAlerts.slice(0, 5).map((alert) => (
                   <tr key={alert.id}>
-                    <td className="text-xs text-[#6B7280]">
+                    <td className="text-xs text-[#6B7280] whitespace-nowrap">
                       {new Date(alert.timestamp || alert.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </td>
-                    <td className="font-medium text-[#202938] truncate max-w-[160px]">
+                    <td className="font-medium text-[#202938] whitespace-nowrap">
                       {alert.alertType?.replace(/_/g, ' ') || 'High Gradient'}
                     </td>
-                    <td className="text-[#6B7280]">
+                    <td className="text-[#6B7280] whitespace-nowrap">
                       {alert.batteryPack?.packCode || `BP-${alert.batteryId || 1}`}
                     </td>
-                    <td>
+                    <td className="whitespace-nowrap">
                       <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
                         alert.severity === 'CRITICAL' || alert.severity === 'DANGER'
                           ? 'bg-[#FBEBEB] text-[#C34848]'
