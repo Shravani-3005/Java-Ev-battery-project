@@ -226,16 +226,13 @@ export default function BatteryPacksPage() {
                   className="w-full bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
                 />
               </div>
-                  className="w-full border border-[#E5E7EB] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
-                />
-              </div>
 
               <div>
-                <label className="block mb-1 font-medium text-[#202938]">Battery Chemistry</label>
+                <label className="block mb-1 font-medium text-[#202938] dark:text-[#CBD5E1]">Battery Chemistry</label>
                 <select
                   value={formData.chemistry}
                   onChange={(e) => setFormData({ ...formData, chemistry: e.target.value })}
-                  className="w-full border border-[#E5E7EB] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
+                  className="w-full bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
                 >
                   <option value="Lithium-Ion (NMC)">Lithium-Ion (NMC)</option>
                   <option value="Lithium Iron Phosphate (LFP)">Lithium Iron Phosphate (LFP)</option>
@@ -245,34 +242,34 @@ export default function BatteryPacksPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block mb-1 font-medium text-[#202938]">Capacity (kWh)</label>
+                  <label className="block mb-1 font-medium text-[#202938] dark:text-[#CBD5E1]">Capacity (kWh)</label>
                   <input
                     type="number"
                     step="0.1"
                     required
                     value={formData.capacityKWh}
                     onChange={(e) => setFormData({ ...formData, capacityKWh: parseFloat(e.target.value) || 0 })}
-                    className="w-full border border-[#E5E7EB] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
+                    className="w-full bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
                   />
                 </div>
                 <div>
-                  <label className="block mb-1 font-medium text-[#202938]">Voltage (V)</label>
+                  <label className="block mb-1 font-medium text-[#202938] dark:text-[#CBD5E1]">Voltage (V)</label>
                   <input
                     type="number"
                     step="1"
                     required
                     value={formData.nominalVoltage}
                     onChange={(e) => setFormData({ ...formData, nominalVoltage: parseFloat(e.target.value) || 0 })}
-                    className="w-full border border-[#E5E7EB] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
+                    className="w-full bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded px-3 py-1.5 focus:outline-none focus:border-[#2563A6]"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-4 border-t border-[#E5E7EB]">
+              <div className="flex justify-end gap-2 pt-4 border-t border-[#E5E7EB] dark:border-[#334155]">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-3 py-1.5 border border-[#E5E7EB] text-[#202938] rounded text-xs hover:bg-[#F3F4F6]"
+                  className="px-3 py-1.5 border border-[#E5E7EB] dark:border-[#334155] text-[#202938] dark:text-[#CBD5E1] rounded text-xs hover:bg-[#F3F4F6] dark:hover:bg-[#334155]"
                 >
                   Cancel
                 </button>
