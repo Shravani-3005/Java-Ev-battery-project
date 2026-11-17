@@ -70,17 +70,17 @@ export default function Navbar({
         </Link>
 
         {/* User Profile */}
-        <div className="flex items-center gap-2 pl-2.5 border-l border-[#E5E7EB] text-xs">
-          <div className="w-7 h-7 rounded-full bg-[#E5E7EB] text-[#202938] flex items-center justify-center font-semibold text-[11px]">
+        <div className="flex items-center gap-2 pl-2.5 border-l border-[#E5E7EB] dark:border-[#223147] text-xs">
+          <div className="w-7 h-7 rounded-full bg-[#E5E7EB] dark:bg-[#1B293E] text-[#202938] dark:text-[#CBD5E1] flex items-center justify-center font-semibold text-[11px]">
             {user?.email ? user.email.charAt(0).toUpperCase() : 'U'}
           </div>
-          <span className="text-[#202938] font-medium hidden sm:inline truncate max-w-[140px]">
+          <span className="text-[#202938] dark:text-[#CBD5E1] font-medium hidden sm:inline truncate max-w-[140px]">
             {user?.email || 'Operator'}
           </span>
           <button
             onClick={handleLogout}
             title="Log out"
-            className="p-1 text-[#6B7280] hover:text-[#C34848] rounded hover:bg-[#F3F4F6] transition-colors"
+            className="p-1 text-[#6B7280] dark:text-[#94A3B8] hover:text-[#C34848] rounded hover:bg-[#F3F4F6] dark:hover:bg-[#1B293E] transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
           </button>

@@ -26,10 +26,10 @@ const navItems = [
 
 export default function Sidebar({ systemOnline = true }) {
   return (
-    <aside className="w-56 bg-[#172235] text-white flex flex-col h-screen fixed left-0 top-0 z-30 select-none">
+    <aside className="w-56 bg-[#172235] text-[#CBD5E1] flex flex-col h-screen fixed left-0 top-0 z-30 select-none">
       {/* Brand Header */}
       <div className="h-14 px-5 flex items-center border-b border-[#223147]">
-        <span className="text-[15px] font-semibold tracking-wider text-white">
+        <span className="text-[15px] font-semibold tracking-wider text-[#CBD5E1]">
           THERMOCORE
         </span>
       </div>
@@ -46,8 +46,8 @@ export default function Sidebar({ systemOnline = true }) {
               className={({ isActive }) =>
                 `flex items-center gap-2.5 px-3 py-2 rounded text-[13px] font-medium transition-colors ${
                   isActive
-                    ? 'bg-[#2563A6] text-white'
-                    : 'text-[#94A3B8] hover:text-white hover:bg-[#1E2C42]'
+                    ? 'bg-[#2563A6] text-[#E2E8F0]'
+                    : 'text-[#94A3B8] hover:text-[#CBD5E1] hover:bg-[#1E2C42]'
                 }`
               }
             >

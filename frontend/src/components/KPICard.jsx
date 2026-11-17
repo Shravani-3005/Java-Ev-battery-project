@@ -2,15 +2,15 @@ import React from 'react';
 
 export default function KPICard({ label, value, unit, status = 'default' }) {
   const statusColors = {
-    default: 'text-[#202938]',
-    normal: 'text-[#27834A]',
-    warning: 'text-[#D69A32]',
-    critical: 'text-[#C34848]',
+    default: 'text-[#202938] dark:text-[#CBD5E1]',
+    normal: 'text-[#27834A] dark:text-[#4ADE80]',
+    warning: 'text-[#D69A32] dark:text-[#FBBF24]',
+    critical: 'text-[#C34848] dark:text-[#F87171]',
   };
 
   return (
-    <div className="bg-white border border-[#E5E7EB] rounded p-4 flex flex-col justify-between">
-      <span className="text-xs font-medium text-[#6B7280] uppercase tracking-wide">
+    <div className="bg-white dark:bg-[#172235] border border-[#E5E7EB] dark:border-[#223147] rounded p-4 flex flex-col justify-between">
+      <span className="text-xs font-medium text-[#6B7280] dark:text-[#94A3B8] uppercase tracking-wide">
         {label}
       </span>
       <div className="mt-2 flex items-baseline gap-1">
@@ -18,7 +18,7 @@ export default function KPICard({ label, value, unit, status = 'default' }) {
           {value}
         </span>
         {unit && (
-          <span className="text-xs font-normal text-[#6B7280]">
+          <span className="text-xs font-normal text-[#6B7280] dark:text-[#94A3B8]">
             {unit}
           </span>
         )}

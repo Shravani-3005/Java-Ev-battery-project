@@ -20,55 +20,97 @@ body {
 }
 
 html.dark body {
-  background-color: #0E131F;
-  color: #F1F5F9;
+  background-color: #0D131F;
+  color: #CBD5E1;
 }
 
-/* Dark mode overrides for cards, inputs, and tables */
+/* Dark mode overrides: replace harsh white with matte grey (#CBD5E1 & #94A3B8) */
 html.dark .bg-white {
   background-color: #172235 !important;
-  color: #F1F5F9;
+  color: #CBD5E1 !important;
 }
 
 html.dark .border-\[\#E5E7EB\] {
   border-color: #223147 !important;
 }
 
-html.dark .text-\[\#202938\] {
-  color: #F1F5F9 !important;
+html.dark .text-\[\#202938\],
+html.dark .text-\[\#172235\] {
+  color: #CBD5E1 !important;
 }
 
 html.dark .text-\[\#6B7280\] {
   color: #94A3B8 !important;
 }
 
+html.dark .text-white {
+  color: #CBD5E1 !important;
+}
+
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4 {
+  color: #CBD5E1 !important;
+}
+
 html.dark .bg-\[\#F9FAFB\],
 html.dark .bg-\[\#FAFAFB\],
 html.dark .bg-\[\#F3F4F6\] {
   background-color: #1B293E !important;
-  color: #F1F5F9;
+  color: #CBD5E1 !important;
 }
 
 html.dark .table-minimal th {
-  background-color: #1B293E;
-  color: #94A3B8;
-  border-bottom-color: #223147;
+  background-color: #1B293E !important;
+  color: #94A3B8 !important;
+  border-bottom-color: #223147 !important;
 }
 
 html.dark .table-minimal td {
-  color: #F1F5F9;
-  border-bottom-color: #223147;
+  color: #CBD5E1 !important;
+  border-bottom-color: #223147 !important;
 }
 
 html.dark .table-minimal tr:hover td {
-  background-color: #1E2D44;
+  background-color: #1E2D44 !important;
 }
 
 html.dark input,
 html.dark select {
   background-color: #1B293E !important;
-  color: #F1F5F9 !important;
+  color: #CBD5E1 !important;
   border-color: #223147 !important;
+}
+
+/* Status Badges in Dark Mode - NO white background pills */
+html.dark .bg-\[\#EBF7EE\] {
+  background-color: #13271D !important;
+  color: #4ADE80 !important;
+  border: 1px solid #1C4431 !important;
+}
+
+html.dark .bg-\[\#FEF5E7\] {
+  background-color: #271E10 !important;
+  color: #FBBF24 !important;
+  border: 1px solid #483518 !important;
+}
+
+html.dark .bg-\[\#FBEBEB\] {
+  background-color: #271313 !important;
+  color: #F87171 !important;
+  border: 1px solid #481F1F !important;
+}
+
+/* Tooltip & Recharts dark mode overrides */
+html.dark .recharts-default-tooltip {
+  background-color: #172235 !important;
+  border-color: #223147 !important;
+  color: #CBD5E1 !important;
+}
+
+html.dark .recharts-cartesian-grid line {
+  stroke: #1E293B !important;
 }
 
 /* Restrained scrollbar */
