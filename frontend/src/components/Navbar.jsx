@@ -49,7 +49,7 @@ export default function Navbar({
         {/* Dark / Light Mode Toggle */}
         <button
           onClick={toggleTheme}
-          className="p-1.5 text-[#6B7280] hover:text-[#202938] rounded hover:bg-[#F3F4F6] transition-colors"
+          className="p-1.5 text-[#6B7280] dark:text-[#94A3B8] hover:text-[#202938] dark:hover:text-[#CBD5E1] rounded hover:bg-[#F3F4F6] dark:hover:bg-[#334155] transition-colors"
           title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         >
           {isDark ? <Sun className="w-4 h-4 text-[#D69A32]" /> : <Moon className="w-4 h-4" />}
@@ -58,7 +58,7 @@ export default function Navbar({
         {/* Alerts Link */}
         <Link
           to="/alerts"
-          className="relative p-1.5 text-[#6B7280] hover:text-[#202938] rounded hover:bg-[#F3F4F6] transition-colors"
+          className="relative p-1.5 text-[#6B7280] dark:text-[#94A3B8] hover:text-[#202938] dark:hover:text-[#CBD5E1] rounded hover:bg-[#F3F4F6] dark:hover:bg-[#334155] transition-colors"
           title="Alerts"
         >
           <Bell className="w-4 h-4" />
@@ -70,8 +70,8 @@ export default function Navbar({
         </Link>
 
         {/* User Profile */}
-        <div className="flex items-center gap-2 pl-2.5 border-l border-[#E5E7EB] dark:border-[#223147] text-xs">
-          <div className="w-7 h-7 rounded-full bg-[#E5E7EB] dark:bg-[#1B293E] text-[#202938] dark:text-[#CBD5E1] flex items-center justify-center font-semibold text-[11px]">
+        <div className="flex items-center gap-2 pl-2.5 border-l border-[#E5E7EB] dark:border-[#334155] text-xs">
+          <div className="w-7 h-7 rounded-full bg-[#E5E7EB] dark:bg-[#334155] text-[#202938] dark:text-[#CBD5E1] flex items-center justify-center font-semibold text-[11px]">
             {user?.email ? user.email.charAt(0).toUpperCase() : 'U'}
           </div>
           <span className="text-[#202938] dark:text-[#CBD5E1] font-medium hidden sm:inline truncate max-w-[140px]">
@@ -80,7 +80,7 @@ export default function Navbar({
           <button
             onClick={handleLogout}
             title="Log out"
-            className="p-1 text-[#6B7280] dark:text-[#94A3B8] hover:text-[#C34848] rounded hover:bg-[#F3F4F6] dark:hover:bg-[#1B293E] transition-colors"
+            className="p-1 text-[#6B7280] dark:text-[#94A3B8] hover:text-[#C34848] rounded hover:bg-[#F3F4F6] dark:hover:bg-[#334155] transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
           </button>

@@ -78,7 +78,7 @@ function AppContent() {
       <Sidebar systemOnline={systemOnline} />
 
       {/* 2. Main Work Content Area */}
-      <div className="flex-1 ml-56 flex flex-col min-w-0">
+      <div className="flex-1 ml-56 flex flex-col min-w-0 bg-[#F7F8FA] dark:bg-[#0F172A]">
         <Navbar
           title={currentTitle}
           packs={packs}
@@ -87,7 +87,7 @@ function AppContent() {
           unreadAlerts={unreadAlerts}
         />
 
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 p-6 overflow-y-auto bg-[#F7F8FA] dark:bg-[#0F172A]">
           <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/batteries" element={<BatteryPacksPage />} />
