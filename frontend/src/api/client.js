@@ -559,6 +559,12 @@ export const sensorsApi = {
       return generateCellTemps(isSprint ? 41.8 : 32.4, isSprint);
     }),
 
+  getCellTemperatures: (batteryId) =>
+    safeCall(api.get(`/sensors/cells/${batteryId}`), () => {
+      const isHotspot = Number(batteryId) === 2;
+      return generateCellTemps(isHotspot ? 41.5 : 34.0, isHotspot);
+    }),
+
   ingestReading: (data) =>
     safeCall(api.post('/sensors/readings', data), () => {
       return {
